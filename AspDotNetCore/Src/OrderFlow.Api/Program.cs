@@ -1,22 +1,22 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using OrderFlow.Api.ConfigurationExtensions;
+using OrderFlow.Api.ServiceCollectionExtensions;
 
-namespace OrderFlow.Api
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.ConfigureStartupOptions();
+builder.Services.InjectCors();
+builder.Services.InjectDatabases();
+builder.Services.InjectRepositories();
+builder.Services.InjectServices();
+builder.Services.AddControllers();
+builder.Services.InjectSwagger(out var enableSwagger);
+
+var app = builder.Build();
+if (enableSwagger)
 {
-    public static class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                       .ConfigureWebHostDefaults(webBuilder =>
-                            {
-                                webBuilder.UseStartup<Startup>();
-                            });
-        }
-    }
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
+
+app.MapControllers();
+app.Run();
