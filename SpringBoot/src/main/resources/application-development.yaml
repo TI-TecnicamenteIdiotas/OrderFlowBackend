@@ -1,0 +1,10 @@
+amazon:
+  aws:
+    accesskey: ENC(cTmrkPC+uEfH/bmED5K5jvHxO7pLbg3cSHlBv2shaQOCgEZ397J+vkZ0v+cNkZ/SY8FxIz7eo8xA4XxiVxkJiQ==)
+    secretkey: ENC(vYdzVIgB3PqeDjgyuTbJVGwgbEmDP/AEXJ6rPgJt+7Bnw775DBW3waqZ7HUGEh8nGOFY3W0rHhtdGq8Stx89VQ==)
+  dynamodb:
+    endpoint: http://localhost:8000/
+
+jasypt:
+  encryptor: 
+    password: ${JASYPT_ENCRYPTION_KEY}
