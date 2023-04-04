@@ -4,6 +4,7 @@ amazon:
     secretkey: ENC(vYdzVIgB3PqeDjgyuTbJVGwgbEmDP/AEXJ6rPgJt+7Bnw775DBW3waqZ7HUGEh8nGOFY3W0rHhtdGq8Stx89VQ==)
   dynamodb:
     endpoint: http://localhost:8000/
+    region: us-west-2
 
 jasypt:
   encryptor: 

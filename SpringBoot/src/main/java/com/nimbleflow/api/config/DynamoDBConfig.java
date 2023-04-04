@@ -6,9 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.nimbleflow.api")
@@ -16,6 +19,9 @@ public class DynamoDBConfig {
 
     @Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
+
+    @Value("${amazon.dynamodb.region}")
+    private String amazonDynamoDBRegion;
 
     @Value("${amazon.aws.accesskey}")
     private String amazonAWSAccessKey;
@@ -25,11 +31,11 @@ public class DynamoDBConfig {
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(amazonAWSCredentials());
-        
-        if (!amazonDynamoDBEndpoint.isEmpty()) {
-            amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
-        }
+        AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder
+            .standard()
+            .withCredentials(new AWSStaticCredentialsProvider(amazonAWSCredentials()))
+            .withEndpointConfiguration(new EndpointConfiguration(amazonDynamoDBEndpoint, amazonDynamoDBRegion))
+            .build();
         
         return amazonDynamoDB;
     }
