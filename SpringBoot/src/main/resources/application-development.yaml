@@ -1,3 +1,11 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+    include-message: always
+  servlet:
+    context-path: /nibleflow-api
+
 amazon:
   aws:
     accesskey: ENC(cTmrkPC+uEfH/bmED5K5jvHxO7pLbg3cSHlBv2shaQOCgEZ397J+vkZ0v+cNkZ/SY8FxIz7eo8xA4XxiVxkJiQ==)
