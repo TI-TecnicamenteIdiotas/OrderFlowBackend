@@ -38,7 +38,7 @@ public class PurchaseController {
         @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(
             responseCode = "400", 
-            description = "Bad Request (throw when dto has invalid (null, empty) parameters)", 
+            description = "Bad Request (thrown when dto has invalid (null, empty) parameters)", 
             content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
         )
     })
@@ -64,7 +64,7 @@ public class PurchaseController {
         @ApiResponse(responseCode = "200", description = "Ok"),
         @ApiResponse(
             responseCode = "400", 
-            description = "Bad Request (throw when no data was found to be deleted)", 
+            description = "Bad Request (thrown when no data was found to be deleted)", 
             content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
         )
     })
