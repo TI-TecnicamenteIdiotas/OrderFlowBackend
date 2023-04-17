@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="OrderFlowDB@179.0.75.150" uuid="c0d36ae0-bfec-4828-aa8d-a8d85ea7cc3f">
+    <data-source source="LOCAL" name="SelfHosted@NimbleFlow" uuid="c0d36ae0-bfec-4828-aa8d-a8d85ea7cc3f">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
       <jdbc-url>jdbc:sqlserver://179.0.75.150\MSSQLSERVER:5657;database=OrderFlowDB</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="AWS@NimbleFlow" uuid="0fad8555-e8b8-4c06-b90a-cc0f29933406">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://postgre-dotnet.c4epyn92zh1c.us-east-2.rds.amazonaws.com:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
