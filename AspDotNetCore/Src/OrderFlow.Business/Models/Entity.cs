@@ -1,9 +1,6 @@
-﻿using OrderFlow.Business.Config;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 namespace OrderFlow.Business.Models
 {
@@ -18,8 +15,8 @@ namespace OrderFlow.Business.Models
         /// <returns>The values that are null</returns>
         public string[] GetNullValues(params string[] exceptPropNames)
         {
-            if (exceptPropNames == null) exceptPropNames = new string[0];
-            var props = this.GetType().GetProperties().Where(p => !exceptPropNames.Contains(p.Name));
+            if (exceptPropNames == null) exceptPropNames = Array.Empty<string>();
+            var props = GetType().GetProperties().Where(p => !exceptPropNames.Contains(p.Name));
             List<string> nullProps = new List<string>();
             foreach (var prop in props)
             {
