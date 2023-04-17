@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OrderFlow.Business.DTO;
 using OrderFlow.Business.Interfaces.Services;
 using OrderFlow.Business.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace OrderFlow.Api.Controllers
 {
@@ -12,11 +9,9 @@ namespace OrderFlow.Api.Controllers
     [Route("api/tables")]
     public class TablesController : MainController
     {
-        private readonly IMapper _mapper;
         private readonly ITablesService _service;
-        public TablesController(IMapper mapper, IResponseService responseService, ITablesService tablesService) : base(responseService)
+        public TablesController(IResponseService responseService, ITablesService tablesService) : base(responseService)
         {
-            _mapper = mapper;
             _service = tablesService;
         }
 
@@ -37,9 +32,11 @@ namespace OrderFlow.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Table>> AddPTable([FromBody] PostTable table)
         {
-            var _table = _mapper.Map<Table>(table);
-            var p = await _service.AddTable(_table);
-            return CustomResponse(p);
+            // var _table = _mapper.Map<Table>(table);
+            // var p = await _service.AddTable(_table);
+            // return CustomResponse(p);
+
+            return CustomResponse();
         }
 
         [HttpDelete]
@@ -54,12 +51,13 @@ namespace OrderFlow.Api.Controllers
         [HttpPut]
         public async Task<ActionResult<Table>> UpdateTable([FromQuery] int tableId, [FromBody] PutTable table)
         {
-            var _table = _mapper.Map<Table>(table);
-            if (tableId != table.Id) _responseService.DivergentId(tableId, _table.Id);
-            if (HasError()) return CustomResponse(_table);
-            var result = await _service.UpdateTable(_table);
-            return CustomResponse(result);
-            
+            // var _table = _mapper.Map<Table>(table);
+            // if (tableId != table.Id) _responseService.DivergentId(tableId, _table.Id);
+            // if (HasError()) return CustomResponse(_table);
+            // var result = await _service.UpdateTable(_table);
+            // return CustomResponse(result);
+
+            return CustomResponse();
         }
     }
 }
