@@ -1,15 +1,14 @@
-using OrderFlow.Business.Interfaces.Repositories;
-using OrderFlow.Data.Repository;
+using OrderFlow.Data.Repositories;
 
 namespace OrderFlow.Api.ServiceCollectionExtensions;
 
 public static partial class ServiceCollectionExtensions
 {
-	public static void InjectRepositories(this IServiceCollection services)
-	{
-		services.AddScoped<IProductsRepository, ProductsRepository>();
-		services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-		services.AddScoped<ITablesRepository, TablesRepository>();
-		services.AddScoped<IItemsRepository, ItemsRepository>();
-	}
+    public static void InjectRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<ProductsRepository>();
+        services.AddScoped<CategoriesRepository>();
+        services.AddScoped<TablesRepository>();
+        services.AddScoped<ItemsRepository>();
+    }
 }

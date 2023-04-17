@@ -1,66 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrderFlow.Business.DTO;
+using OrderFlow.Business.DTO.Categories;
 using OrderFlow.Business.Interfaces.Services;
-using OrderFlow.Business.Models;
+using OrderFlow.Data.Models;
 
-namespace OrderFlow.Api.Controllers
+namespace OrderFlow.Api.Controllers;
+
+[ApiController]
+[Route("api/categories")]
+public class CategoriesController : ControllerBase
 {
-    [ApiController]
-    [Route("api/categories")]
-    public class CategoriesController : MainController
-    {
-        private readonly ICategoriesService _service;
-        public CategoriesController(IResponseService responseService, ICategoriesService categoriesService) : base(responseService)
-        {
-            _service = categoriesService;
-        }
+	private readonly ICategoriesService _service;
 
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAll()
-        {
-            // var Categories = await _service.GetAll();
-            // var _categories = _mapper.Map<List<GetCategory>>(Categories);
-            // return CustomResponse(_categories);
+	public CategoriesController(ICategoriesService categoriesService)
+	{
+		_service = categoriesService;
+	}
 
-            return CustomResponse();
-        }
+	[HttpGet("all")]
+	public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+	{
+		// var Categories = await _service.GetAll();
+		// var _categories = _mapper.Map<List<GetCategory>>(Categories);
+		// return CustomResponse(_categories);
 
-        [HttpGet]
-        public async Task<ActionResult<bool>> GetCategoryById([FromQuery] int categoryId)
-        {
-            var category = await _service.GetById(categoryId);
-            return CustomResponse(category);
-        }
+		return Ok();
+	}
 
-        [HttpPost]
-        public async Task<ActionResult<Category>> AddCategory([FromBody] PostCategory category)
-        {   
-            // var _category = _mapper.Map<Category>(category);
-            // var p = await _service.AddCategory(_category);
-            // return CustomResponse(p);
+	[HttpGet]
+	public async Task<ActionResult<bool>> GetCategoryById([FromQuery] int categoryId)
+	{
+		var category = await _service.GetById(categoryId);
+		return Ok();
+	}
 
-            return CustomResponse();
-        }
+	[HttpPost]
+	public async Task<ActionResult<Category>> AddCategory([FromBody] PostCategory category)
+	{
+		// var _category = _mapper.Map<Category>(category);
+		// var p = await _service.AddCategory(_category);
+		// return CustomResponse(p);
 
-        [HttpDelete]
-        public async Task<ActionResult<Category>> DeleteCategory([FromQuery] int categoryID)
-        {
-            
-            var result = await _service.DeleteCategory(categoryID);
-            return CustomResponse(result);
+		return Ok();
+	}
 
-        }
+	[HttpDelete]
+	public async Task<ActionResult<Category>> DeleteCategory([FromQuery] int categoryID)
+	{
+		var result = await _service.DeleteCategory(categoryID);
+		return Ok();
+	}
 
-        [HttpPut]
-        public async Task<ActionResult<Category>> UpdateCategory([FromQuery] int categoryID, [FromBody] PutCategory category)
-        {
-            // var _category = _mapper.Map<Category>(category);
-            // if (categoryID != _category.Id) _responseService.DivergentId(categoryID, _category.Id);
-            // if (HasError()) return CustomResponse(_category);
-            // var result = await _service.UpdateCategory(_category);
-            // return CustomResponse(result);
+	[HttpPut]
+	public async Task<ActionResult<Category>> UpdateCategory([FromQuery] int categoryID,
+		[FromBody] PutCategory category)
+	{
+		// var _category = _mapper.Map<Category>(category);
+		// if (categoryID != _category.Id) _responseService.DivergentId(categoryID, _category.Id);
+		// if (HasError()) return CustomResponse(_category);
+		// var result = await _service.UpdateCategory(_category);
+		// return CustomResponse(result);
 
-            return CustomResponse();
-        }
-    }
+		return Ok();
+	}
 }
