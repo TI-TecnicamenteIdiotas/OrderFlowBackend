@@ -14,8 +14,8 @@ builder.Services.InjectSwagger(out var enableSwagger);
 var app = builder.Build();
 if (enableSwagger)
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.MapControllers();

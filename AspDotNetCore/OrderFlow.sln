@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Api", "Src\OrderFlow.Api\OrderFlow.Api.csproj", "{344048D3-F0F1-4F93-891F-BAC7A5611314}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Business", "Src\OrderFlow.Business\OrderFlow.Business.csproj", "{EA149509-39C5-4771-8E00-01FBFA46A72D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Contracts", "Src\OrderFlow.Contracts\OrderFlow.Contracts.csproj", "{EA149509-39C5-4771-8E00-01FBFA46A72D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Data", "Src\OrderFlow.Data\OrderFlow.Data.csproj", "{DF6DC2BE-972F-4BC3-B352-A9261EE8D13F}"
 EndProject
