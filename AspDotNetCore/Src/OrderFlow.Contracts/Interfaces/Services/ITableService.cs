@@ -5,8 +5,8 @@ namespace OrderFlow.Contracts.Interfaces.Services;
 public interface ITableService
 {
     Task<IEnumerable<GetTable>> GetAllPaginated();
-    Task<uint?> AddTable(PostTable table);
-    Task<bool> DeleteTableById(uint tableId);
-    Task<bool> UpdateTableById(uint tableId, PutTable table);
-    Task<GetTable?> GetTableById(uint tableId);
+    Task<Guid?> AddTable(PostTable table);
+    Task<bool> DeleteTableById(Guid tableId);
+    Task<bool> UpdateTableById(Guid tableId, PutTable table);
+    Task<GetTable?> GetTableById(Guid tableId);
 }

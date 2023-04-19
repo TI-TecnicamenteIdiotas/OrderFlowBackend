@@ -5,8 +5,8 @@ namespace OrderFlow.Contracts.Interfaces.Services;
 public interface IProductService
 {
     Task<IEnumerable<GetProduct>> GetAllPaginated();
-    Task<uint?> AddProduct(PostProduct product);
-    Task<bool> DeleteProductById(uint productId);
-    Task<bool> UpdateProductById(uint productId, PutProduct product);
-    Task<GetProduct?> GetProductById(uint productId);
+    Task<Guid?> AddProduct(PostProduct product);
+    Task<bool> DeleteProductById(Guid productId);
+    Task<bool> UpdateProductById(Guid productId, PutProduct product);
+    Task<GetProduct?> GetProductById(Guid productId);
 }

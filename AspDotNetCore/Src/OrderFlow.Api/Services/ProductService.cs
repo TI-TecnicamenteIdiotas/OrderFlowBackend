@@ -65,22 +65,22 @@ public class ProductService : IProductService
         throw new NotImplementedException();
     }
 
-    public Task<uint?> AddProduct(PostProduct product)
+    public Task<Guid?> AddProduct(PostProduct product)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteProductById(uint productId)
+    public Task<bool> DeleteProductById(Guid productId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateProductById(uint productId, PutProduct product)
+    public Task<bool> UpdateProductById(Guid productId, PutProduct product)
     {
         throw new NotImplementedException();
     }
 
-    public Task<GetProduct?> GetProductById(uint productId)
+    public Task<GetProduct?> GetProductById(Guid productId)
     {
         throw new NotImplementedException();
     }

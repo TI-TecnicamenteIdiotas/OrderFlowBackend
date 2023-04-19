@@ -25,8 +25,8 @@ public class CategoryController : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{categoryId:int}")]
-    public async Task<ActionResult> GetCategoryById([FromRoute] uint categoryId)
+    [HttpGet("{categoryId:guid}")]
+    public async Task<ActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
         var category = await _categoryService.GetCategoryById(categoryId);
         if (category is null)
@@ -35,7 +35,7 @@ public class CategoryController : ControllerBase
         return Ok(category);
     }
 
-    private readonly record struct AddCategoryResponseWrapper(uint CategoryId);
+    private readonly record struct AddCategoryResponseWrapper(Guid CategoryId);
 
     [HttpPost]
     public async Task<ActionResult> AddCategory([FromBody] PostCategory requestBody)
@@ -50,8 +50,8 @@ public class CategoryController : ControllerBase
         });
     }
 
-    [HttpDelete("{categoryId:int}")]
-    public async Task<ActionResult> DeleteCategoryById([FromQuery] uint categoryId)
+    [HttpDelete("{categoryId:guid}")]
+    public async Task<ActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
     {
         var wasDeleted = await _categoryService.DeleteById(categoryId);
         if (!wasDeleted)
@@ -60,8 +60,8 @@ public class CategoryController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{categoryId:int}")]
-    public async Task<ActionResult> UpdateCategoryById([FromQuery] uint categoryId, [FromBody] PutCategory requestBody)
+    [HttpPut("{categoryId:guid}")]
+    public async Task<ActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] PutCategory requestBody)
     {
         var wasUpdated = await _categoryService.UpdateCategoryById(categoryId, requestBody);
         if (!wasUpdated)

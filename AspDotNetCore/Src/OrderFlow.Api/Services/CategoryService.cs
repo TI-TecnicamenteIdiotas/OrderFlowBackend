@@ -33,17 +33,6 @@ public class CategoryService : ICategoryService
     //     return !HasError();
     // }
     //
-    //
-    // public async Task<IEnumerable<Category>> GetAll()
-    // {
-    //     return await _repository.GetAll();
-    // }
-    //
-    // public async Task<Category> GetById(int id)
-    // {
-    //     return await _repository.GetById(id);
-    // }
-    //
     // public async Task<bool> DeleteCategory(int value)
     // {
     //     var p = await _repository.GetById(value);
@@ -63,22 +52,22 @@ public class CategoryService : ICategoryService
         throw new NotImplementedException();
     }
 
-    public Task<uint?> AddCategory(PostCategory category)
+    public Task<Guid?> AddCategory(PostCategory category)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteById(uint categoryId)
+    public Task<bool> DeleteById(Guid categoryId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateCategoryById(uint categoryId, PutCategory category)
+    public Task<bool> UpdateCategoryById(Guid categoryId, PutCategory category)
     {
         throw new NotImplementedException();
     }
 
-    public Task<GetCategory?> GetCategoryById(uint categoryId)
+    public Task<GetCategory?> GetCategoryById(Guid categoryId)
     {
         throw new NotImplementedException();
     }

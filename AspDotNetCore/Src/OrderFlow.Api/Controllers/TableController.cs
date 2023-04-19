@@ -25,8 +25,8 @@ public class TableController : ControllerBase
         return Ok(tables);
     }
 
-    [HttpGet("{tableId:int}")]
-    public async Task<ActionResult> GetTableById([FromRoute] uint tableId)
+    [HttpGet("{tableId:guid}")]
+    public async Task<ActionResult> GetTableById([FromRoute] Guid tableId)
     {
         var table = await _tableService.GetTableById(tableId);
         if (table is null)
@@ -35,7 +35,7 @@ public class TableController : ControllerBase
         return Ok(table);
     }
 
-    private readonly record struct AddTableResponseWrapper(uint TableId);
+    private readonly record struct AddTableResponseWrapper(Guid TableId);
 
     [HttpPost]
     public async Task<ActionResult> AddTable([FromBody] PostTable requestBody)
@@ -50,8 +50,8 @@ public class TableController : ControllerBase
         });
     }
 
-    [HttpDelete("{tableId:int}")]
-    public async Task<ActionResult> DeleteTableById([FromRoute] uint tableId)
+    [HttpDelete("{tableId:guid}")]
+    public async Task<ActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
         var wasDeleted = await _tableService.DeleteTableById(tableId);
         if (!wasDeleted)
@@ -60,8 +60,8 @@ public class TableController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{tableId:int}")]
-    public async Task<ActionResult> UpdateTable([FromRoute] uint tableId, [FromBody] PutTable requestBody)
+    [HttpPut("{tableId:guid}")]
+    public async Task<ActionResult> UpdateTable([FromRoute] Guid tableId, [FromBody] PutTable requestBody)
     {
         var wasUpdated = await _tableService.UpdateTableById(tableId, requestBody);
         if (!wasUpdated)

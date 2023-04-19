@@ -7,5 +7,5 @@ public class PutProduct
     public decimal? Price { get; set; }
     public string? ImageURL { get; set; }
     public bool? IsFavorite { get; set; }
-    public int? CategoryId { get; set; }
+    public uint? CategoryId { get; set; }
 }

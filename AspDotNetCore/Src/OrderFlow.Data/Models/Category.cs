@@ -7,7 +7,7 @@ public partial class Category
         Products = new HashSet<Product>();
     }
 
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; }
     public int ColorTheme { get; set; }
     public int CategoryIcon { get; set; }

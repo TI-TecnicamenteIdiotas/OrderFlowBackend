@@ -2,9 +2,9 @@
 
 public partial class Item
 {
-    public int Id { get; set; }
-    public int ProductId { get; set; }
-    public int TableId { get; set; }
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public Guid TableId { get; set; }
     public int Count { get; set; }
     public decimal Discount { get; set; }
     public decimal Additional { get; set; }

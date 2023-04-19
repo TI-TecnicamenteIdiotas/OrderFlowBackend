@@ -9,7 +9,7 @@ public class PostProduct
     public decimal Price { get; set; }
     public string ImageURL { get; set; } = null!;
     public bool IsFavorite { get; set; }
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     public Product ToModel()
         => new()

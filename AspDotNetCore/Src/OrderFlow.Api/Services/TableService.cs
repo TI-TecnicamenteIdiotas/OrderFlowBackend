@@ -89,22 +89,22 @@ public class TableService : ITableService
         throw new NotImplementedException();
     }
 
-    public Task<uint?> AddTable(PostTable table)
+    public Task<Guid?> AddTable(PostTable table)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteTableById(uint tableId)
+    public Task<bool> DeleteTableById(Guid tableId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateTableById(uint tableId, PutTable table)
+    public Task<bool> UpdateTableById(Guid tableId, PutTable table)
     {
         throw new NotImplementedException();
     }
 
-    public Task<GetTable?> GetTableById(uint tableId)
+    public Task<GetTable?> GetTableById(Guid tableId)
     {
         throw new NotImplementedException();
     }

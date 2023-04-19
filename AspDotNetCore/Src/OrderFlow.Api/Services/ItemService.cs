@@ -74,12 +74,12 @@ public class ItemService : IItemService
         throw new NotImplementedException();
     }
 
-    public Task<uint?> AddItem(Item item)
+    public Task<Guid?> AddItem(Item item)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteItemById(uint itemId)
+    public Task<bool> DeleteItemById(Guid itemId)
     {
         throw new NotImplementedException();
     }
@@ -89,12 +89,12 @@ public class ItemService : IItemService
         throw new NotImplementedException();
     }
 
-    public Task<Item> GetItemById(uint itemId)
+    public Task<Item> GetItemById(Guid itemId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Item>> GetTableItems(uint tableId)
+    public Task<IEnumerable<Item>> GetTableItems(Guid tableId)
     {
         throw new NotImplementedException();
     }

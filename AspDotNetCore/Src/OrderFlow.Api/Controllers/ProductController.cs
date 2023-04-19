@@ -25,8 +25,8 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("{productId:int}")]
-    public async Task<ActionResult> GetProductById([FromRoute] uint productId)
+    [HttpGet("{productId:guid}")]
+    public async Task<ActionResult> GetProductById([FromRoute] Guid productId)
     {
         var product = await _productService.GetProductById(productId);
         if (product is null)
@@ -35,7 +35,7 @@ public class ProductController : ControllerBase
         return Ok(product);
     }
 
-    private readonly record struct AddProductResponseWrapper(uint ProductId);
+    private readonly record struct AddProductResponseWrapper(Guid ProductId);
 
     [HttpPost]
     public async Task<ActionResult> AddProduct([FromBody] PostProduct requestBody)
@@ -50,8 +50,8 @@ public class ProductController : ControllerBase
         });
     }
 
-    [HttpDelete("{productId:int}")]
-    public async Task<ActionResult> DeleteProductById([FromRoute] uint productId)
+    [HttpDelete("{productId:guid}")]
+    public async Task<ActionResult> DeleteProductById([FromRoute] Guid productId)
     {
         var wasDeleted = await _productService.DeleteProductById(productId);
         if (!wasDeleted)
@@ -60,8 +60,8 @@ public class ProductController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{productId:int}")]
-    public async Task<ActionResult> UpdateProductById([FromRoute] uint productId, [FromBody] PutProduct requestBody)
+    [HttpPut("{productId:guid}")]
+    public async Task<ActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] PutProduct requestBody)
     {
         var wasUpdated = await _productService.UpdateProductById(productId, requestBody);
         if (!wasUpdated)
