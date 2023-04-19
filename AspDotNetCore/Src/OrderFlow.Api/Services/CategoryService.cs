@@ -13,12 +13,12 @@ public class CategoryService : ICategoryService
         _categoryRepository = categoryRepository;
     }
 
-    public Task<IEnumerable<GetCategory>> GetAllPaginated()
+    public Task<IEnumerable<GetCategory>> GetAllCategoriesPaginated()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Guid?> AddCategory(PostCategory category)
+    public Task<Guid?> CreateCategory(PostCategory category)
     {
         throw new NotImplementedException();
     }

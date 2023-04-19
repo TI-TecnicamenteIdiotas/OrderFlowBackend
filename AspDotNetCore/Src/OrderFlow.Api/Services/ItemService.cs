@@ -69,12 +69,12 @@ public class ItemService : IItemService
     //     return result;
     // }
 
-    public Task<IEnumerable<Item>> GetAllPaginated()
+    public Task<IEnumerable<Item>> GetAllItemsPaginated()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Guid?> AddItem(Item item)
+    public Task<Guid?> CreateItem(Item item)
     {
         throw new NotImplementedException();
     }

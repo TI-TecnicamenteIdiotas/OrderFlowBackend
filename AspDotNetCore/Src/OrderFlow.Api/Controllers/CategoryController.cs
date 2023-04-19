@@ -16,17 +16,26 @@ public class CategoryController : ControllerBase
         _categoryService = categoryService;
     }
 
+    /// <summary>Gets all categories paginated</summary>
+    /// <param name="page"></param>
+    /// <param name="limit"></param>
+    /// <response code="204">No Content</response>
     [HttpGet]
-    public async Task<IActionResult> GetAllPaginated()
+    [ProducesResponseType(typeof(GetCategory[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllCategoriesPaginated([FromQuery] int page = 0, [FromQuery] int limit = 12)
     {
-        var categories = await _categoryService.GetAllPaginated();
+        var categories = await _categoryService.GetAllCategoriesPaginated();
         if (!categories.Any())
             return NoContent();
 
         return Ok(categories);
     }
 
+    /// <summary>Gets a category by id</summary>
+    /// <param name="categoryId"></param>
+    /// <response code="404">Not Found</response>
     [HttpGet("{categoryId:guid}")]
+    [ProducesResponseType(typeof(GetCategory), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
         var category = await _categoryService.GetCategoryById(categoryId);
@@ -38,14 +47,19 @@ public class CategoryController : ControllerBase
 
     private readonly record struct AddCategoryResponseWrapper(Guid CategoryId);
 
+    /// <summary>Creates a category</summary>
+    /// <param name="requestBody"></param>
+    /// <response code="400">Bad Request</response>
+    /// <response code="500">Internal Server Error</response>
     [HttpPost]
-    public async Task<IActionResult> AddCategory([FromBody] PostCategory requestBody)
+    [ProducesResponseType(typeof(AddCategoryResponseWrapper), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateCategory([FromBody] PostCategory requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)
             return requestBodyValidationError;
 
-        var categoryId = await _categoryService.AddCategory(requestBody);
+        var categoryId = await _categoryService.CreateCategory(requestBody);
         if (categoryId is null)
             return Problem();
 
@@ -55,6 +69,11 @@ public class CategoryController : ControllerBase
         });
     }
 
+    /// <summary>Deletes a category by id</summary>
+    /// <param name="categoryId"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="500">Internal Server Error</response>
     [HttpDelete("{categoryId:guid}")]
     public async Task<IActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
     {
@@ -69,6 +88,13 @@ public class CategoryController : ControllerBase
         return Ok();
     }
 
+    /// <summary>Updates a category by id</summary>
+    /// <param name="categoryId"></param>
+    /// <param name="requestBody"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="400">Bad Request</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="500">Internal Server Error</response>
     [HttpPut("{categoryId:guid}")]
     public async Task<IActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] PutCategory requestBody)
     {

@@ -50,12 +50,12 @@ public class TableService : ITableService
     //
     //     return result;
     // }
-    public Task<IEnumerable<GetTable>> GetAllPaginated()
+    public Task<IEnumerable<GetTable>> GetAllTablesPaginated()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Guid?> AddTable(PostTable table)
+    public Task<Guid?> CreateTable(PostTable table)
     {
         throw new NotImplementedException();
     }

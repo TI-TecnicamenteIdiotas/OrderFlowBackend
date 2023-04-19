@@ -13,12 +13,12 @@ public class ProductService : IProductService
         _productRepository = productRepository;
     }
 
-    public Task<IEnumerable<GetProduct>> GetAllPaginated()
+    public Task<IEnumerable<GetProduct>> GetAllProductsPaginated()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Guid?> AddProduct(PostProduct product)
+    public Task<Guid?> CreateProduct(PostProduct product)
     {
         throw new NotImplementedException();
     }
