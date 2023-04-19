@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OrderFlow.Api.Helpers;
 using OrderFlow.Contracts.DTOs.Products;
 using OrderFlow.Contracts.Interfaces.Services;
 
@@ -16,7 +17,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAllPaginated()
+    public async Task<IActionResult> GetAllPaginated()
     {
         var products = await _productService.GetAllPaginated();
         if (!products.Any())
@@ -26,7 +27,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("{productId:guid}")]
-    public async Task<ActionResult> GetProductById([FromRoute] Guid productId)
+    public async Task<IActionResult> GetProductById([FromRoute] Guid productId)
     {
         var product = await _productService.GetProductById(productId);
         if (product is null)
@@ -38,8 +39,12 @@ public class ProductController : ControllerBase
     private readonly record struct AddProductResponseWrapper(Guid ProductId);
 
     [HttpPost]
-    public async Task<ActionResult> AddProduct([FromBody] PostProduct requestBody)
+    public async Task<IActionResult> AddProduct([FromBody] PostProduct requestBody)
     {
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
         var productId = await _productService.AddProduct(requestBody);
         if (productId is null)
             return Problem();
@@ -51,20 +56,32 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete("{productId:guid}")]
-    public async Task<ActionResult> DeleteProductById([FromRoute] Guid productId)
+    public async Task<IActionResult> DeleteProductById([FromRoute] Guid productId)
     {
-        var wasDeleted = await _productService.DeleteProductById(productId);
-        if (!wasDeleted)
+        var productExists = await _productService.GetProductById(productId);
+        if (productExists is null)
+            return NotFound();
+
+        var wasProductDeleted = await _productService.DeleteProductById(productId);
+        if (!wasProductDeleted)
             return Problem();
 
         return Ok();
     }
 
     [HttpPut("{productId:guid}")]
-    public async Task<ActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] PutProduct requestBody)
+    public async Task<IActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] PutProduct requestBody)
     {
-        var wasUpdated = await _productService.UpdateProductById(productId, requestBody);
-        if (!wasUpdated)
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
+        var productExists = await _productService.GetProductById(productId);
+        if (productExists is null)
+            return NotFound();
+
+        var wasProductUpdated = await _productService.UpdateProductById(productId, requestBody);
+        if (!wasProductUpdated)
             return Problem();
 
         return Ok();

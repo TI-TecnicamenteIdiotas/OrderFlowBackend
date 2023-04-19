@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OrderFlow.Api.Helpers;
 using OrderFlow.Contracts.DTOs.Categories;
 using OrderFlow.Contracts.Interfaces.Services;
 
@@ -16,7 +17,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAllPaginated()
+    public async Task<IActionResult> GetAllPaginated()
     {
         var categories = await _categoryService.GetAllPaginated();
         if (!categories.Any())
@@ -26,7 +27,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("{categoryId:guid}")]
-    public async Task<ActionResult> GetCategoryById([FromRoute] Guid categoryId)
+    public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
         var category = await _categoryService.GetCategoryById(categoryId);
         if (category is null)
@@ -38,8 +39,12 @@ public class CategoryController : ControllerBase
     private readonly record struct AddCategoryResponseWrapper(Guid CategoryId);
 
     [HttpPost]
-    public async Task<ActionResult> AddCategory([FromBody] PostCategory requestBody)
+    public async Task<IActionResult> AddCategory([FromBody] PostCategory requestBody)
     {
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
         var categoryId = await _categoryService.AddCategory(requestBody);
         if (categoryId is null)
             return Problem();
@@ -51,20 +56,32 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("{categoryId:guid}")]
-    public async Task<ActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
+    public async Task<IActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
     {
-        var wasDeleted = await _categoryService.DeleteById(categoryId);
-        if (!wasDeleted)
+        var categoryExists = await _categoryService.GetCategoryById(categoryId);
+        if (categoryExists is null)
+            return NotFound();
+
+        var wasCategoryDeleted = await _categoryService.DeleteById(categoryId);
+        if (!wasCategoryDeleted)
             return Problem();
 
         return Ok();
     }
 
     [HttpPut("{categoryId:guid}")]
-    public async Task<ActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] PutCategory requestBody)
+    public async Task<IActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] PutCategory requestBody)
     {
-        var wasUpdated = await _categoryService.UpdateCategoryById(categoryId, requestBody);
-        if (!wasUpdated)
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
+        var categoryExists = await _categoryService.GetCategoryById(categoryId);
+        if (categoryExists is null)
+            return NotFound();
+
+        var wasCategoryUpdated = await _categoryService.UpdateCategoryById(categoryId, requestBody);
+        if (!wasCategoryUpdated)
             return Problem();
 
         return Ok();

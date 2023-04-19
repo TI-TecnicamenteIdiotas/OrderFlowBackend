@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OrderFlow.Api.Helpers;
 using OrderFlow.Contracts.DTOs.Tables;
 using OrderFlow.Contracts.Interfaces.Services;
 
@@ -16,7 +17,7 @@ public class TableController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAllPaginated()
+    public async Task<IActionResult> GetAllPaginated()
     {
         var tables = await _tableService.GetAllPaginated();
         if (!tables.Any())
@@ -26,7 +27,7 @@ public class TableController : ControllerBase
     }
 
     [HttpGet("{tableId:guid}")]
-    public async Task<ActionResult> GetTableById([FromRoute] Guid tableId)
+    public async Task<IActionResult> GetTableById([FromRoute] Guid tableId)
     {
         var table = await _tableService.GetTableById(tableId);
         if (table is null)
@@ -38,8 +39,12 @@ public class TableController : ControllerBase
     private readonly record struct AddTableResponseWrapper(Guid TableId);
 
     [HttpPost]
-    public async Task<ActionResult> AddTable([FromBody] PostTable requestBody)
+    public async Task<IActionResult> AddTable([FromBody] PostTable requestBody)
     {
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
         var tableId = await _tableService.AddTable(requestBody);
         if (tableId is null)
             return Problem();
@@ -51,20 +56,32 @@ public class TableController : ControllerBase
     }
 
     [HttpDelete("{tableId:guid}")]
-    public async Task<ActionResult> DeleteTableById([FromRoute] Guid tableId)
+    public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
-        var wasDeleted = await _tableService.DeleteTableById(tableId);
-        if (!wasDeleted)
+        var tableExists = await _tableService.GetTableById(tableId);
+        if (tableExists is null)
+            return NotFound();
+
+        var wasTableDeleted = await _tableService.DeleteTableById(tableId);
+        if (!wasTableDeleted)
             return Problem();
 
         return Ok();
     }
 
     [HttpPut("{tableId:guid}")]
-    public async Task<ActionResult> UpdateTable([FromRoute] Guid tableId, [FromBody] PutTable requestBody)
+    public async Task<IActionResult> UpdateTableById([FromRoute] Guid tableId, [FromBody] PutTable requestBody)
     {
-        var wasUpdated = await _tableService.UpdateTableById(tableId, requestBody);
-        if (!wasUpdated)
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
+        var tableExists = await _tableService.GetTableById(tableId);
+        if (tableExists is null)
+            return NotFound();
+
+        var wasTableUpdated = await _tableService.UpdateTableById(tableId, requestBody);
+        if (!wasTableUpdated)
             return Problem();
 
         return Ok();
