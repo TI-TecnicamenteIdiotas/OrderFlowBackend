@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamoDBTable(tableName = "Purchase")
+@DynamoDBTable(tableName = "purchase")
 public class Purchase {
 
     @DynamoDBHashKey

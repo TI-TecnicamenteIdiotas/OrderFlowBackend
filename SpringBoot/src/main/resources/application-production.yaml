@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+    include-message: always
+  servlet:
+    context-path: /nibleflow-api
+
+amazon:
+  aws:
+    accesskey: ENC(jgtGn1URDHo7qKzR6dETcP5wYk6HNbZKeEVPYlp3xm6bD8H9sbFPLy12p7QtULEdOxDwSFYsobosPe+WPOSejw==)
+    secretkey: ENC(HcmZI9xRkntwuSsuykDVp863i98cweFMVhrYpt2hdtYTogiSTmlGyT0C6bEQaG14gnrYlselrXEDrXjiibpcPkve6EU2x+n0bYZDPt71OKc=)
+  dynamodb:
+    endpoint: https://dynamodb.us-east-2.amazonaws.com
+    region: us-west-2
+
+jasypt:
+  encryptor: 
+    password: ${JASYPT_ENCRYPTION_KEY}

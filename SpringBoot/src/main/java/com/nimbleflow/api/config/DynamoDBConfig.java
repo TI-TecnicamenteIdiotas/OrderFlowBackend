@@ -59,4 +59,5 @@ public class DynamoDBConfig {
             return ZonedDateTime.parse(stringValue);
         }
     }
+    
 }
