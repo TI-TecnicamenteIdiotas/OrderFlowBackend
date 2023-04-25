@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ApiApplication<api>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nimbleflow.api.ApiApplication",
+            "projectName": "api",
+            "args": "--spring.profiles.active=production",
+            "envFile": "${workspaceFolder}/.env",
+        }
+    ]
+}

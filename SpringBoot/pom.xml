@@ -9,9 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nimbleflow</groupId>
-	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>api</name>
+	<artifactId>nimble-flow-backend</artifactId>
+	<name>nimble-flow-backend</name>
 	<description>Nimbleflow API</description>
 	<properties>
 		<java.version>17</java.version>
