@@ -3,7 +3,8 @@ using NimbleFlow.Api.ServiceCollectionExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.ConfigureStartupOptions();
+builder.Configuration.ConfigureSwaggerOptions();
+builder.Configuration.ConfigurePostgresOptions();
 builder.Services.InjectCors();
 builder.Services.InjectDatabases();
 builder.Services.InjectRepositories();
