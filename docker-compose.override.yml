@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  nimbleflow.sql.db:
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "10500:5432"
+    volumes:
+      - nimbleflow.sql.db:/var/lib/postgresql/data
+    restart: always
+
+  nimbleflow.nosql.db:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    ports:
+      - "10501:8000"
+    volumes:
+      - nimbleflow.nosql.db:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+    restart: always
+
+  nimbleflow.aspnetcore:
+    environment:
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - SQL_DATABASE_CONNECTION_STRING=${DATABASE_CONNECTION_STRING}
+    ports:
+      - "10502:80"
+      - "10503:443"
+    depends_on:
+      nimbleflow.sql.db:
+        condition: service_healthy
+      nimbleflow.nosql.db:
+        condition: service_started
+
+  # nimbleflow.java:
+  #   environment:
+  #   - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+  #   - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+  #   - AWS_REGION=${AWS_REGION}
+  #   ports:
+  #     - "10504:80"
+  #     - "10505:443"
+
+networks:
+  default:
+    name: nimbleflow-network
+
+volumes:
+  nimbleflow.sql.db:
+    driver: local
+  nimbleflow.nosql.db:
+    driver: local

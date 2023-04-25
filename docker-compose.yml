@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  nimbleflow.sql.db:
+    container_name: nimbleflow.sql.db
+    image: postgres:${POSTGRES_TAG}
+
+  nimbleflow.nosql.db:
+    container_name: nimbleflow.nosql.db
+    image: "amazon/dynamodb-local:latest"
+
+  nimbleflow.aspnetcore:
+    container_name: nimbleflow.aspnetcore
+    build:
+      context: ./AspDotNetCore
+      dockerfile: ./AspDotNetCore/Src/NimbleFlow.Api/Dockerfile
+
+  # nimbleflow.java:
+  #   container_name: nimbleflow.java
