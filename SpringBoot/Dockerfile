@@ -1,22 +1,22 @@
-# Imagem base
-FROM ubuntu:latest
+FROM openjdk:17-alpine
 
-# Atualiza o sistema e instala o Java e o Maven
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk maven
+# Instala o Maven
+RUN apk update && apk add --no-cache \
+    maven
 
-# Cria e navega para o diretório de trabalho
+# Cria um diretório de trabalho na imagem
 WORKDIR /app
 
-# Copia o código fonte para o container
+# Copia o código-fonte da aplicação para a imagem
 COPY . .
 
-# Baixa todas as dependências necessárias para executar a aplicação
-RUN mvn clean package
+# Compila a aplicação e todas as suas dependências usando o Maven
+RUN mvn clean package -DskipTests
 
-# Define a variável de ambiente JASYPT_ENCRYPTION_KEY com o valor da variável de ambiente correspondente
-ARG JASYPT_ENCRYPTION_KEY
+# Define uma variável de ambiente JASYPT_ENCRYPTION_KEY com o valor da variável de ambiente do cluster de mesmo nome
 ENV JASYPT_ENCRYPTION_KEY=${JASYPT_ENCRYPTION_KEY}
 
-# Inicia a aplicação no container com o application.properties com o sufixo production na porta 8080
-CMD ["java", "-jar", "/app/target/nimble-flow-backend.jar", "--spring.profiles.active=production", "--server.port=8080"]
+EXPOSE 8080
+
+# Executa a aplicação com o application.properties com o sufixo production na porta 8080 do container
+CMD java -jar target/nimble-flow-backend-3.0.5.jar --spring.profiles.active=production --server.port=8080
