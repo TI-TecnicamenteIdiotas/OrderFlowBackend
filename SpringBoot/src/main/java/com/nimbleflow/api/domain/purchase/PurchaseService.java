@@ -1,6 +1,5 @@
 package com.nimbleflow.api.domain.purchase;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
