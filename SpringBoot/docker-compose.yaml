@@ -9,15 +9,32 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
   app-node:
     depends_on:
       - dynamodb-local
     image: amazon/aws-cli
     container_name: app-node
     ports:
-     - "8080:8080"
+     - "8081:8081"
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_ACCESS_KEY_ID: ${NIMBLEFLOW_AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${NIMBLEFLOW_AWS_SECRET_ACCESS_KEY}
     command:
       dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+  app: 
+    depends_on:
+        - app-node
+    container_name: spring-boot-api
+    build: 
+      context: .
+      dockerfile: Dockerfile.development
+    environment:
+      NIMBLEFLOW_JASYPT_ENCRIPTION_KEY: ${NIMBLEFLOW_JASYPT_ENCRIPTION_KEY}
+    ports:
+      - "8080:8080"
+    extra_hosts:
+    - "host.docker.internal:host-gateway"

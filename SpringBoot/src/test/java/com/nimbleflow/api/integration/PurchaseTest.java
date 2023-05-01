@@ -10,10 +10,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.nimbleflow.api.ApiApplication;
-import com.nimbleflow.api.model.Purchase;
-import com.nimbleflow.api.repository.PurchaseRepository;
+import com.nimbleflow.api.domain.purchase.Purchase;
+import com.nimbleflow.api.domain.purchase.PurchaseRepository;
 
-@ActiveProfiles("development")
+@ActiveProfiles("production")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ApiApplication.class)
 public class PurchaseTest {

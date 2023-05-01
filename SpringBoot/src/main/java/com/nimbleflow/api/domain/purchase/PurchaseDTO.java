@@ -1,9 +1,9 @@
-package com.nimbleflow.api.dto;
+package com.nimbleflow.api.domain.purchase;
 
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nimbleflow.api.enums.PaymentMethod;
+import com.nimbleflow.api.domain.purchase.enums.PaymentMethod;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

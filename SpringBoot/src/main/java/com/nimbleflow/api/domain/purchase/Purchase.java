@@ -1,4 +1,4 @@
-package com.nimbleflow.api.model;
+package com.nimbleflow.api.domain.purchase;
 
 import java.time.ZonedDateTime;
 
@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import com.nimbleflow.api.config.DynamoDBConfig.ZonedDateTimeConverter;
-import com.nimbleflow.api.enums.PaymentMethod;
+import com.nimbleflow.api.domain.purchase.enums.PaymentMethod;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

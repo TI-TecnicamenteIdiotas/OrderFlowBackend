@@ -19,4 +19,4 @@ ENV NIMBLEFLOW_AWS_SECRET_ACCESS_KEY=${NIMBLEFLOW_AWS_SECRET_ACCESS_KEY}
 EXPOSE 8080
 
 # Executa a aplicação com o application.properties com o sufixo production na porta 8080 do container
-CMD java -jar target/nimble-flow-backend-3.0.5.jar --spring.profiles.active=production --server.port=8080
+CMD java -jar target/nimble-flow-backend-3.0.5.jar --spring.profiles.active=development --server.port=8080

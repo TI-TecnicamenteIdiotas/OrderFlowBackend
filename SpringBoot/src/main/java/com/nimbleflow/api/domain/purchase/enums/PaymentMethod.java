@@ -1,4 +1,4 @@
-package com.nimbleflow.api.enums;
+package com.nimbleflow.api.domain.purchase.enums;
 
 public enum PaymentMethod {
 
