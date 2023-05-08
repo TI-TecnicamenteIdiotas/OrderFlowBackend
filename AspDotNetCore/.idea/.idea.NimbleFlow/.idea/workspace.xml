@@ -7,15 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b098893-851a-46f8-b5e0-0a53a7d77f2c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.env" beforeDir="false" afterPath="$PROJECT_DIR$/../.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.NimbleFlow/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NimbleFlow/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/ConfigurationExtensions/ConfigureStartupOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/ConfigurationExtensions/ConfigureSwaggerOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/ServiceCollectionExtensions/InjectDatabase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/ServiceCollectionExtensions/InjectDatabase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.override.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.override.yml" afterDir="false" />
-    </list>
+    <list default="true" id="1b098893-851a-46f8-b5e0-0a53a7d77f2c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -107,7 +99,7 @@
       <workItem from="1682388673903" duration="8000" />
       <workItem from="1682388685637" duration="1174000" />
       <workItem from="1682389875126" duration="3252000" />
-      <workItem from="1682393147284" duration="1703000" />
+      <workItem from="1682393147284" duration="1932000" />
     </task>
     <servers />
   </component>
