@@ -2,6 +2,8 @@ version: '3.9'
 
 services:
   nimbleflow.sql.db:
+    container_name: nimbleflow.sql.db
+    image: postgres:${POSTGRES_TAG}
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -23,6 +25,8 @@ services:
     restart: always
 
   nimbleflow.nosql.db:
+    container_name: nimbleflow.nosql.db
+    image: "amazon/dynamodb-local:latest"
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     ports:
       - "10501:8000"
@@ -32,32 +36,14 @@ services:
     restart: always
 
   nimbleflow.aspnetcore:
-    environment:
-      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_REGION=${AWS_REGION}
-      - SQL_DATABASE_SERVER=${SQL_DATABASE_SERVER}
-      - SQL_DATABASE_PORT=${SQL_DATABASE_PORT}
-      - SQL_DATABASE_DATABASE=${SQL_DATABASE_DATABASE}
-      - SQL_DATABASE_USER=${SQL_DATABASE_USER}
-      - SQL_DATABASE_PASSWORD=${SQL_DATABASE_PASSWORD}
-    ports:
-      - "10502:80"
-      - "10503:443"
-    depends_on:
-      nimbleflow.sql.db:
-        condition: service_healthy
-      nimbleflow.nosql.db:
-        condition: service_started
+    build:
+      context: ./AspDotNetCore
+      dockerfile: ./AspDotNetCore/Src/NimbleFlow.Api/Dockerfile
 
-  # nimbleflow.java:
-  #   environment:
-  #   - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-  #   - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-  #   - AWS_REGION=${AWS_REGION}
-  #   ports:
-  #     - "10504:80"
-  #     - "10505:443"
+  nimbleflow.java:
+    build: 
+      context: ./SpringBoot
+      dockerfile: ./SpringBoot/Dockerfile.development
 
 networks:
   default:

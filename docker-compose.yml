@@ -1,19 +1,37 @@
 version: '3.9'
 
 services:
-  nimbleflow.sql.db:
-    container_name: nimbleflow.sql.db
-    image: postgres:${POSTGRES_TAG}
-
-  nimbleflow.nosql.db:
-    container_name: nimbleflow.nosql.db
-    image: "amazon/dynamodb-local:latest"
-
   nimbleflow.aspnetcore:
     container_name: nimbleflow.aspnetcore
-    build:
-      context: ./AspDotNetCore
-      dockerfile: ./AspDotNetCore/Src/NimbleFlow.Api/Dockerfile
+    environment:
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - SQL_DATABASE_SERVER=${SQL_DATABASE_SERVER}
+      - SQL_DATABASE_PORT=${SQL_DATABASE_PORT}
+      - SQL_DATABASE_DATABASE=${SQL_DATABASE_DATABASE}
+      - SQL_DATABASE_USER=${SQL_DATABASE_USER}
+      - SQL_DATABASE_PASSWORD=${SQL_DATABASE_PASSWORD}
+    ports:
+      - "10502:80"
+      - "10503:443"
+    depends_on:
+      nimbleflow.sql.db:
+        condition: service_healthy
+      nimbleflow.nosql.db:
+        condition: service_started
 
-  # nimbleflow.java:
-  #   container_name: nimbleflow.java
+  nimbleflow.java:
+    container_name: nimbleflow.java
+    environment:
+      - NIMBLEFLOW_JASYPT_ENCRIPTION_KEY=${NIMBLEFLOW_JASYPT_ENCRIPTION_KEY}
+    ports:
+      - "10504:80"
+      - "10505:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      nimbleflow.sql.db:
+        condition: service_healthy
+      nimbleflow.nosql.db:
+        condition: service_started
