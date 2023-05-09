@@ -38,12 +38,12 @@ services:
   nimbleflow.aspnetcore:
     build:
       context: ./AspDotNetCore
-      dockerfile: ./AspDotNetCore/Src/NimbleFlow.Api/Dockerfile
+      dockerfile: Src/NimbleFlow.Api/Dockerfile
 
   nimbleflow.java:
     build: 
       context: ./SpringBoot
-      dockerfile: ./SpringBoot/Dockerfile.development
+      dockerfile: Dockerfile.development
 
 networks:
   default:

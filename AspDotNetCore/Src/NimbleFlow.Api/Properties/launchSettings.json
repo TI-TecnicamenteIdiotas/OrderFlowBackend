@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "OrderFlow": {
+    "NimbleFlow": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": false,
