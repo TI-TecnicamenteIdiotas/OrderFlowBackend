@@ -1,7 +1,11 @@
 using NimbleFlow.Api.ConfigurationExtensions;
 using NimbleFlow.Api.ServiceCollectionExtensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+builder.Host.UseSerilog();
 
 builder.Configuration.ConfigureSwaggerOptions();
 builder.Configuration.ConfigurePostgresOptions();

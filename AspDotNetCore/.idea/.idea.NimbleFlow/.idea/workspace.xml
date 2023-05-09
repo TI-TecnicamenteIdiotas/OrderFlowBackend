@@ -7,7 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b098893-851a-46f8-b5e0-0a53a7d77f2c" name="Changes" comment="" />
+    <list default="true" id="1b098893-851a-46f8-b5e0-0a53a7d77f2c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.NimbleFlow/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NimbleFlow/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/NimbleFlow.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/NimbleFlow.Api.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/NimbleFlow.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NimbleFlow.Api/appsettings.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,18 +42,20 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "refactor",
+    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "inlay.hints",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
     "rider.external.source.directories": [
-      "/home/almirafjr/.config/JetBrains/Rider2023.1/resharper-host/DecompilerCache",
-      "/home/almirafjr/.config/JetBrains/Rider2023.1/resharper-host/SourcesCache",
-      "/home/almirafjr/.local/share/Symbols/src"
+      "C:\\Users\\almir\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\almir\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\almir\\AppData\\Local\\Symbols\\src"
     ]
   }
 }]]></component>
@@ -100,6 +108,8 @@
       <workItem from="1682388685637" duration="1174000" />
       <workItem from="1682389875126" duration="3252000" />
       <workItem from="1682393147284" duration="1932000" />
+      <workItem from="1683637917205" duration="106000" />
+      <workItem from="1683638039922" duration="772000" />
     </task>
     <servers />
   </component>
@@ -108,6 +118,10 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore.Abstractions" />
+    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore.Relational" />
+    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.Extensions.Logging" />
+    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
@@ -118,17 +132,14 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Src/NimbleFlow.Api/ConfigurationExtensions/ConfigurePostgresOptions.cs</url>
           <line>13</line>
-          <properties documentPath="$PROJECT_DIR$/Src/NimbleFlow.Api/ConfigurationExtensions/ConfigureEnvironmentVariablesOptions.cs" initialLine="7" containingFunctionPresentation="Method 'ConfigureEnvironmentVariablesOptions'">
-            <startOffsets>
-              <option value="621" />
-            </startOffsets>
-            <endOffsets>
-              <option value="622" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="$PROJECT_DIR$/Src/NimbleFlow.Api/ConfigurationExtensions/ConfigureEnvironmentVariablesOptions.cs" initialLine="7" containingFunctionPresentation="Method 'ConfigureEnvironmentVariablesOptions'" />
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
