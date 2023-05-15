@@ -27,6 +27,7 @@ services:
   nimbleflow.nosql.db:
     container_name: nimbleflow.nosql.db
     image: "amazon/dynamodb-local:latest"
+    user: root
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     ports:
       - "10501:8000"
@@ -34,16 +35,44 @@ services:
       - nimbleflow.nosql.db:/home/dynamodblocal/data
     working_dir: /home/dynamodblocal
     restart: always
+    
+  nimbleflow.nosql.db.up:
+    depends_on:
+        - nimbleflow.nosql.db
+    image: amazon/aws-cli
+    container_name: nimbleflow.nosql.db.up
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    command:
+      "dynamodb create-table
+      --table-name purchase
+      --attribute-definitions AttributeName=id,AttributeType=S
+      --key-schema AttributeName=id,KeyType=HASH
+      --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+      --table-class STANDARD
+      --endpoint-url ${NO_SQL_DATABASE_PATH}
+      --region ${AWS_REGION}"
 
   nimbleflow.aspnetcore:
     build:
       context: ./AspDotNetCore
       dockerfile: Src/NimbleFlow.Api/Dockerfile
+    depends_on:
+      nimbleflow.sql.db:
+        condition: service_healthy
+      nimbleflow.nosql.db:
+        condition: service_started
 
   nimbleflow.java:
     build: 
       context: ./SpringBoot
       dockerfile: Dockerfile.development
+    depends_on:
+      nimbleflow.sql.db:
+        condition: service_healthy
+      nimbleflow.nosql.db:
+        condition: service_started
 
 networks:
   default:

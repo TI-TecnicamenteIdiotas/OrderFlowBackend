@@ -15,23 +15,12 @@ services:
     ports:
       - "10502:80"
       - "10503:443"
-    depends_on:
-      nimbleflow.sql.db:
-        condition: service_healthy
-      nimbleflow.nosql.db:
-        condition: service_started
 
   nimbleflow.java:
     container_name: nimbleflow.java
     environment:
       - NIMBLEFLOW_JASYPT_ENCRIPTION_KEY=${NIMBLEFLOW_JASYPT_ENCRIPTION_KEY}
+      - NO_SQL_DATABASE_PATH=${NO_SQL_DATABASE_PATH}
+      - AWS_REGION=${AWS_REGION}
     ports:
-      - "10504:80"
-      - "10505:443"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      nimbleflow.sql.db:
-        condition: service_healthy
-      nimbleflow.nosql.db:
-        condition: service_started
+      - "10504:8080"

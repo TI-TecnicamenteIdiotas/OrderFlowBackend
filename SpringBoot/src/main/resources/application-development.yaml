@@ -11,8 +11,8 @@ amazon:
     accesskey: ENC(L7U53JhIFJ+cFQGsWtWraIhD0WYtmiJxVvM24ZHUMoMelJSKtYHAHQAX1KAfhf9a2YRs064dHe3SBbyCAy+qeg==)
     secretkey: ENC(O+SV5znU+hattFn2mEGz6en8xPAWfsb8DmmfN9FRgjA6tPHafL+vrc4OiS6HpGggX38PooNFCS28yf8jTQncog==)
   dynamodb:
-    endpoint: http://host.docker.internal:8000
-    region: us-west-2
+    endpoint: ${NO_SQL_DATABASE_PATH}
+    region: ${AWS_REGION}
 
 jasypt:
   encryptor: 

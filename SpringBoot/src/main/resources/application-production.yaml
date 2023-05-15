@@ -11,8 +11,8 @@ amazon:
     accesskey: ENC(msWkKSV1HmIHpBPlv1dbxF7TSqAf6y9rN7fZ8bGjw6A/3fbjGjVxkFLV91aGK7fOB0bglf5s8dA52y1cHd9ynQ==)
     secretkey: ENC(gwUhlcZTOMCuj2VWZvdtHrxMmFI/OQtbpKXnBV3jJFXbURE89Rx1uzeG+MsDwy+jK1ff38Ging4gsfIfvUkPK4XW56gcTvJg3wvmxS+Jw4I=)
   dynamodb:
-    endpoint: https://dynamodb.us-east-2.amazonaws.com
-    region: us-east-2
+    endpoint: ${NO_SQL_DATABASE_PATH}
+    region: ${AWS_REGION}
 
 jasypt:
   encryptor: 
