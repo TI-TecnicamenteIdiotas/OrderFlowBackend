@@ -19,4 +19,4 @@ nimbleflow:
   password: <CHANGE_ME_IF_NEEDED>
   integration-token: <CHANGE_ME_IF_NEEDED>
   jwt:
-    signing-key: <CHANGE_ME_IF_NEEDED>
+    signing-key: oCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDo
