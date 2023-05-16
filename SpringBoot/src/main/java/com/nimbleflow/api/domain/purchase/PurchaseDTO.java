@@ -1,6 +1,7 @@
 package com.nimbleflow.api.domain.purchase;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nimbleflow.api.domain.purchase.enums.PaymentMethod;
@@ -20,13 +21,13 @@ import lombok.NoArgsConstructor;
 public class PurchaseDTO {
     
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String id;
+    private UUID id;
 
     @NotNull
-    private Long orderId;
+    private UUID orderId;
 
     @NotNull
-    private Long tableId;
+    private UUID tableId;
 
     @NotNull
     private ZonedDateTime purchaseDate;

@@ -26,12 +26,11 @@ public class AuthController {
 
     @PostMapping(value = "web", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<AuthDTO>> webRegister(@RequestBody @Validated AuthDTO dto) {
-        return new ResponseEntity<>(new BaseResponse<>(authService.webAuthenticate(dto), HttpStatus.OK), HttpStatus.OK);
+        return new ResponseEntity<>(new BaseResponse<>(authService.webAuthenticate(dto)), HttpStatus.OK);
     }
 
     @GetMapping(value = "mobile")
     public ResponseEntity<BaseResponse<AuthDTO>> mobileRegister(@RequestParam("integrationToken") String integrationToken) {
-        return new ResponseEntity<>(new BaseResponse<>(authService.mobileAuthenticate(integrationToken), HttpStatus.OK), HttpStatus.OK);
+        return new ResponseEntity<>(new BaseResponse<>(authService.mobileAuthenticate(integrationToken)), HttpStatus.OK);
     }
-    
 }
