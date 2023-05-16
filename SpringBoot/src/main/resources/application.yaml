@@ -8,15 +8,15 @@ server:
 
 amazon:
   aws:
-    accesskey: ${AWS_ACCESS_KEY}
-    secretkey: ${AWS_SECRET_KEY}
+    accesskey: <CHANGE_ME_IF_NEEDED>
+    secretkey: <CHANGE_ME_IF_NEEDED>
   dynamodb:
-    endpoint: ${NO_SQL_DATABASE_PATH}
-    region: ${AWS_REGION}
+    endpoint: http://localhost:10501
+    region: us-east-1
 
 nimbleflow:
-  username: ${NIMBLEFLOW_JAVA_API_USERNAME}
-  password: ${NIMBLEFLOW_JAVA_API_PASSWORD}
-  integration-token: ${NIMBLEFLOW_JAVA_API_INTEGRATION_TOKEN}
+  username: <CHANGE_ME_IF_NEEDED>
+  password: <CHANGE_ME_IF_NEEDED>
+  integration-token: <CHANGE_ME_IF_NEEDED>
   jwt:
-    signing-key: ${NIMBLEFLOW_JAVA_API_JWT_SIGNING_KEY}
+    signing-key: <CHANGE_ME_IF_NEEDED>
