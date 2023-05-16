@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nimbleflow.api.domain.shared.BaseResponse;
-
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 
@@ -25,12 +23,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "web", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BaseResponse<AuthDTO>> webRegister(@RequestBody @Validated AuthDTO dto) {
-        return new ResponseEntity<>(new BaseResponse<>(authService.webAuthenticate(dto)), HttpStatus.OK);
+    public ResponseEntity<AuthDTO> webRegister(@RequestBody @Validated AuthDTO dto) {
+        return new ResponseEntity<>(authService.webAuthenticate(dto), HttpStatus.OK);
     }
 
     @GetMapping(value = "mobile")
-    public ResponseEntity<BaseResponse<AuthDTO>> mobileRegister(@RequestParam("integrationToken") String integrationToken) {
-        return new ResponseEntity<>(new BaseResponse<>(authService.mobileAuthenticate(integrationToken)), HttpStatus.OK);
+    public ResponseEntity<AuthDTO> mobileRegister(@RequestParam("integrationToken") String integrationToken) {
+        return new ResponseEntity<>(authService.mobileAuthenticate(integrationToken), HttpStatus.OK);
     }
 }
