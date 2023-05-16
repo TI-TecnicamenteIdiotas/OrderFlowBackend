@@ -14,11 +14,6 @@ amazon:
     endpoint: ${NO_SQL_DATABASE_PATH}
     region: ${AWS_REGION}
 
-jasypt:
-  encryptor: 
-    password: ${NIMBLEFLOW_JASYPT_ENCRIPTION_KEY}
-
-
 nimbleflow:
   username: ${NIMBLEFLOW_JAVA_API_USERNAME}
   password: ${NIMBLEFLOW_JAVA_API_PASSWORD}

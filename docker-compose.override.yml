@@ -5,21 +5,21 @@ services:
     container_name: nimbleflow.sql.db
     image: postgres:${POSTGRES_TAG}
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE_DATABASE}
+      - POSTGRES_USER=${SQL_DATABASE_USER}
+      - POSTGRES_PASSWORD=${SQL_DATABASE_PASSWORD}
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+          "pg_isready -U ${SQL_DATABASE_USER} -d ${SQL_DATABASE_DATABASE}"
         ]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
     ports:
-      - "10500:5432"
+      - "10500:${SQL_DATABASE_PORT}"
     volumes:
       - nimbleflow.sql.db:/var/lib/postgresql/data
     restart: always
