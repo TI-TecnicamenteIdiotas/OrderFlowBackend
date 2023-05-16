@@ -13,5 +13,9 @@ public class UnauthorizedException extends ServletException {
     public UnauthorizedException() {
         super(MESSAGE);
     }
+
+    public UnauthorizedException(String message) {
+        super(message);
+    }
     
 }

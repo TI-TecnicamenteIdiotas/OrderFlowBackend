@@ -22,5 +22,6 @@ jasypt:
 nimbleflow:
   username: ENC(6fzepUNAo6qH1UY9/B01MLD1OQ6w9u2tyk1+h9rY15RmgR/RV1TqvDpbLyXSGtIKXOJsfS5mLBiPJKKbto1Bbw==)
   password: ENC(XSKA7L4aSLGFaKRTFxCLa0A1ksPKLhtROLGmGJdsUIy8wNwQrkLjc5e7r/9PNwVqaRacn5Q1wV+SdLZ3xgSjQg==)
+  integration-token: ${NIMBLEFLOW_JAVA_API_INTEGRATION_TOKEN}
   jwt:
     signing-key: ENC(k6344MkXQgxJQumRjWzUwJJvD0RSGIZUD39eAPeLtIxmMp5WKXLq7ndiYzBes/1HOEB3+6OjJYwV/NGLp1t16Kdh32rmzyh25RWfvVuWz5by9E09XS4TEVYUwB7sG/w4)

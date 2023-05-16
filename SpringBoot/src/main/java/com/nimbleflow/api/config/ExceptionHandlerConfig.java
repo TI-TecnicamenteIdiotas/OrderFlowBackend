@@ -1,6 +1,7 @@
 package com.nimbleflow.api.config;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -41,18 +42,19 @@ public class ExceptionHandlerConfig {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<BaseExceptionResponse> methodArgumentNotValidHandler(HttpServletRequest request, MethodArgumentNotValidException exception) {
-        String message = "";
-
         List<FieldError> errors = exception.getBindingResult().getFieldErrors();
+
+        List<String> errorList = new ArrayList<String>();
+
         for (FieldError error : errors) {
-            message += String.format("%s %s", error.getField(), error.getDefaultMessage());
+            errorList.add(String.format("%s %s", error.getField(), error.getDefaultMessage()));
         };
 
         BaseExceptionResponse responseBody = BaseExceptionResponse.builder()
             .timestamp(ZonedDateTime.now())
             .status(400)
             .error("Bad Request")
-            .message(message)
+            .message(errorList.toString())
             .path(request.getServletPath())
             .build();
 

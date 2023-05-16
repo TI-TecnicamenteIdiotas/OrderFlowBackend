@@ -1,6 +1,6 @@
 package com.nimbleflow.api.domain.purchase;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -34,7 +34,7 @@ public class PurchaseService {
 
     public List<PurchaseDTO> findPurchaseByOrderId(Long orderId, boolean inactive) {
         List<Purchase> purchases = purchaseRepository.findByOrderIdAndActive(orderId, !inactive);
-        List<PurchaseDTO> purchasesDTOs = Collections.emptyList();
+        List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
 
         if (purchases.isEmpty()) return null;
 
@@ -47,7 +47,7 @@ public class PurchaseService {
 
     public List<PurchaseDTO> deletePurchaseByOrderId(Long orderId) {
         List<Purchase> purchases = purchaseRepository.findByOrderId(orderId);
-        List<PurchaseDTO> purchasesDTOs = Collections.emptyList();
+        List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
         
         if (purchases.isEmpty()) {
             return null;
