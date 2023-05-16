@@ -18,7 +18,8 @@ public class PurchaseService {
     private final ModelMapper modelMapper;
 
     public PurchaseDTO savePurchase(PurchaseDTO purchaseDTO) {
-        if (!findPurchaseByOrderId(purchaseDTO.getOrderId()).isEmpty()) {
+        List<PurchaseDTO> purchaseExists = findPurchaseByOrderId(purchaseDTO.getOrderId());
+        if (purchaseExists != null && !purchaseExists.isEmpty()) {
             throw new BadRequestException("Purchase already registered");
         }
 
