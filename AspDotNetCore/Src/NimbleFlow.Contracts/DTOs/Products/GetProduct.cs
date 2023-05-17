@@ -9,7 +9,7 @@ public class GetProduct
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public decimal Price { get; set; }
-    public string? ImageURL { get; set; }
+    public string? ImageUrl { get; set; }
     public bool IsFavorite { get; set; }
     public GetCategory Category { get; set; } = new();
     public Guid CategoryId { get; set; }
@@ -21,7 +21,7 @@ public class GetProduct
             Title = product.Title,
             Description = product.Description,
             Price = product.Price,
-            ImageURL = product.ImageUrl,
+            ImageUrl = product.ImageUrl,
             IsFavorite = product.IsFavorite,
             Category = GetCategory.FromModel(product.Category),
             CategoryId = product.CategoryId

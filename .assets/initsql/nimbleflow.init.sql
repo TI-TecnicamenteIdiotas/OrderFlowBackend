@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS product
     price       DECIMAL            NOT NULL,
     image_url   TEXT               NULL,
     is_favorite BOOLEAN            NOT NULL DEFAULT FALSE,
-    category_id uuid REFERENCES category (id),
+    category_id uuid               NOT NULL REFERENCES category (id),
     created_at  TIMESTAMP          NOT NULL DEFAULT NOW(),
     deleted_at  TIMESTAMP          NULL
 );
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS "table"
 CREATE TABLE IF NOT EXISTS "order"
 (
     id         uuid PRIMARY KEY   DEFAULT gen_random_uuid(),
-    table_id   uuid REFERENCES "table" (id),
+    table_id   uuid      NOT NULL REFERENCES "table" (id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP NULL
 );

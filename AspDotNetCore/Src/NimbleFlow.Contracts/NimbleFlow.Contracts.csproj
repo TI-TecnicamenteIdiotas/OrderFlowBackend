@@ -10,4 +10,8 @@
     <ProjectReference Include="..\NimbleFlow.Data\NimbleFlow.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Orders\" />
+  </ItemGroup>
+
 </Project>

@@ -2,19 +2,19 @@
 
 namespace NimbleFlow.Contracts.DTOs.Tables;
 
-public class GetTable
+public sealed class GetTable
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
-    public decimal PaidValue { get; set; }
-    public virtual List<Item> Items { get; set; } = new();
+    public string Accountable { get; set; } = null!;
+    public bool IsFullyPaid { get; set; }
+    public ICollection<GetOrder> Orders { get; set; } = Array.Empty<GetOrder>();
 
     public static GetTable FromModel(Table table)
         => new()
         {
             Id = table.Id,
-            Name = table.Name,
-            PaidValue = table.PaidValue,
-            Items = table.Items.ToList()
+            Accountable = table.Accountable,
+            IsFullyPaid = table.IsFullyPaid,
+            Orders = table.Orders.Select(GetOrder.FromModel)
         };
 }

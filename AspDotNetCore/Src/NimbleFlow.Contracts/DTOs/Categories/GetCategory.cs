@@ -6,8 +6,8 @@ public class GetCategory
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
-    public int ColorTheme { get; set; }
-    public int CategoryIcon { get; set; }
+    public int? ColorTheme { get; set; }
+    public int? CategoryIcon { get; set; }
 
     public static GetCategory FromModel(Category category)
         => new()
