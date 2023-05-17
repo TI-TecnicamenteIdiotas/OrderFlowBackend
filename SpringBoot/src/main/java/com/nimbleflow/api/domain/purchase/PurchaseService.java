@@ -2,6 +2,7 @@ package com.nimbleflow.api.domain.purchase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,11 @@ public class PurchaseService {
         return purchaseDTO;
     }
 
-    public List<PurchaseDTO> findPurchaseByOrderId(Long orderId) {
+    public List<PurchaseDTO> findPurchaseByOrderId(UUID orderId) {
         return findPurchaseByOrderId(orderId, false);
     }
 
-    public List<PurchaseDTO> findPurchaseByOrderId(Long orderId, boolean inactive) {
+    public List<PurchaseDTO> findPurchaseByOrderId(UUID orderId, boolean inactive) {
         List<Purchase> purchases = purchaseRepository.findByOrderIdAndActive(orderId, !inactive);
         List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
 
@@ -46,7 +47,7 @@ public class PurchaseService {
         return purchasesDTOs;
     }
 
-    public List<PurchaseDTO> deletePurchaseByOrderId(Long orderId) {
+    public List<PurchaseDTO> deletePurchaseByOrderId(UUID orderId) {
         List<Purchase> purchases = purchaseRepository.findByOrderId(orderId);
         List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
         

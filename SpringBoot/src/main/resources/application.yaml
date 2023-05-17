@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: always
+    include-message: always
+  servlet:
+    context-path: /nimbleflow-api
+
+amazon:
+  aws:
+    accesskey: <CHANGE_ME_IF_NEEDED>
+    secretkey: <CHANGE_ME_IF_NEEDED>
+  dynamodb:
+    endpoint: http://localhost:10501
+    region: us-east-1
+
+nimbleflow:
+  username: <CHANGE_ME_IF_NEEDED>
+  password: <CHANGE_ME_IF_NEEDED>
+  integration-token: <CHANGE_ME_IF_NEEDED>
+  jwt:
+    signing-key: oCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDo

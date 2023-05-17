@@ -1,6 +1,7 @@
 package com.nimbleflow.api.domain.purchase;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.CrudRepository;
@@ -9,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface PurchaseRepository extends CrudRepository<Purchase, String> {
 
     List<Purchase> findAll();
-    List<Purchase> findByOrderId(Long orderId);
-    List<Purchase> findByOrderIdAndActive(Long orderId, boolean active);
+    List<Purchase> findByOrderId(UUID orderId);
+    List<Purchase> findByOrderIdAndActive(UUID orderId, boolean active);
 
 }

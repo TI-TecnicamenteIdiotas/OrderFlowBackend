@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: always
+    include-message: always
+  servlet:
+    context-path: /nimbleflow-api
+
+amazon:
+  aws:
+    accesskey: ${AWS_ACCESS_KEY}
+    secretkey: ${AWS_SECRET_KEY}
+  dynamodb:
+    endpoint: ${NO_SQL_DATABASE_PATH}
+    region: ${AWS_REGION}
+
+nimbleflow:
+  username: ${NIMBLEFLOW_JAVA_API_USERNAME}
+  password: ${NIMBLEFLOW_JAVA_API_PASSWORD}
+  integration-token: ${NIMBLEFLOW_JAVA_API_INTEGRATION_TOKEN}
+  jwt:
+    signing-key: ${NIMBLEFLOW_JAVA_API_JWT_SIGNING_KEY}

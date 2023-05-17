@@ -1,0 +1,22 @@
+﻿{
+  "profiles": {
+    "NimbleFlow": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_DATABASE_SERVER": "localhost",
+        "SQL_DATABASE_PORT": "5432",
+        "SQL_DATABASE_DATABASE": "postgres",
+        "SQL_DATABASE_USER": "postgres",
+        "SQL_DATABASE_PASSWORD": "postgres123",
+        "AWS_ACCESS_KEY": "CHANGE_ME",
+        "AWS_SECRET_ACCESS_KEY": "CHANGE_ME",
+        "AWS_REGION": "CHANGE_ME"
+      }
+    }
+  }
+}

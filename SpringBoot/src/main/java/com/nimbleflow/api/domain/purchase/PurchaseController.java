@@ -1,6 +1,7 @@
 package com.nimbleflow.api.domain.purchase;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.nimbleflow.api.domain.shared.BaseResponse;
 import com.nimbleflow.api.exception.response.example.ExceptionResponseExample;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,9 +51,9 @@ public class PurchaseController {
             content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
         )
     })
-    public ResponseEntity<BaseResponse<PurchaseDTO>> savePurchase(@RequestBody @Validated PurchaseDTO dto) {
+    public ResponseEntity<PurchaseDTO> savePurchase(@RequestBody @Validated PurchaseDTO dto) {
         PurchaseDTO body = purchaseService.savePurchase(dto);
-        return new ResponseEntity<>(new BaseResponse<>(body, HttpStatus.CREATED), HttpStatus.CREATED);
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
     @GetMapping("{orderId}")
@@ -62,13 +62,13 @@ public class PurchaseController {
         @ApiResponse(responseCode = "200", description = "Ok"),
         @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<BaseResponse<List<PurchaseDTO>>> getPurchaseByOrderId(
-        @PathVariable Long orderId, 
+    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
+        @PathVariable UUID orderId,
         @RequestParam(value = "inactive", required = false) boolean inactive
     ) {
         List<PurchaseDTO> body = purchaseService.findPurchaseByOrderId(orderId, inactive);
-        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return new ResponseEntity<>(new BaseResponse<>(body, httpStatus), httpStatus);
+        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(body, httpStatus);
     }
 
     @DeleteMapping("{orderId}")
@@ -77,10 +77,10 @@ public class PurchaseController {
         @ApiResponse(responseCode = "200", description = "Ok"),
         @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<BaseResponse<List<PurchaseDTO>>> deletePurchaseByOrderId(@PathVariable Long orderId) {
+    public ResponseEntity<List<PurchaseDTO>> deletePurchaseByOrderId(@PathVariable UUID orderId) {
         List<PurchaseDTO> body = purchaseService.deletePurchaseByOrderId(orderId);
-        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return new ResponseEntity<>(new BaseResponse<>(body, httpStatus), httpStatus);
+        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(body, httpStatus);
     }
 
     //TODO: GetMonthReport, GetReportByInterval, GetTopSoldProducts
