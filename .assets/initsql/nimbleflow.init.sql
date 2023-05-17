@@ -1,29 +1,39 @@
 CREATE TABLE IF NOT EXISTS category
 (
-    id            uuid PRIMARY KEY   DEFAULT gen_random_uuid(),
-    title         TEXT      NOT NULL,
-    color_theme   INT       NULL,
-    category_icon INT       NULL,
-    created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-    deleted_at    TIMESTAMP NULL
+    id            uuid PRIMARY KEY     DEFAULT gen_random_uuid(),
+    title         VARCHAR(32) NOT NULL,
+    color_theme   INT         NULL,
+    category_icon INT         NULL,
+    created_at    TIMESTAMP   NOT NULL DEFAULT NOW(),
+    deleted_at    TIMESTAMP   NULL
 );
 
 CREATE TABLE IF NOT EXISTS product
 (
-    id          uuid PRIMARY KEY     DEFAULT gen_random_uuid(),
-    title       TEXT UNIQUE NOT NULL,
-    description TEXT        NULL,
-    price       DECIMAL     NOT NULL,
-    image_url   TEXT        NULL,
-    is_favorite BOOLEAN     NOT NULL DEFAULT FALSE,
+    id          uuid PRIMARY KEY            DEFAULT gen_random_uuid(),
+    title       VARCHAR(64) UNIQUE NOT NULL,
+    description VARCHAR(512)       NULL,
+    price       DECIMAL            NOT NULL,
+    image_url   TEXT               NULL,
+    is_favorite BOOLEAN            NOT NULL DEFAULT FALSE,
     category_id uuid REFERENCES category (id),
-    created_at  TIMESTAMP   NOT NULL DEFAULT NOW(),
-    deleted_at  TIMESTAMP   NULL
+    created_at  TIMESTAMP          NOT NULL DEFAULT NOW(),
+    deleted_at  TIMESTAMP          NULL
+);
+
+CREATE TABLE IF NOT EXISTS "table"
+(
+    id            uuid PRIMARY KEY             DEFAULT gen_random_uuid(),
+    accountable   VARCHAR(256) UNIQUE NOT NULL,
+    is_fully_paid BOOLEAN             NOT NULL DEFAULT FALSE,
+    created_at    TIMESTAMP           NOT NULL DEFAULT NOW(),
+    deleted_at    TIMESTAMP           NULL
 );
 
 CREATE TABLE IF NOT EXISTS "order"
 (
     id         uuid PRIMARY KEY   DEFAULT gen_random_uuid(),
+    table_id   uuid REFERENCES "table" (id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP NULL
 );
@@ -36,22 +46,4 @@ CREATE TABLE IF NOT EXISTS order_product
     created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_at     TIMESTAMP NULL,
     PRIMARY KEY (order_id, product_id)
-);
-
-CREATE TABLE IF NOT EXISTS "table"
-(
-    id            uuid PRIMARY KEY     DEFAULT gen_random_uuid(),
-    accountable   TEXT UNIQUE NOT NULL,
-    is_fully_paid BOOLEAN     NOT NULL DEFAULT FALSE,
-    created_at    TIMESTAMP   NOT NULL DEFAULT NOW(),
-    deleted_at    TIMESTAMP   NULL
-);
-
-CREATE TABLE IF NOT EXISTS table_order
-(
-    table_id   uuid REFERENCES "table" (id),
-    order_id   uuid REFERENCES "order" (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    deleted_at TIMESTAMP NULL,
-    PRIMARY KEY (table_id, order_id)
 );
