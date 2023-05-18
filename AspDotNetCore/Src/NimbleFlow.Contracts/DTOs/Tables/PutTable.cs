@@ -1,10 +1,7 @@
-﻿using NimbleFlow.Data.Models;
+﻿namespace NimbleFlow.Contracts.DTOs.Tables;
 
-namespace NimbleFlow.Contracts.DTOs.Tables;
-
-public class PutTable
+public sealed class PutTable
 {
-    public string? Name { get; set; }
-    public decimal? PaidValue { get; set; }
-    public virtual Item[]? Items { get; set; }
+    public string? Accountable { get; set; } = null;
+    public bool? IsFullyPaid { get; set; } = null;
 }

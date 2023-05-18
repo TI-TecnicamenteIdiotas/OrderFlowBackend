@@ -2,9 +2,9 @@
 
 namespace NimbleFlow.Api.Repositories;
 
-public class ItemRepository : IItemRepository
+public class OrderRepository : IOrderRepository
 {
-    public ItemRepository()
+    public OrderRepository()
     {
     }
 }

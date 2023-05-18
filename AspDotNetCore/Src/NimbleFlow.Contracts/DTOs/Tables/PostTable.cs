@@ -4,11 +4,13 @@ namespace NimbleFlow.Contracts.DTOs.Tables;
 
 public class PostTable
 {
-    public string Name { get; set; } = null!;
+    public string Accountable { get; set; } = null!;
+    public bool IsFullyPaid { get; set; }
 
     public Table ToModel()
         => new()
         {
-            Name = Name
+            Accountable = Accountable,
+            IsFullyPaid = IsFullyPaid
         };
 }

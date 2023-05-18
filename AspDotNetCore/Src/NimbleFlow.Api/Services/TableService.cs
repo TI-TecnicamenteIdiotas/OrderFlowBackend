@@ -1,4 +1,5 @@
-﻿using NimbleFlow.Contracts.DTOs.Tables;
+﻿using System.Net;
+using NimbleFlow.Contracts.DTOs.Tables;
 using NimbleFlow.Contracts.Interfaces.Repositories;
 using NimbleFlow.Contracts.Interfaces.Services;
 
@@ -13,65 +14,72 @@ public class TableService : ITableService
         _tableRepository = tableRepository;
     }
 
-    // public async Task<Table> GetById(int id)
-    // {
-    //     return await _repository.GetQueryable().Where(x => x.Id == id).Include(x => x.Items)
-    //         .ThenInclude(i => i.Product).ThenInclude(p => p.Category).FirstOrDefaultAsync();
-    // }
-    //
-    // public async Task<bool> DeleteTable(int value)
-    // {
-    //     var p = await _repository.GetById(value);
-    //     if (p == null) AddError($"Mesa com ID {value} não existe");
-    //     if (HasError()) return false;
-    //     await _repository.Remove(value);
-    //     return !HasError();
-    // }
-    //
-    // public async Task<Table> UpdateTable(Table value)
-    // {
-    //     Table result = null;
-    //     if (!IsValid(value)) return value;
-    //
-    //     result = await _repository.Update(value);
-    //     if (result == null)
-    //         return result;
-    //
-    //     var oldItems = await _itemsService.GetTableItems(result.Id);
-    //     var newItems = result.Items;
-    //     if (oldItems.Count() <= newItems.Count)
-    //         return result;
-    //
-    //     var extraItems = oldItems.Where(p => !newItems.Any(p2 => p2.Id == p.Id));
-    //     foreach (var item in extraItems)
-    //     {
-    //         await _itemsService.DeleteItem(item.Id);
-    //     }
-    //
-    //     return result;
-    // }
-    public Task<IEnumerable<GetTable>> GetAllTablesPaginated()
+    public async Task<GetTable?> CreateTable(PostTable tableDto)
     {
-        throw new NotImplementedException();
+        var response = await _tableRepository.CreateTable(tableDto.ToModel());
+        if (response is null)
+            return null;
+
+        return GetTable.FromModel(response);
     }
 
-    public Task<Guid?> CreateTable(PostTable table)
+    public async Task<IEnumerable<GetTable>> GetAllTablesPaginated(int page, int limit, bool includeDeleted)
     {
-        throw new NotImplementedException();
+        var response = await _tableRepository.GetAllTablesPaginated(page, limit, includeDeleted);
+        return response.Select(GetTable.FromModel);
     }
 
-    public Task<bool> DeleteTableById(Guid tableId)
+    public async Task<GetTable?> GetTableById(Guid tableId)
     {
-        throw new NotImplementedException();
+        var response = await _tableRepository.GetTableById(tableId);
+        if (response is null)
+            return null;
+
+        return GetTable.FromModel(response);
     }
 
-    public Task<bool> UpdateTableById(Guid tableId, PutTable table)
+    public async Task<(HttpStatusCode, GetTable?)> UpdateTableById(Guid tableId, PutTable tableDto)
     {
-        throw new NotImplementedException();
+        var tableEntity = await _tableRepository.GetTableById(tableId);
+        if (tableEntity is null)
+            return (HttpStatusCode.NotFound, null);
+
+        var shouldUpdate = false;
+        if (!string.IsNullOrWhiteSpace(tableDto.Accountable)
+            && !tableEntity.Accountable.Equals(tableDto.Accountable, StringComparison.InvariantCultureIgnoreCase))
+        {
+            tableEntity.Accountable = tableDto.Accountable;
+            shouldUpdate = true;
+        }
+
+        if (tableDto.IsFullyPaid is not null && tableEntity.IsFullyPaid != tableDto.IsFullyPaid)
+        {
+            tableEntity.IsFullyPaid = tableDto.IsFullyPaid.Value;
+            shouldUpdate = true;
+        }
+
+        if (!shouldUpdate)
+            return (HttpStatusCode.NotModified, null);
+
+        var response = await _tableRepository.UpdateTable(tableEntity);
+        if (response is null)
+            return (HttpStatusCode.InternalServerError, null);
+
+        return (HttpStatusCode.OK, GetTable.FromModel(response));
     }
 
-    public Task<GetTable?> GetTableById(Guid tableId)
+    public async Task<HttpStatusCode> DeleteTableById(Guid tableId)
     {
-        throw new NotImplementedException();
+        var tableEntity = await _tableRepository.GetTableById(tableId);
+        if (tableEntity is null)
+            return HttpStatusCode.NotFound;
+
+        tableEntity.DeletedAt = DateTime.UtcNow;
+
+        var response = await _tableRepository.UpdateTable(tableEntity);
+        if (response is null)
+            return HttpStatusCode.InternalServerError;
+
+        return HttpStatusCode.OK;
     }
 }

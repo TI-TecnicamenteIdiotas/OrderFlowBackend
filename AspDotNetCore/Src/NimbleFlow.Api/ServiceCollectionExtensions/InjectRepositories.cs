@@ -10,6 +10,6 @@ public static partial class ServiceCollectionExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ITableRepository, TableRepository>();
-        services.AddScoped<IItemRepository, ItemRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
     }
 }

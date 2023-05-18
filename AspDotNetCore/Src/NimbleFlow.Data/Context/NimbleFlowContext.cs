@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using NimbleFlow.Data;
+﻿using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Data.Context
@@ -39,13 +35,10 @@ namespace NimbleFlow.Data.Context
                 entity.Property(e => e.ColorTheme).HasColumnName("color_theme");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp without time zone")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("timestamp without time zone")
-                    .HasColumnName("deleted_at");
+                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(32)
@@ -61,13 +54,10 @@ namespace NimbleFlow.Data.Context
                     .HasDefaultValueSql("gen_random_uuid()");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp without time zone")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("timestamp without time zone")
-                    .HasColumnName("deleted_at");
+                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
                 entity.Property(e => e.TableId).HasColumnName("table_id");
 
@@ -90,13 +80,10 @@ namespace NimbleFlow.Data.Context
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp without time zone")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("timestamp without time zone")
-                    .HasColumnName("deleted_at");
+                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
                 entity.Property(e => e.ProductAmount).HasColumnName("product_amount");
 
@@ -127,13 +114,10 @@ namespace NimbleFlow.Data.Context
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp without time zone")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("timestamp without time zone")
-                    .HasColumnName("deleted_at");
+                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(512)
@@ -160,9 +144,6 @@ namespace NimbleFlow.Data.Context
             {
                 entity.ToTable("table");
 
-                entity.HasIndex(e => e.Accountable, "table_accountable_key")
-                    .IsUnique();
-
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("gen_random_uuid()");
@@ -172,13 +153,10 @@ namespace NimbleFlow.Data.Context
                     .HasColumnName("accountable");
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp without time zone")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("timestamp without time zone")
-                    .HasColumnName("deleted_at");
+                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
                 entity.Property(e => e.IsFullyPaid).HasColumnName("is_fully_paid");
             });
