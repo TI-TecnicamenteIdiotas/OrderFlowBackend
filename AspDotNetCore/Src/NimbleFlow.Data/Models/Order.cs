@@ -1,18 +1,18 @@
-﻿namespace NimbleFlow.Data.Models
+﻿using NimbleFlow.Data.Base;
+
+namespace NimbleFlow.Data.Models;
+
+public class Order : ModelBase
 {
-    public partial class Order
+    public Order()
     {
-        public Order()
-        {
-            OrderProducts = new HashSet<OrderProduct>();
-        }
-
-        public Guid Id { get; set; }
-        public Guid TableId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
-
-        public virtual Table Table { get; set; } = null!;
-        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
+        OrderProducts = new HashSet<OrderProduct>();
     }
+
+    public Guid TableId { get; set; }
+    public short Status { get; set; }
+
+    public virtual OrderStatus StatusNavigation { get; set; } = null!;
+    public virtual Table Table { get; set; } = null!;
+    public virtual ICollection<OrderProduct> OrderProducts { get; set; }
 }

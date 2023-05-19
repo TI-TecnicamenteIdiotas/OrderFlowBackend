@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Helpers;
+using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Categories;
-using NimbleFlow.Contracts.Interfaces.Services;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -9,26 +9,50 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class CategoryController : ControllerBase
 {
-    private readonly ICategoryService _categoryService;
+    private readonly CategoryService _categoryService;
 
-    public CategoryController(ICategoryService categoryService)
+    public CategoryController(CategoryService categoryService)
     {
         _categoryService = categoryService;
+    }
+
+    /// <summary>Creates a category</summary>
+    /// <param name="requestBody"></param>
+    /// <response code="400">Bad Request</response>
+    /// <response code="500">Internal Server Error</response>
+    [HttpPost]
+    [ProducesResponseType(typeof(GetCategory), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateCategory([FromBody] PostCategory requestBody)
+    {
+        var requestBodyValidationError = requestBody.Validate();
+        if (requestBodyValidationError is not null)
+            return requestBodyValidationError;
+
+        var response = await _categoryService.CreateCategory(requestBody);
+        if (response is null)
+            return Problem();
+
+        return Created(string.Empty, response);
     }
 
     /// <summary>Gets all categories paginated</summary>
     /// <param name="page"></param>
     /// <param name="limit"></param>
+    /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
     [ProducesResponseType(typeof(GetCategory[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAllCategoriesPaginated([FromQuery] int page = 0, [FromQuery] int limit = 12)
+    public async Task<IActionResult> GetAllCategoriesPaginated(
+        [FromQuery] int page = 0,
+        [FromQuery] int limit = 12,
+        [FromQuery] bool includeDeleted = false
+    )
     {
-        var categories = await _categoryService.GetAllCategoriesPaginated();
-        if (!categories.Any())
+        var response = await _categoryService.GetAllCategoriesPaginated(page, limit, includeDeleted);
+        if (!response.Any())
             return NoContent();
 
-        return Ok(categories);
+        return Ok(response);
     }
 
     /// <summary>Gets a category by id</summary>
@@ -38,54 +62,11 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(typeof(GetCategory), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
-        var category = await _categoryService.GetCategoryById(categoryId);
-        if (category is null)
+        var response = await _categoryService.GetCategoryById(categoryId);
+        if (response is null)
             return NotFound();
 
-        return Ok(category);
-    }
-
-    private readonly record struct AddCategoryResponseWrapper(Guid CategoryId);
-
-    /// <summary>Creates a category</summary>
-    /// <param name="requestBody"></param>
-    /// <response code="400">Bad Request</response>
-    /// <response code="500">Internal Server Error</response>
-    [HttpPost]
-    [ProducesResponseType(typeof(AddCategoryResponseWrapper), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateCategory([FromBody] PostCategory requestBody)
-    {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
-
-        var categoryId = await _categoryService.CreateCategory(requestBody);
-        if (categoryId is null)
-            return Problem();
-
-        return Created(string.Empty, new AddCategoryResponseWrapper
-        {
-            CategoryId = categoryId.Value
-        });
-    }
-
-    /// <summary>Deletes a category by id</summary>
-    /// <param name="categoryId"></param>
-    /// <response code="200">Ok</response>
-    /// <response code="404">Not Found</response>
-    /// <response code="500">Internal Server Error</response>
-    [HttpDelete("{categoryId:guid}")]
-    public async Task<IActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
-    {
-        var categoryExists = await _categoryService.GetCategoryById(categoryId);
-        if (categoryExists is null)
-            return NotFound();
-
-        var wasCategoryDeleted = await _categoryService.DeleteById(categoryId);
-        if (!wasCategoryDeleted)
-            return Problem();
-
-        return Ok();
+        return Ok(response);
     }
 
     /// <summary>Updates a category by id</summary>
@@ -102,14 +83,19 @@ public class CategoryController : ControllerBase
         if (requestBodyValidationError is not null)
             return requestBodyValidationError;
 
-        var categoryExists = await _categoryService.GetCategoryById(categoryId);
-        if (categoryExists is null)
-            return NotFound();
+        var (responseStatus, response) = await _categoryService.UpdateCategoryById(categoryId, requestBody);
+        return StatusCode((int)responseStatus, response);
+    }
 
-        var wasCategoryUpdated = await _categoryService.UpdateCategoryById(categoryId, requestBody);
-        if (!wasCategoryUpdated)
-            return Problem();
-
-        return Ok();
+    /// <summary>Deletes a category by id</summary>
+    /// <param name="categoryId"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="500">Internal Server Error</response>
+    [HttpDelete("{categoryId:guid}")]
+    public async Task<IActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
+    {
+        var responseStatus = await _categoryService.DeleteEntityById(categoryId);
+        return StatusCode((int)responseStatus);
     }
 }

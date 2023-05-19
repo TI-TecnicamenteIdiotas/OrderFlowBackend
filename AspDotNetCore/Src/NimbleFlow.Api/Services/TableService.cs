@@ -1,22 +1,24 @@
 ﻿using System.Net;
+using NimbleFlow.Api.Repositories;
+using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Tables;
-using NimbleFlow.Contracts.Interfaces.Repositories;
-using NimbleFlow.Contracts.Interfaces.Services;
+using NimbleFlow.Data.Context;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Api.Services;
 
-public class TableService : ITableService
+public class TableService : ServiceBase<NimbleFlowContext, Table>
 {
-    private readonly ITableRepository _tableRepository;
+    private readonly TableRepository _tableRepository;
 
-    public TableService(ITableRepository tableRepository)
+    public TableService(TableRepository tableRepository) : base(tableRepository)
     {
         _tableRepository = tableRepository;
     }
 
     public async Task<GetTable?> CreateTable(PostTable tableDto)
     {
-        var response = await _tableRepository.CreateTable(tableDto.ToModel());
+        var response = await _tableRepository.CreateEntity(tableDto.ToModel());
         if (response is null)
             return null;
 
@@ -25,13 +27,13 @@ public class TableService : ITableService
 
     public async Task<IEnumerable<GetTable>> GetAllTablesPaginated(int page, int limit, bool includeDeleted)
     {
-        var response = await _tableRepository.GetAllTablesPaginated(page, limit, includeDeleted);
+        var response = await _tableRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
         return response.Select(GetTable.FromModel);
     }
 
     public async Task<GetTable?> GetTableById(Guid tableId)
     {
-        var response = await _tableRepository.GetTableById(tableId);
+        var response = await _tableRepository.GetEntityById(tableId);
         if (response is null)
             return null;
 
@@ -40,7 +42,7 @@ public class TableService : ITableService
 
     public async Task<(HttpStatusCode, GetTable?)> UpdateTableById(Guid tableId, PutTable tableDto)
     {
-        var tableEntity = await _tableRepository.GetTableById(tableId);
+        var tableEntity = await _tableRepository.GetEntityById(tableId);
         if (tableEntity is null)
             return (HttpStatusCode.NotFound, null);
 
@@ -61,25 +63,10 @@ public class TableService : ITableService
         if (!shouldUpdate)
             return (HttpStatusCode.NotModified, null);
 
-        var response = await _tableRepository.UpdateTable(tableEntity);
+        var response = await _tableRepository.UpdateEntity(tableEntity);
         if (response is null)
             return (HttpStatusCode.InternalServerError, null);
 
         return (HttpStatusCode.OK, GetTable.FromModel(response));
-    }
-
-    public async Task<HttpStatusCode> DeleteTableById(Guid tableId)
-    {
-        var tableEntity = await _tableRepository.GetTableById(tableId);
-        if (tableEntity is null)
-            return HttpStatusCode.NotFound;
-
-        tableEntity.DeletedAt = DateTime.UtcNow;
-
-        var response = await _tableRepository.UpdateTable(tableEntity);
-        if (response is null)
-            return HttpStatusCode.InternalServerError;
-
-        return HttpStatusCode.OK;
     }
 }

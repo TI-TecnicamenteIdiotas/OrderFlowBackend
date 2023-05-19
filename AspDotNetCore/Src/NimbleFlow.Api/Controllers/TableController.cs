@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Helpers;
+using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Tables;
-using NimbleFlow.Contracts.Interfaces.Services;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -9,9 +9,9 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class TableController : ControllerBase
 {
-    private readonly ITableService _tableService;
+    private readonly TableService _tableService;
 
-    public TableController(ITableService tableService)
+    public TableController(TableService tableService)
     {
         _tableService = tableService;
     }
@@ -95,7 +95,7 @@ public class TableController : ControllerBase
     [HttpDelete("{tableId:guid}")]
     public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
-        var responseStatus = await _tableService.DeleteTableById(tableId);
+        var responseStatus = await _tableService.DeleteEntityById(tableId);
         return StatusCode((int)responseStatus);
     }
 }

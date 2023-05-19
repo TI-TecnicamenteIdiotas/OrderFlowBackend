@@ -1,39 +1,37 @@
-﻿using NimbleFlow.Contracts.DTOs.Categories;
-using NimbleFlow.Contracts.Interfaces.Repositories;
-using NimbleFlow.Contracts.Interfaces.Services;
+﻿using System.Net;
+using NimbleFlow.Api.Repositories;
+using NimbleFlow.Api.Services.Base;
+using NimbleFlow.Contracts.DTOs.Categories;
+using NimbleFlow.Data.Context;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Api.Services;
 
-public class CategoryService : ICategoryService
+public class CategoryService : ServiceBase<NimbleFlowContext, Category>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly CategoryRepository _categoryRepository;
 
-    public CategoryService(ICategoryRepository categoryRepository)
+    public CategoryService(CategoryRepository categoryRepository) : base(categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }
 
-    public Task<IEnumerable<GetCategory>> GetAllCategoriesPaginated()
+    public Task<GetCategory?> CreateCategory(PostCategory categoryDto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Guid?> CreateCategory(PostCategory category)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> DeleteById(Guid categoryId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> UpdateCategoryById(Guid categoryId, PutCategory category)
+    public Task<IEnumerable<GetCategory>> GetAllCategoriesPaginated(int page, int limit, bool includeDeleted)
     {
         throw new NotImplementedException();
     }
 
     public Task<GetCategory?> GetCategoryById(Guid categoryId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<(HttpStatusCode, GetCategory?)> UpdateCategoryById(Guid categoryId, PutCategory categoryDto)
     {
         throw new NotImplementedException();
     }

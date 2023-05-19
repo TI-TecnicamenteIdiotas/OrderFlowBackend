@@ -1,18 +1,16 @@
-﻿namespace NimbleFlow.Data.Models
+﻿using NimbleFlow.Data.Base;
+
+namespace NimbleFlow.Data.Models;
+
+public class Table : ModelBase
 {
-    public partial class Table
+    public Table()
     {
-        public Table()
-        {
-            Orders = new HashSet<Order>();
-        }
-
-        public Guid Id { get; set; }
-        public string Accountable { get; set; } = null!;
-        public bool IsFullyPaid { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
-
-        public virtual ICollection<Order> Orders { get; set; }
+        Orders = new HashSet<Order>();
     }
+
+    public string Accountable { get; set; } = null!;
+    public bool IsFullyPaid { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; }
 }
