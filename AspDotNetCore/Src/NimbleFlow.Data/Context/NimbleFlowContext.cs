@@ -21,7 +21,6 @@ namespace NimbleFlow.Data.Context
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderProduct> OrderProducts { get; set; } = null!;
-        public virtual DbSet<OrderStatus> OrderStatuses { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
 
@@ -68,12 +67,6 @@ namespace NimbleFlow.Data.Context
 
                 entity.Property(e => e.TableId).HasColumnName("table_id");
 
-                entity.HasOne(d => d.StatusNavigation)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.Status)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("order_status_fkey");
-
                 entity.HasOne(d => d.Table)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.TableId)
@@ -111,21 +104,6 @@ namespace NimbleFlow.Data.Context
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("order_product_product_id_fkey");
-            });
-
-            modelBuilder.Entity<OrderStatus>(entity =>
-            {
-                entity.ToTable("order_status");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("now()");
-
-                entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
             });
 
             modelBuilder.Entity<Product>(entity =>
