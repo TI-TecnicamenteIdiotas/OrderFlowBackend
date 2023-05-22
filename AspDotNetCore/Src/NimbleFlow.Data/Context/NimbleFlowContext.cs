@@ -63,7 +63,11 @@ namespace NimbleFlow.Data.Context
 
                 entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Discount).HasColumnName("discount");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasComment("0 - Pending\n1 - Preparing\n2 - Ready\n3 - Delivered");
 
                 entity.Property(e => e.TableId).HasColumnName("table_id");
 

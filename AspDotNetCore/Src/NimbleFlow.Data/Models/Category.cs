@@ -1,17 +1,19 @@
-﻿using NimbleFlow.Data.Base;
-
-namespace NimbleFlow.Data.Models;
-
-public class Category : ModelBase
+﻿namespace NimbleFlow.Data.Models
 {
-    public Category()
+    public partial class Category
     {
-        Products = new HashSet<Product>();
+        public Category()
+        {
+            Products = new HashSet<Product>();
+        }
+
+        public Guid Id { get; set; }
+        public string Title { get; set; } = null!;
+        public int? ColorTheme { get; set; }
+        public int? CategoryIcon { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+        public virtual ICollection<Product> Products { get; set; }
     }
-
-    public string Title { get; set; } = null!;
-    public int? ColorTheme { get; set; }
-    public int? CategoryIcon { get; set; }
-
-    public virtual ICollection<Product> Products { get; set; }
 }

@@ -1,13 +1,13 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Repositories.Base;
-using NimbleFlow.Data.Base;
+using NimbleFlow.Data.Partials.Interfaces;
 
 namespace NimbleFlow.Api.Services.Base;
 
 public abstract class ServiceBase<TDbContext, TEntity>
     where TDbContext : DbContext
-    where TEntity : ModelBase
+    where TEntity : class, IIdentifiable<Guid>, ICreatedAtDeletedAt
 {
     private readonly RepositoryBase<TDbContext, TEntity> _repository;
 

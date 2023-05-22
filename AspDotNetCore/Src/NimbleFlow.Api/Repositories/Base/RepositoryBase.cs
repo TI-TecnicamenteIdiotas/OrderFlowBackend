@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using NimbleFlow.Data.Base;
+using NimbleFlow.Data.Partials.Interfaces;
 
 namespace NimbleFlow.Api.Repositories.Base;
 
 public abstract class RepositoryBase<TDbContext, TEntity>
     where TDbContext : DbContext
-    where TEntity : ModelBase
+    where TEntity : class, IIdentifiable<Guid>, ICreatedAtDeletedAt
 {
     private readonly TDbContext _dbContext;
     private readonly DbSet<TEntity> _dbEntities;

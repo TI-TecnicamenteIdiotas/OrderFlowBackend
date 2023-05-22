@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "order"
     id         uuid PRIMARY KEY                  DEFAULT gen_random_uuid(),
     table_id   uuid                     NOT NULL REFERENCES "table" (id),
     status     SMALLINT                 NOT NULL DEFAULT 0,
+    discount   DECIMAL                  NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE NULL
 );
