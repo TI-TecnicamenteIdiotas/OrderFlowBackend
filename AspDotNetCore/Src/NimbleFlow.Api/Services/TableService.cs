@@ -48,7 +48,7 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
             return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
-        if (tableDto.Accountable.IsNotNullAndEquals(tableDto.Accountable))
+        if (tableDto.Accountable.IsNotNullAndNotEquals(tableDto.Accountable))
         {
             tableEntity.Accountable = tableDto.Accountable ?? throw new NullReferenceException();;
             shouldUpdate = true;

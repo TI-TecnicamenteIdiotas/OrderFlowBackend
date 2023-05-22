@@ -48,13 +48,15 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
             return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
-        if (productDto.Title.IsNotNullAndEquals(productEntity.Title))
+        if (productDto.Title.IsNotNullAndNotEquals(productEntity.Title))
         {
             productEntity.Title = productDto.Title ?? throw new NullReferenceException();
             shouldUpdate = true;
         }
 
-        if (productDto.Description.IsNotNullAndEquals(productEntity.Description))
+        if (productDto.Description != productEntity.Description
+            && (productDto.Description is not null && productDto.Description.Trim() != string.Empty
+                || productDto.Description is null))
         {
             productEntity.Description = productDto.Description ?? throw new NullReferenceException();
             shouldUpdate = true;

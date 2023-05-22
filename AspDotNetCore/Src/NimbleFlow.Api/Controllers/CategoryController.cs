@@ -77,7 +77,7 @@ public class CategoryController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{categoryId:guid}")]
-    public async Task<IActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] UpdateCategoryDto requestBody)
+    public async Task<IActionResult> UpdateCategoryById([FromRoute] Guid categoryId, [FromBody] UpdateCategoryDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)
@@ -93,7 +93,7 @@ public class CategoryController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpDelete("{categoryId:guid}")]
-    public async Task<IActionResult> DeleteCategoryById([FromQuery] Guid categoryId)
+    public async Task<IActionResult> DeleteCategoryById([FromRoute] Guid categoryId)
     {
         var responseStatus = await _categoryService.DeleteEntityById(categoryId);
         return StatusCode((int)responseStatus);

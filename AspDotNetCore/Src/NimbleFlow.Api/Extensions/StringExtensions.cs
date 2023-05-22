@@ -9,11 +9,11 @@ public static partial class GeneralExtensions
     /// <param name="firstValue">string value</param>
     /// <param name="secondValue">string value</param>
     /// <returns><see cref="bool"/> comparison between values</returns>
-    public static bool IsNotNullAndEquals(this string? firstValue, string? secondValue)
+    public static bool IsNotNullAndNotEquals(this string? firstValue, string? secondValue)
     {
         if (string.IsNullOrWhiteSpace(firstValue) || string.IsNullOrWhiteSpace(secondValue))
             return false;
 
-        return firstValue.Equals(secondValue, StringComparison.InvariantCultureIgnoreCase);
+        return !firstValue.Equals(secondValue, StringComparison.InvariantCultureIgnoreCase);
     }
 }

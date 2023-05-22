@@ -48,7 +48,7 @@ public class CategoryService : ServiceBase<NimbleFlowContext, Category>
             return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
-        if (categoryDto.Title.IsNotNullAndEquals(categoryEntity.Title))
+        if (categoryDto.Title.IsNotNullAndNotEquals(categoryEntity.Title))
         {
             categoryEntity.Title = categoryDto.Title ?? throw new NullReferenceException();
             shouldUpdate = true;
