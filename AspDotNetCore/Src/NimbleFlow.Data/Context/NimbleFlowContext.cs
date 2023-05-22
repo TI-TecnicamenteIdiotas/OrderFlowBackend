@@ -30,6 +30,9 @@ namespace NimbleFlow.Data.Context
             {
                 entity.ToTable("category");
 
+                entity.HasIndex(e => e.Title, "category_title_key")
+                    .IsUnique();
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("gen_random_uuid()");

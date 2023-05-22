@@ -2,14 +2,14 @@
 
 namespace NimbleFlow.Contracts.DTOs.Tables;
 
-public sealed class GetTable
+public sealed class TableDto
 {
     public Guid Id { get; set; }
     public string Accountable { get; set; } = null!;
     public bool IsFullyPaid { get; set; }
     public ICollection<Order> Orders { get; set; } = Array.Empty<Order>();
 
-    public static GetTable FromModel(Table table)
+    public static TableDto FromModel(Table table)
         => new()
         {
             Id = table.Id,

@@ -5,38 +5,38 @@ namespace NimbleFlow.Api.Helpers;
 
 public static class CategoryHelper
 {
-    public static IActionResult? Validate(this PostCategory category)
+    public static IActionResult? Validate(this CreateCategoryDto categoryDto)
     {
-        if (string.IsNullOrWhiteSpace(category.Title))
+        if (string.IsNullOrWhiteSpace(categoryDto.Title))
             return new BadRequestObjectResult(
-                $"{nameof(category.Title)} must not be null or composed by white spaces only");
+                $"{nameof(categoryDto.Title)} must not be null or composed by white spaces only");
 
-        if (category.Title.Length > 50)
-            return new BadRequestObjectResult($"{nameof(category.Title)} length must be under 51 characters");
+        if (categoryDto.Title.Length > 50)
+            return new BadRequestObjectResult($"{nameof(categoryDto.Title)} length must be under 51 characters");
 
-        if (category.ColorTheme < 0)
-            return new BadRequestObjectResult($"{nameof(category.ColorTheme)} must be positive");
+        if (categoryDto.ColorTheme < 0)
+            return new BadRequestObjectResult($"{nameof(categoryDto.ColorTheme)} must be positive");
 
-        if (category.CategoryIcon < 0)
-            return new BadRequestObjectResult($"{nameof(category.CategoryIcon)} must be positive");
+        if (categoryDto.CategoryIcon < 0)
+            return new BadRequestObjectResult($"{nameof(categoryDto.CategoryIcon)} must be positive");
 
         return null;
     }
 
-    public static IActionResult? Validate(this PutCategory category)
+    public static IActionResult? Validate(this UpdateCategoryDto categoryDto)
     {
-        if (category.Title is not null && string.IsNullOrWhiteSpace(category.Title))
+        if (categoryDto.Title is not null && string.IsNullOrWhiteSpace(categoryDto.Title))
             return new BadRequestObjectResult(
-                $"{nameof(category.Title)} must not be null or composed by white spaces only");
+                $"{nameof(categoryDto.Title)} must not be null or composed by white spaces only");
 
-        if (category.Title?.Length > 50)
-            return new BadRequestObjectResult($"{nameof(category.Title)} length must be under 51 characters");
+        if (categoryDto.Title?.Length > 50)
+            return new BadRequestObjectResult($"{nameof(categoryDto.Title)} length must be under 51 characters");
 
-        if (category.ColorTheme < 0)
-            return new BadRequestObjectResult($"{nameof(category.ColorTheme)} must be positive");
+        if (categoryDto.ColorTheme < 0)
+            return new BadRequestObjectResult($"{nameof(categoryDto.ColorTheme)} must be positive");
 
-        if (category.CategoryIcon < 0)
-            return new BadRequestObjectResult($"{nameof(category.CategoryIcon)} must be positive");
+        if (categoryDto.CategoryIcon < 0)
+            return new BadRequestObjectResult($"{nameof(categoryDto.CategoryIcon)} must be positive");
 
         return null;
     }

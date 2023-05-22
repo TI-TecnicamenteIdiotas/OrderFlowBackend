@@ -2,12 +2,12 @@
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
-public class PostProduct
+public class CreateProductDto
 {
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public decimal Price { get; set; }
-    public string ImageURL { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
     public bool IsFavorite { get; set; }
     public Guid CategoryId { get; set; }
 
@@ -17,7 +17,7 @@ public class PostProduct
             Title = Title,
             Description = Description,
             Price = Price,
-            ImageUrl = ImageURL,
+            ImageUrl = ImageUrl,
             IsFavorite = IsFavorite,
             CategoryId = CategoryId
         };

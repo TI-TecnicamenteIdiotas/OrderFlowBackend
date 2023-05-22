@@ -1,6 +1,6 @@
 ﻿namespace NimbleFlow.Contracts.DTOs.Categories;
 
-public class PutCategory
+public class UpdateCategoryDto
 {
     public string? Title { get; set; }
     public int? ColorTheme { get; set; }

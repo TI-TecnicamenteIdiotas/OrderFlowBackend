@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using NimbleFlow.Api.Extensions;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Products;
@@ -16,23 +17,84 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         _productRepository = productRepository;
     }
 
-    public Task<GetProduct?> CreateProduct(PostProduct productDto)
+    public async Task<ProductDto?> CreateProduct(CreateProductDto productDto)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.CreateEntity(productDto.ToModel());
+        if (response is null)
+            return null;
+
+        return ProductDto.FromModel(response);
     }
 
-    public Task<IEnumerable<GetProduct>> GetAllProductsPaginated(int page, int limit, bool includeDeleted)
+    public async Task<IEnumerable<ProductDto>> GetAllProductsPaginated(int page, int limit, bool includeDeleted)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return response.Select(ProductDto.FromModel);
     }
 
-    public Task<GetProduct?> GetProductById(Guid productId)
+    public async Task<ProductDto?> GetProductById(Guid productId)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.GetEntityById(productId);
+        if (response is null)
+            return null;
+
+        return ProductDto.FromModel(response);
     }
 
-    public Task<(HttpStatusCode, GetProduct?)> UpdateProductById(Guid productId, PutProduct productDto)
+    public async Task<(HttpStatusCode, ProductDto?)> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
-        throw new NotImplementedException();
+        var productEntity = await _productRepository.GetEntityById(productId);
+        if (productEntity is null)
+            return (HttpStatusCode.NotFound, null);
+
+        var shouldUpdate = false;
+        if (productDto.Title.IsNotNullAndEquals(productEntity.Title))
+        {
+            productEntity.Title = productDto.Title ?? throw new NullReferenceException();
+            shouldUpdate = true;
+        }
+
+        if (productDto.Description.IsNotNullAndEquals(productEntity.Description))
+        {
+            productEntity.Description = productDto.Description ?? throw new NullReferenceException();
+            shouldUpdate = true;
+        }
+
+        if (productDto.Price is not null && productDto.Price != productEntity.Price)
+        {
+            productEntity.Price = productDto.Price.Value;
+            shouldUpdate = true;
+        }
+
+        if (productDto.ImageUrl != productEntity.ImageUrl
+            && (productDto.ImageUrl is not null && productDto.ImageUrl.Trim() != string.Empty
+                || productDto.ImageUrl is null))
+        {
+            productEntity.ImageUrl = productDto.ImageUrl;
+            shouldUpdate = true;
+        }
+
+        if (productDto.IsFavorite is not null && productDto.IsFavorite != productEntity.IsFavorite)
+        {
+            productEntity.IsFavorite = productDto.IsFavorite.Value;
+            shouldUpdate = true;
+        }
+
+        if (productDto.CategoryId is not null
+            && productDto.CategoryId != Guid.Empty
+            && productDto.CategoryId != productEntity.CategoryId)
+        {
+            productEntity.CategoryId = productDto.CategoryId.Value;
+            shouldUpdate = true;
+        }
+
+        if (!shouldUpdate)
+            return (HttpStatusCode.NotModified, null);
+
+        var response = await _productRepository.UpdateEntity(productEntity);
+        if (response is null)
+            return (HttpStatusCode.InternalServerError, null);
+
+        return (HttpStatusCode.OK, ProductDto.FromModel(response));
     }
 }

@@ -21,8 +21,8 @@ public class ProductController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPost]
-    [ProducesResponseType(typeof(GetProduct), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateProduct([FromBody] PostProduct requestBody)
+    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)
@@ -41,7 +41,7 @@ public class ProductController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(GetProduct[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductDto[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllProductsPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
@@ -59,7 +59,7 @@ public class ProductController : ControllerBase
     /// <param name="productId"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{productId:guid}")]
-    [ProducesResponseType(typeof(GetProduct), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProductById([FromRoute] Guid productId)
     {
         var response = await _productService.GetProductById(productId);
@@ -77,7 +77,7 @@ public class ProductController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{productId:guid}")]
-    public async Task<IActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] PutProduct requestBody)
+    public async Task<IActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] UpdateProductDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)

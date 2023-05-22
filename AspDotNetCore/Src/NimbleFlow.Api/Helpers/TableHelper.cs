@@ -5,18 +5,18 @@ namespace NimbleFlow.Api.Helpers;
 
 public static class TableHelper
 {
-    public static IActionResult? Validate(this PostTable table)
+    public static IActionResult? Validate(this CreateTableDto tableDto)
     {
-        if (table.Accountable.Length > 50)
-            return new BadRequestObjectResult($"{nameof(table.Accountable)} length must be under 51 characters");
+        if (tableDto.Accountable.Length > 50)
+            return new BadRequestObjectResult($"{nameof(tableDto.Accountable)} length must be under 51 characters");
 
         return null;
     }
 
-    public static IActionResult? Validate(this PutTable table)
+    public static IActionResult? Validate(this UpdateTableDto tableDto)
     {
-        if (table.Accountable?.Length > 50)
-            return new BadRequestObjectResult($"{nameof(table.Accountable)} length must be under 51 characters");
+        if (tableDto.Accountable?.Length > 50)
+            return new BadRequestObjectResult($"{nameof(tableDto.Accountable)} length must be under 51 characters");
 
         return null;
     }

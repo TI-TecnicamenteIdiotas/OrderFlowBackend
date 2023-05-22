@@ -2,7 +2,7 @@
 
 namespace NimbleFlow.Contracts.DTOs.Tables;
 
-public class PostTable
+public class CreateTableDto
 {
     public string Accountable { get; set; } = null!;
     public bool IsFullyPaid { get; set; }

@@ -2,7 +2,7 @@
 
 namespace NimbleFlow.Contracts.DTOs.Categories;
 
-public class PostCategory
+public class CreateCategoryDto
 {
     public string Title { get; set; } = null!;
     public int ColorTheme { get; set; }

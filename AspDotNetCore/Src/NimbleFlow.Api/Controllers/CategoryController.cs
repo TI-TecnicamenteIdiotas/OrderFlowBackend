@@ -21,8 +21,8 @@ public class CategoryController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPost]
-    [ProducesResponseType(typeof(GetCategory), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateCategory([FromBody] PostCategory requestBody)
+    [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)
@@ -41,7 +41,7 @@ public class CategoryController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(GetCategory[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CategoryDto[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllCategoriesPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
@@ -59,7 +59,7 @@ public class CategoryController : ControllerBase
     /// <param name="categoryId"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{categoryId:guid}")]
-    [ProducesResponseType(typeof(GetCategory), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
         var response = await _categoryService.GetCategoryById(categoryId);
@@ -77,7 +77,7 @@ public class CategoryController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{categoryId:guid}")]
-    public async Task<IActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] PutCategory requestBody)
+    public async Task<IActionResult> UpdateCategoryById([FromQuery] Guid categoryId, [FromBody] UpdateCategoryDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)

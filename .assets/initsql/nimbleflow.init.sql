@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS category
 (
     id            uuid PRIMARY KEY                  DEFAULT gen_random_uuid(),
-    title         VARCHAR(32)              NOT NULL,
+    title         VARCHAR(32) UNIQUE       NOT NULL,
     color_theme   INT                      NULL,
     category_icon INT                      NULL,
     created_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -40,8 +40,7 @@ CREATE TABLE IF NOT EXISTS "order"
     deleted_at TIMESTAMP WITH TIME ZONE NULL
 );
 
-COMMENT ON COLUMN "order".status IS
-'0 - Pending
+COMMENT ON COLUMN "order".status IS '0 - Pending
 1 - Preparing
 2 - Ready
 3 - Delivered';
