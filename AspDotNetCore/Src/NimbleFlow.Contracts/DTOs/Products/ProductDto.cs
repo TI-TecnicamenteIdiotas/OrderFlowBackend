@@ -1,5 +1,4 @@
-﻿using NimbleFlow.Contracts.DTOs.Categories;
-using NimbleFlow.Data.Models;
+﻿using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
@@ -11,7 +10,6 @@ public class ProductDto
     public decimal Price { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsFavorite { get; set; }
-    public CategoryDto Category { get; set; } = new();
     public Guid CategoryId { get; set; }
 
     public static ProductDto FromModel(Product product)
@@ -23,7 +21,6 @@ public class ProductDto
             Price = product.Price,
             ImageUrl = product.ImageUrl,
             IsFavorite = product.IsFavorite,
-            Category = CategoryDto.FromModel(product.Category),
             CategoryId = product.CategoryId
         };
 }

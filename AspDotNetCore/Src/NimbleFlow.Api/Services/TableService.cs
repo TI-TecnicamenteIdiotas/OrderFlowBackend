@@ -11,10 +11,15 @@ namespace NimbleFlow.Api.Services;
 public class TableService : ServiceBase<NimbleFlowContext, Table>
 {
     private readonly TableRepository _tableRepository;
+    private readonly OrderRepository _orderRepository;
 
-    public TableService(TableRepository tableRepository) : base(tableRepository)
+    public TableService(
+        TableRepository tableRepository,
+        OrderRepository orderRepository
+    ) : base(tableRepository)
     {
         _tableRepository = tableRepository;
+        _orderRepository = orderRepository;
     }
 
     public async Task<TableDto?> CreateTable(CreateTableDto tableDto)
@@ -50,7 +55,7 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         var shouldUpdate = false;
         if (tableDto.Accountable.IsNotNullAndNotEquals(tableDto.Accountable))
         {
-            tableEntity.Accountable = tableDto.Accountable ?? throw new NullReferenceException();;
+            tableEntity.Accountable = tableDto.Accountable ?? throw new NullReferenceException();
             shouldUpdate = true;
         }
 
@@ -68,5 +73,25 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
             return (HttpStatusCode.InternalServerError, null);
 
         return (HttpStatusCode.OK, TableDto.FromModel(response));
+    }
+
+    public async Task<TableWithOrdersDto?> GetTableWithOrdersByTableId(Guid tableId, bool includeDeleted)
+    {
+        var tableEntity = await _tableRepository.GetEntityById(tableId);
+        if (tableEntity is null)
+            return null;
+
+        var ordersResponse = await _orderRepository.GetOrdersByTableId(tableId, includeDeleted);
+        return TableWithOrdersDto.FromModels(tableEntity, ordersResponse);
+    }
+
+    public async Task<TableWithOrdersAndProductsDto?> GetTableWithOrdersAndProductsByTableId(Guid tableId, bool includeDeleted)
+    {
+        var tableEntity = await _tableRepository.GetEntityById(tableId);
+        if (tableEntity is null)
+            return null;
+
+        var ordersResponse = await _orderRepository.GetOrdersWithProductsByTableId(tableId, includeDeleted);
+        return TableWithOrdersAndProductsDto.FromModels(tableEntity, ordersResponse);
     }
 }
