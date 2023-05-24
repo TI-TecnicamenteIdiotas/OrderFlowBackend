@@ -11,15 +11,10 @@ namespace NimbleFlow.Api.Services;
 public class TableService : ServiceBase<NimbleFlowContext, Table>
 {
     private readonly TableRepository _tableRepository;
-    private readonly OrderRepository _orderRepository;
 
-    public TableService(
-        TableRepository tableRepository,
-        OrderRepository orderRepository
-    ) : base(tableRepository)
+    public TableService(TableRepository tableRepository) : base(tableRepository)
     {
         _tableRepository = tableRepository;
-        _orderRepository = orderRepository;
     }
 
     public async Task<TableDto?> CreateTable(CreateTableDto tableDto)
@@ -75,23 +70,12 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         return (HttpStatusCode.OK, TableDto.FromModel(response));
     }
 
-    public async Task<TableWithOrdersDto?> GetTableWithOrdersByTableId(Guid tableId, bool includeDeleted)
+    public async Task<TableWithRelationsDto?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)
     {
-        var tableEntity = await _tableRepository.GetEntityById(tableId);
-        if (tableEntity is null)
+        var response = await _tableRepository.GetTableById(tableId, includeDeleted);
+        if (response is null)
             return null;
 
-        var ordersResponse = await _orderRepository.GetOrdersByTableId(tableId, includeDeleted);
-        return TableWithOrdersDto.FromModels(tableEntity, ordersResponse);
-    }
-
-    public async Task<TableWithOrdersAndProductsDto?> GetTableWithOrdersAndProductsByTableId(Guid tableId, bool includeDeleted)
-    {
-        var tableEntity = await _tableRepository.GetEntityById(tableId);
-        if (tableEntity is null)
-            return null;
-
-        var ordersResponse = await _orderRepository.GetOrdersWithProductsByTableId(tableId, includeDeleted);
-        return TableWithOrdersAndProductsDto.FromModels(tableEntity, ordersResponse);
+        return TableWithRelationsDto.FromModels(response);
     }
 }

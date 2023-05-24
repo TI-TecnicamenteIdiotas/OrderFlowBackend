@@ -57,11 +57,13 @@ public class TableController : ControllerBase
 
     /// <summary>Gets a table by id</summary>
     /// <param name="tableId"></param>
+    /// <param name="includeDeleted"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{tableId:guid}")]
-    public async Task<IActionResult> GetTableById([FromRoute] Guid tableId)
+    [ProducesResponseType(typeof(TableWithRelationsDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTableById([FromRoute] Guid tableId, [FromQuery] bool includeDeleted = false)
     {
-        var response = await _tableService.GetTableById(tableId);
+        var response = await _tableService.GetTableWithRelationsById(tableId, includeDeleted);
         if (response is null)
             return NotFound();
 
@@ -97,41 +99,5 @@ public class TableController : ControllerBase
     {
         var responseStatus = await _tableService.DeleteEntityById(tableId);
         return StatusCode((int)responseStatus);
-    }
-
-    /// <summary>Gets a table with orders by table id</summary>
-    /// <param name="tableId"></param>
-    /// <param name="includeDeleted"></param>
-    /// <response code="404">Not Found</response>
-    [HttpGet("{tableId:guid}/orders")]
-    [ProducesResponseType(typeof(TableWithOrdersDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTableWithOrdersById(
-        [FromRoute] Guid tableId,
-        [FromQuery] bool includeDeleted = false
-    )
-    {
-        var response = await _tableService.GetTableWithOrdersByTableId(tableId, includeDeleted);
-        if (response is null)
-            return NotFound();
-
-        return Ok(response);
-    }
-
-    /// <summary>Gets a table with orders and products by table id</summary>
-    /// <param name="tableId"></param>
-    /// <param name="includeDeleted"></param>
-    /// <response code="404">Not Found</response>
-    [HttpGet("{tableId:guid}/orders-products")]
-    [ProducesResponseType(typeof(TableWithOrdersDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTableWithOrdersAndProductsById(
-        [FromRoute] Guid tableId,
-        [FromQuery] bool includeDeleted = false
-    )
-    {
-        var response = await _tableService.GetTableWithOrdersAndProductsByTableId(tableId, includeDeleted);
-        if (response is null)
-            return NotFound();
-
-        return Ok(response);
     }
 }

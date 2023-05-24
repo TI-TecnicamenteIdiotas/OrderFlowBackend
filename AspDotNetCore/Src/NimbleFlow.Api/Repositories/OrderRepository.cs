@@ -33,22 +33,4 @@ public class OrderRepository : RepositoryBase<NimbleFlowContext, Order>
             .Where(x => x.DeletedAt == null && x.TableId == tableId)
             .ToArrayAsync();
     }
-
-    public Task<OrderProduct[]> GetOrdersWithProductsByTableId(Guid tableId, bool includeDeleted)
-    {
-        if (includeDeleted)
-            return _orderProductEntities
-                .Include(x => x.Order)
-                .Include(x => x.Product)
-                .Include(x => x.Product.Category)
-                .Where(x => x.Order.TableId == tableId)
-                .ToArrayAsync();
-
-        return _orderProductEntities
-            .Include(x => x.Order)
-            .Include(x => x.Product)
-            .Include(x => x.Product.Category)
-            .Where(x => x.DeletedAt == null && x.Order.DeletedAt == null && x.Order.TableId == tableId)
-            .ToArrayAsync();
-    }
 }
