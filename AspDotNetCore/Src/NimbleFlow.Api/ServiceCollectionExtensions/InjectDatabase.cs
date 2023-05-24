@@ -15,6 +15,6 @@ public static partial class ServiceCollectionExtensions
                                        $"User Id={postgresOptions.User};" +
                                        $"Password={postgresOptions.Password}";
 
-        services.AddDbContext<OrderFlowContext>(optionsBuilder => optionsBuilder.UseNpgsql(postgresConnectionString));
+        services.AddDbContext<NimbleFlowContext>(optionsBuilder => optionsBuilder.UseNpgsql(postgresConnectionString));
     }
 }

@@ -22,6 +22,7 @@ services:
       - "10500:${SQL_DATABASE_PORT}"
     volumes:
       - nimbleflow.sql.db:/var/lib/postgresql/data
+      - .assets/initsql:/docker-entrypoint-initdb.d
     restart: always
 
   nimbleflow.nosql.db:

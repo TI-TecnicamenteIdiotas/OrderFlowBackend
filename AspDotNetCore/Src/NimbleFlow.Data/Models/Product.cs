@@ -1,19 +1,23 @@
-﻿namespace NimbleFlow.Data.Models;
-
-public partial class Product
+﻿namespace NimbleFlow.Data.Models
 {
-    public Product()
+    public partial class Product
     {
-        Items = new HashSet<Item>();
-    }
+        public Product()
+        {
+            OrderProducts = new HashSet<OrderProduct>();
+        }
 
-    public Guid Id { get; set; }
-    public string Title { get; set; } = null!;
-    public string? Description { get; set; }
-    public decimal Price { get; set; }
-    public string? ImageUrl { get; set; }
-    public bool IsFavorite { get; set; }
-    public Guid CategoryId { get; set; }
-    public virtual Category Category { get; set; } = null!;
-    public virtual ICollection<Item> Items { get; set; }
+        public Guid Id { get; set; }
+        public string Title { get; set; } = null!;
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
+        public string? ImageUrl { get; set; }
+        public bool IsFavorite { get; set; }
+        public Guid CategoryId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+        public virtual Category Category { get; set; } = null!;
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
+    }
 }

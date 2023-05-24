@@ -1,40 +1,78 @@
-﻿using NimbleFlow.Contracts.DTOs.Categories;
-using NimbleFlow.Contracts.Interfaces.Repositories;
-using NimbleFlow.Contracts.Interfaces.Services;
+﻿using System.Net;
+using NimbleFlow.Api.Extensions;
+using NimbleFlow.Api.Repositories;
+using NimbleFlow.Api.Services.Base;
+using NimbleFlow.Contracts.DTOs.Categories;
+using NimbleFlow.Data.Context;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Api.Services;
 
-public class CategoryService : ICategoryService
+public class CategoryService : ServiceBase<NimbleFlowContext, Category>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly CategoryRepository _categoryRepository;
 
-    public CategoryService(ICategoryRepository categoryRepository)
+    public CategoryService(CategoryRepository categoryRepository) : base(categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }
 
-    public Task<IEnumerable<GetCategory>> GetAllCategoriesPaginated()
+    public async Task<CategoryDto?> CreateCategory(CreateCategoryDto categoryDto)
     {
-        throw new NotImplementedException();
+        var response = await _categoryRepository.CreateEntity(categoryDto.ToModel());
+        if (response is null)
+            return null;
+
+        return CategoryDto.FromModel(response);
     }
 
-    public Task<Guid?> CreateCategory(PostCategory category)
+    public async Task<IEnumerable<CategoryDto>> GetAllCategoriesPaginated(int page, int limit, bool includeDeleted)
     {
-        throw new NotImplementedException();
+        var response = await _categoryRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return response.Select(CategoryDto.FromModel);
     }
 
-    public Task<bool> DeleteById(Guid categoryId)
+    public async Task<CategoryDto?> GetCategoryById(Guid categoryId)
     {
-        throw new NotImplementedException();
+        var response = await _categoryRepository.GetEntityById(categoryId);
+        if (response is null)
+            return null;
+
+        return CategoryDto.FromModel(response);
     }
 
-    public Task<bool> UpdateCategoryById(Guid categoryId, PutCategory category)
+    public async Task<(HttpStatusCode, CategoryDto?)> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
     {
-        throw new NotImplementedException();
-    }
+        var categoryEntity = await _categoryRepository.GetEntityById(categoryId);
+        if (categoryEntity is null)
+            return (HttpStatusCode.NotFound, null);
 
-    public Task<GetCategory?> GetCategoryById(Guid categoryId)
-    {
-        throw new NotImplementedException();
+        var shouldUpdate = false;
+        if (categoryDto.Title.IsNotNullAndNotEquals(categoryEntity.Title))
+        {
+            categoryEntity.Title = categoryDto.Title ?? throw new NullReferenceException();
+            shouldUpdate = true;
+        }
+
+        if (categoryDto.ColorTheme != categoryEntity.ColorTheme)
+        {
+            categoryEntity.ColorTheme = categoryDto.ColorTheme;
+            shouldUpdate = true;
+        }
+
+        if (categoryDto.CategoryIcon != categoryEntity.CategoryIcon)
+        {
+            categoryEntity.CategoryIcon = categoryDto.CategoryIcon;
+            shouldUpdate = true;
+        }
+
+        if (!shouldUpdate)
+            return (HttpStatusCode.NotModified, null);
+
+        var response = await _categoryRepository.UpdateEntity(categoryEntity);
+        if (response is null)
+            return (HttpStatusCode.InternalServerError, null);
+
+        return (HttpStatusCode.OK, CategoryDto.FromModel(response));
     }
 }

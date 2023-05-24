@@ -9,7 +9,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SQL_DATABASE_SERVER": "localhost",
-        "SQL_DATABASE_PORT": "5432",
+        "SQL_DATABASE_PORT": "10500",
         "SQL_DATABASE_DATABASE": "postgres",
         "SQL_DATABASE_USER": "postgres",
         "SQL_DATABASE_PASSWORD": "postgres123",

@@ -1,40 +1,102 @@
-﻿using NimbleFlow.Contracts.DTOs.Products;
-using NimbleFlow.Contracts.Interfaces.Repositories;
-using NimbleFlow.Contracts.Interfaces.Services;
+﻿using System.Net;
+using NimbleFlow.Api.Extensions;
+using NimbleFlow.Api.Repositories;
+using NimbleFlow.Api.Services.Base;
+using NimbleFlow.Contracts.DTOs.Products;
+using NimbleFlow.Data.Context;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Api.Services;
 
-public class ProductService : IProductService
+public class ProductService : ServiceBase<NimbleFlowContext, Product>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly ProductRepository _productRepository;
 
-    public ProductService(IProductRepository productRepository)
+    public ProductService(ProductRepository productRepository) : base(productRepository)
     {
         _productRepository = productRepository;
     }
 
-    public Task<IEnumerable<GetProduct>> GetAllProductsPaginated()
+    public async Task<ProductDto?> CreateProduct(CreateProductDto productDto)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.CreateEntity(productDto.ToModel());
+        if (response is null)
+            return null;
+
+        return ProductDto.FromModel(response);
     }
 
-    public Task<Guid?> CreateProduct(PostProduct product)
+    public async Task<IEnumerable<ProductDto>> GetAllProductsPaginated(int page, int limit, bool includeDeleted)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return response.Select(ProductDto.FromModel);
     }
 
-    public Task<bool> DeleteProductById(Guid productId)
+    public async Task<ProductDto?> GetProductById(Guid productId)
     {
-        throw new NotImplementedException();
+        var response = await _productRepository.GetEntityById(productId);
+        if (response is null)
+            return null;
+
+        return ProductDto.FromModel(response);
     }
 
-    public Task<bool> UpdateProductById(Guid productId, PutProduct product)
+    public async Task<(HttpStatusCode, ProductDto?)> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
-        throw new NotImplementedException();
-    }
+        var productEntity = await _productRepository.GetEntityById(productId);
+        if (productEntity is null)
+            return (HttpStatusCode.NotFound, null);
 
-    public Task<GetProduct?> GetProductById(Guid productId)
-    {
-        throw new NotImplementedException();
+        var shouldUpdate = false;
+        if (productDto.Title.IsNotNullAndNotEquals(productEntity.Title))
+        {
+            productEntity.Title = productDto.Title ?? throw new NullReferenceException();
+            shouldUpdate = true;
+        }
+
+        if (productDto.Description != productEntity.Description
+            && (productDto.Description is not null && productDto.Description.Trim() != string.Empty
+                || productDto.Description is null))
+        {
+            productEntity.Description = productDto.Description ?? throw new NullReferenceException();
+            shouldUpdate = true;
+        }
+
+        if (productDto.Price is not null && productDto.Price != productEntity.Price)
+        {
+            productEntity.Price = productDto.Price.Value;
+            shouldUpdate = true;
+        }
+
+        if (productDto.ImageUrl != productEntity.ImageUrl
+            && (productDto.ImageUrl is not null && productDto.ImageUrl.Trim() != string.Empty
+                || productDto.ImageUrl is null))
+        {
+            productEntity.ImageUrl = productDto.ImageUrl;
+            shouldUpdate = true;
+        }
+
+        if (productDto.IsFavorite is not null && productDto.IsFavorite != productEntity.IsFavorite)
+        {
+            productEntity.IsFavorite = productDto.IsFavorite.Value;
+            shouldUpdate = true;
+        }
+
+        if (productDto.CategoryId is not null
+            && productDto.CategoryId != Guid.Empty
+            && productDto.CategoryId != productEntity.CategoryId)
+        {
+            productEntity.CategoryId = productDto.CategoryId.Value;
+            shouldUpdate = true;
+        }
+
+        if (!shouldUpdate)
+            return (HttpStatusCode.NotModified, null);
+
+        var response = await _productRepository.UpdateEntity(productEntity);
+        if (response is null)
+            return (HttpStatusCode.InternalServerError, null);
+
+        return (HttpStatusCode.OK, ProductDto.FromModel(response));
     }
 }
