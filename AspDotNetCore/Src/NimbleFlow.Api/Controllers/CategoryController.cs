@@ -72,12 +72,15 @@ public class CategoryController : ControllerBase
     /// <summary>Updates a category by id</summary>
     /// <param name="categoryId"></param>
     /// <param name="requestBody"></param>
-    /// <response code="200">Ok</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{categoryId:guid}")]
-    public async Task<IActionResult> UpdateCategoryById([FromRoute] Guid categoryId, [FromBody] UpdateCategoryDto requestBody)
+    [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateCategoryById(
+        [FromRoute] Guid categoryId,
+        [FromBody] UpdateCategoryDto requestBody
+    )
     {
         var requestBodyValidationError = requestBody.Validate();
         if (requestBodyValidationError is not null)

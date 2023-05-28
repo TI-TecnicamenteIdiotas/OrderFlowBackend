@@ -14,16 +14,16 @@ public class ProductWithRelationsDto
     public bool IsFavorite { get; set; }
     public CategoryDto Category { get; set; } = new();
 
-    public static ProductWithRelationsDto FromModel(OrderProduct orderProduct)
+    public static ProductWithRelationsDto FromModel(Product product, int productAmount)
         => new()
         {
-            Id = orderProduct.Product.Id,
-            Amount = orderProduct.ProductAmount,
-            Title = orderProduct.Product.Title,
-            Description = orderProduct.Product.Description,
-            Price = orderProduct.Product.Price,
-            ImageUrl = orderProduct.Product.ImageUrl,
-            IsFavorite = orderProduct.Product.IsFavorite,
-            Category = CategoryDto.FromModel(orderProduct.Product.Category)
+            Id = product.Id,
+            Amount = productAmount,
+            Title = product.Title,
+            Description = product.Description,
+            Price = product.Price,
+            ImageUrl = product.ImageUrl,
+            IsFavorite = product.IsFavorite,
+            Category = CategoryDto.FromModel(product.Category)
         };
 }

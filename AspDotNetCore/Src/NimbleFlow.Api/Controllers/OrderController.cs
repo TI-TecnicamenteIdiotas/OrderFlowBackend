@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Helpers;
 using NimbleFlow.Api.Services;
@@ -57,12 +58,13 @@ public class OrderController : ControllerBase
 
     /// <summary>Gets a order by id</summary>
     /// <param name="orderId"></param>
+    /// <param name="includeDeleted"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{orderId:guid}")]
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId)
+    public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId, [FromQuery] bool includeDeleted = false)
     {
-        var response = await _orderService.GetOrderById(orderId);
+        var response = await _orderService.GetOrderWithRelationsById(orderId, includeDeleted);
         if (response is null)
             return NotFound();
 
@@ -72,12 +74,13 @@ public class OrderController : ControllerBase
     /// <summary>Updates a order by id</summary>
     /// <param name="orderId"></param>
     /// <param name="requestBody"></param>
-    /// <response code="200">Ok</response>
     /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{orderId:guid}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
     public async Task<IActionResult> UpdateOrderById([FromRoute] Guid orderId, [FromBody] UpdateOrderDto requestBody)
     {
         var requestBodyValidationError = requestBody.Validate();
@@ -103,36 +106,18 @@ public class OrderController : ControllerBase
     /// <summary>Adds a product to a order</summary>
     /// <param name="orderId"></param>
     /// <param name="requestBody"></param>
-    /// <response code="400">Bad Request</response>
+    /// <response code="200">Ok</response>
+    /// <response code="409">Conflict</response>
     [HttpPost("{orderId:guid}")]
-    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> AddProductToOrder(
         [FromRoute] Guid orderId,
         [FromBody] CreateOrderProductDto requestBody
     )
     {
         var response = await _orderService.AddProductToOrder(orderId, requestBody);
-        if (response is null)
-            return Problem();
+        if (!response)
+            return Conflict();
 
-        return Created(string.Empty, response);
-    }
-
-    /// <summary>Gets all orders by table id</summary>
-    /// <param name="tableId"></param>
-    /// <param name="includeDeleted"></param>
-    /// <response code="404">Not Found</response>
-    [HttpGet("table/{tableId:guid}")]
-    [ProducesResponseType(typeof(OrderDto[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetOrdersByTableId(
-        [FromRoute] Guid tableId,
-        [FromQuery] bool includeDeleted = false
-    )
-    {
-        var response = await _orderService.GetOrdersByTableId(tableId, includeDeleted);
-        if (response.Length is 0)
-            return NoContent();
-
-        return Ok(response);
+        return Ok();
     }
 }

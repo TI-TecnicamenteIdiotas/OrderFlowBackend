@@ -9,14 +9,17 @@ public class OrderWithRelationsDto
     public Guid Id { get; set; }
     public OrderStatusEnum Status { get; set; }
     public decimal? Discount { get; set; }
-    public ProductWithRelationsDto Product { get; set; } = new();
+    public ICollection<ProductWithRelationsDto> Products { get; set; } = Array.Empty<ProductWithRelationsDto>();
 
-    public static OrderWithRelationsDto FromModel(OrderProduct orderProduct)
+    public static OrderWithRelationsDto FromModel(Order order)
         => new()
         {
-            Id = orderProduct.Order.Id,
-            Status = (OrderStatusEnum)orderProduct.Order.Status,
-            Discount = orderProduct.Order.Discount,
-            Product = ProductWithRelationsDto.FromModel(orderProduct)
+            Id = order.Id,
+            Status = (OrderStatusEnum)order.Status,
+            Discount = order.Discount,
+            Products = order.OrderProducts
+                .Where(x => x.OrderId == order.Id)
+                .Select(x => ProductWithRelationsDto.FromModel(x.Product, x.ProductAmount))
+                .ToArray()
         };
 }

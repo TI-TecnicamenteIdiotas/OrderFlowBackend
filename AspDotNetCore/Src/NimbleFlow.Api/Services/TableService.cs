@@ -72,7 +72,7 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
 
     public async Task<TableWithRelationsDto?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)
     {
-        var response = await _tableRepository.GetTableById(tableId, includeDeleted);
+        var response = await _tableRepository.GetTableWithRelationsById(tableId, includeDeleted);
         if (response is null)
             return null;
 

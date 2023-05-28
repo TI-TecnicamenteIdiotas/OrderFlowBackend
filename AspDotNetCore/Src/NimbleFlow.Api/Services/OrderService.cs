@@ -75,18 +75,15 @@ public class OrderService : ServiceBase<NimbleFlowContext, Order>
         return (HttpStatusCode.OK, OrderDto.FromModel(response));
     }
 
-    public async Task<OrderDto?> AddProductToOrder(Guid orderId, CreateOrderProductDto orderProductDto)
+    public async Task<OrderWithRelationsDto?> GetOrderWithRelationsById(Guid tableId, bool includeDeleted)
     {
-        var response = await _orderRepository.AddProductToOrder(orderProductDto.ToModel(orderId));
+        var response = await _orderRepository.GetOrderWithRelationsById(tableId, includeDeleted);
         if (response is null)
             return null;
 
-        return OrderDto.FromModel(response.Order);
+        return OrderWithRelationsDto.FromModel(response);
     }
 
-    public async Task<OrderDto[]> GetOrdersByTableId(Guid tableId, bool includeDeleted)
-    {
-        var response = await _orderRepository.GetOrdersByTableId(tableId, includeDeleted);
-        return response.Select(OrderDto.FromModel).ToArray();
-    }
+    public Task<bool> AddProductToOrder(Guid orderId, CreateOrderProductDto orderProductDto)
+        => _orderRepository.AddProductToOrder(orderProductDto.ToModel(orderId));
 }

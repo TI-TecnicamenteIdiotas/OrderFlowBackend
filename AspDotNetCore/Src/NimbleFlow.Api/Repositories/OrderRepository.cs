@@ -14,23 +14,35 @@ public class OrderRepository : RepositoryBase<NimbleFlowContext, Order>
         _orderProductEntities = dbContext.OrderProducts;
     }
 
-    public async Task<OrderProduct?> AddProductToOrder(OrderProduct entity)
-    {
-        var entityEntry = await _orderProductEntities.AddAsync(entity);
-        if (await DbContext.SaveChangesAsync() != 1)
-            return null;
-
-        return entityEntry.Entity;
-    }
-
-    public Task<Order[]> GetOrdersByTableId(Guid tableId, bool includeDeleted)
+    public async Task<Order?> GetOrderWithRelationsById(Guid orderId, bool includeDeleted)
     {
         if (includeDeleted)
-            return DbEntities.Include(x => x.OrderProducts).Where(x => x.TableId == tableId).ToArrayAsync();
+            return await DbEntities
+                .Include(x => x.OrderProducts)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.Category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == orderId);
 
-        return DbEntities
+        var response = await DbEntities
             .Include(x => x.OrderProducts)
-            .Where(x => x.DeletedAt == null && x.TableId == tableId)
-            .ToArrayAsync();
+            .ThenInclude(x => x.Product)
+            .ThenInclude(x => x.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.DeletedAt == null && x.Id == orderId);
+        if (response is null)
+            return null;
+
+        foreach (var orderProduct in response.OrderProducts.ToArray())
+            if (orderProduct.Product is { DeletedAt: not null } or { Category.DeletedAt: not null })
+                response.OrderProducts.Remove(orderProduct);
+
+        return response;
+    }
+
+    public async Task<bool> AddProductToOrder(OrderProduct entity)
+    {
+        _ = await _orderProductEntities.AddAsync(entity);
+        return await DbContext.SaveChangesAsync() == 1;
     }
 }

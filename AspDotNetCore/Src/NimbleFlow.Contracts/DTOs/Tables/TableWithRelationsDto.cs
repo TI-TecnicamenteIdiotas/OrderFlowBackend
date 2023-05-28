@@ -16,6 +16,6 @@ public class TableWithRelationsDto
             Id = table.Id,
             Accountable = table.Accountable,
             IsFullyPaid = table.IsFullyPaid,
-            Orders = table.Orders.SelectMany(x => x.OrderProducts.Select(OrderWithRelationsDto.FromModel)).ToArray()
+            Orders = table.Orders.Select(OrderWithRelationsDto.FromModel).ToArray()
         };
 }

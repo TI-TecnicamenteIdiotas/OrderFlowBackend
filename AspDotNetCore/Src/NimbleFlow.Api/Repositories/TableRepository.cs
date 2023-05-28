@@ -11,10 +11,10 @@ public class TableRepository : RepositoryBase<NimbleFlowContext, Table>
     {
     }
 
-    public Task<Table?> GetTableById(Guid tableId, bool includeDeleted)
+    public async Task<Table?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)
     {
         if (includeDeleted)
-            return DbEntities
+            return await DbEntities
                 .Include(x => x.Orders)
                 .ThenInclude(x => x.OrderProducts)
                 .ThenInclude(x => x.Product)
@@ -22,12 +22,21 @@ public class TableRepository : RepositoryBase<NimbleFlowContext, Table>
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == tableId);
 
-        return DbEntities
+        var response = await DbEntities
             .Include(x => x.Orders)
             .ThenInclude(x => x.OrderProducts)
             .ThenInclude(x => x.Product)
             .ThenInclude(x => x.Category)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.DeletedAt == null && x.Id == tableId);
+        if (response is null)
+            return null;
+
+        foreach (var order in response.Orders.Where(x => x.DeletedAt is null))
+        foreach (var orderProduct in order.OrderProducts.Where(x => x.DeletedAt is null).ToArray())
+            if (orderProduct.Product is { DeletedAt: not null } or { Category.DeletedAt: not null })
+                order.OrderProducts.Remove(orderProduct);
+
+        return response;
     }
 }
