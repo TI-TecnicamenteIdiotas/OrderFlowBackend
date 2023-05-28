@@ -84,6 +84,28 @@ public class OrderService : ServiceBase<NimbleFlowContext, Order>
         return OrderWithRelationsDto.FromModel(response);
     }
 
-    public Task<bool> AddProductToOrder(Guid orderId, CreateOrderProductDto orderProductDto)
-        => _orderRepository.AddProductToOrder(orderProductDto.ToModel(orderId));
+    public async Task<bool> AddProductToOrderByOrderId(Guid orderId, CreateOrderProductDto createOrderProductDto)
+    {
+        var order = await _orderRepository.GetOrderWithRelationsById(orderId, true);
+        var orderProduct = order?.OrderProducts.FirstOrDefault(x => x.Product.Id == createOrderProductDto.ProductId);
+        if (orderProduct is not null)
+        {
+            var orderProductModel = createOrderProductDto.ToModel(orderId);
+            orderProductModel.CreatedAt = orderProduct.CreatedAt;
+            orderProductModel.ProductAmount = createOrderProductDto.ProductAmount;
+            return await _orderRepository.ReactivateProductInOrder(orderProductModel);
+        }
+
+        return await _orderRepository.AddProductToOrder(createOrderProductDto.ToModel(orderId));
+    }
+
+    public async Task<bool> RemoveProductFromOrderByIds(Guid orderId, Guid productId)
+    {
+        var order = await _orderRepository.GetOrderWithRelationsById(orderId, false);
+        var orderProduct = order?.OrderProducts.FirstOrDefault(x => x.Product.Id == productId);
+        if (orderProduct is null)
+            return false;
+
+        return await _orderRepository.RemoveProductFromOrder(orderProduct);
+    }
 }

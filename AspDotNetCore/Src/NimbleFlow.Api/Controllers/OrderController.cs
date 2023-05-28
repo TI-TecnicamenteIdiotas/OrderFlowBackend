@@ -61,7 +61,7 @@ public class OrderController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{orderId:guid}")]
-    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OrderWithRelationsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId, [FromQuery] bool includeDeleted = false)
     {
         var response = await _orderService.GetOrderWithRelationsById(orderId, includeDeleted);
@@ -103,7 +103,7 @@ public class OrderController : ControllerBase
         return StatusCode((int)responseStatus);
     }
 
-    /// <summary>Adds a product to a order</summary>
+    /// <summary>Adds a product to a order by order id</summary>
     /// <param name="orderId"></param>
     /// <param name="requestBody"></param>
     /// <response code="200">Ok</response>
@@ -114,9 +114,25 @@ public class OrderController : ControllerBase
         [FromBody] CreateOrderProductDto requestBody
     )
     {
-        var response = await _orderService.AddProductToOrder(orderId, requestBody);
+        var response = await _orderService.AddProductToOrderByOrderId(orderId, requestBody);
         if (!response)
             return Conflict();
+
+        return Ok();
+    }
+
+    /// <summary>Removes a product from a order by ids</summary>
+    /// <param name="orderId"></param>
+    /// <param name="productId"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="409">Conflict</response>
+    [HttpDelete("{orderId:guid}/{productId:guid}")]
+    public async Task<IActionResult> RemoveProductFromOrder([FromRoute] Guid orderId, [FromRoute] Guid productId)
+    {
+        var response = await _orderService.RemoveProductFromOrderByIds(orderId, productId);
+        if (!response)
+            return NotFound();
 
         return Ok();
     }
