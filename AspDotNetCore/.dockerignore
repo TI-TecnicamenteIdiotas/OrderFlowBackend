@@ -21,9 +21,9 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
-**/*[Tt]est*
-**/*[Tt]est*/*
-*[Tt]est*
-*[Tt]est*/*
+**/*[Tt]ests*
+**/*[Tt]ests*/*
+*[Tt]ests*
+*[Tt]ests*/*
 LICENSE
 README.md
