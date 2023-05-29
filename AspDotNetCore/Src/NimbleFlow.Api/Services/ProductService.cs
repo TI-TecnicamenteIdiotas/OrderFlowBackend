@@ -41,11 +41,11 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         return ProductDto.FromModel(response);
     }
 
-    public async Task<(HttpStatusCode, ProductDto?)> UpdateProductById(Guid productId, UpdateProductDto productDto)
+    public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
         var productEntity = await _productRepository.GetEntityById(productId);
         if (productEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
         if (productDto.Title.IsNotNullAndNotEquals(productEntity.Title))
@@ -91,12 +91,11 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _productRepository.UpdateEntity(productEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        if (!await _productRepository.UpdateEntity(productEntity))
+            return HttpStatusCode.InternalServerError;
 
-        return (HttpStatusCode.OK, ProductDto.FromModel(response));
+        return HttpStatusCode.OK;
     }
 }

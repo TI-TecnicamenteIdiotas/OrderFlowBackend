@@ -41,11 +41,11 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         return TableDto.FromModel(response);
     }
 
-    public async Task<(HttpStatusCode, TableDto?)> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
+    public async Task<HttpStatusCode> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
     {
         var tableEntity = await _tableRepository.GetEntityById(tableId);
         if (tableEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
         if (tableDto.Accountable.IsNotNullAndNotEquals(tableDto.Accountable))
@@ -61,13 +61,12 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _tableRepository.UpdateEntity(tableEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        if (!await _tableRepository.UpdateEntity(tableEntity))
+            return HttpStatusCode.InternalServerError;
 
-        return (HttpStatusCode.OK, TableDto.FromModel(response));
+        return HttpStatusCode.OK;
     }
 
     public async Task<TableWithRelationsDto?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)

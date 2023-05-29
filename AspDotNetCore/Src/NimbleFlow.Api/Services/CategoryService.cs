@@ -41,11 +41,11 @@ public class CategoryService : ServiceBase<NimbleFlowContext, Category>
         return CategoryDto.FromModel(response);
     }
 
-    public async Task<(HttpStatusCode, CategoryDto?)> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
+    public async Task<HttpStatusCode> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
     {
         var categoryEntity = await _categoryRepository.GetEntityById(categoryId);
         if (categoryEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
         if (categoryDto.Title.IsNotNullAndNotEquals(categoryEntity.Title))
@@ -67,12 +67,11 @@ public class CategoryService : ServiceBase<NimbleFlowContext, Category>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _categoryRepository.UpdateEntity(categoryEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        if (!await _categoryRepository.UpdateEntity(categoryEntity))
+            return HttpStatusCode.InternalServerError;
 
-        return (HttpStatusCode.OK, CategoryDto.FromModel(response));
+        return HttpStatusCode.OK;
     }
 }

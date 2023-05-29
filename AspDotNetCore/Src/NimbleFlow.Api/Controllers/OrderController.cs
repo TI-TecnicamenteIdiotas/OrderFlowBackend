@@ -11,10 +11,12 @@ namespace NimbleFlow.Api.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly OrderService _orderService;
+    private readonly ProductService _productService;
 
-    public OrderController(OrderService orderService)
+    public OrderController(OrderService orderService, ProductService productService)
     {
         _orderService = orderService;
+        _productService = productService;
     }
 
     /// <summary>Creates a order</summary>
@@ -22,12 +24,12 @@ public class OrderController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPost]
-    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created, MediaTypeNames.Application.Json)]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto requestBody)
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
         var response = await _orderService.CreateOrder(requestBody);
         if (response is null)
@@ -42,7 +44,7 @@ public class OrderController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(OrderDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OrderDto[]), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetAllOrdersPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
@@ -61,7 +63,7 @@ public class OrderController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{orderId:guid}")]
-    [ProducesResponseType(typeof(OrderWithRelationsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OrderWithRelationsDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId, [FromQuery] bool includeDeleted = false)
     {
         var response = await _orderService.GetOrderWithRelationsById(orderId, includeDeleted);
@@ -74,6 +76,7 @@ public class OrderController : ControllerBase
     /// <summary>Updates a order by id</summary>
     /// <param name="orderId"></param>
     /// <param name="requestBody"></param>
+    /// <response code="200">Ok</response>
     /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
@@ -83,12 +86,12 @@ public class OrderController : ControllerBase
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
     public async Task<IActionResult> UpdateOrderById([FromRoute] Guid orderId, [FromBody] UpdateOrderDto requestBody)
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
-        var (responseStatus, response) = await _orderService.UpdateOrderById(orderId, requestBody);
-        return StatusCode((int)responseStatus, response);
+        var responseStatus = await _orderService.UpdateOrderById(orderId, requestBody);
+        return StatusCode((int)responseStatus);
     }
 
     /// <summary>Deletes a order by id</summary>
@@ -130,6 +133,10 @@ public class OrderController : ControllerBase
     [HttpDelete("{orderId:guid}/{productId:guid}")]
     public async Task<IActionResult> RemoveProductFromOrder([FromRoute] Guid orderId, [FromRoute] Guid productId)
     {
+        var validationError = await OrderHelper.Validate(_productService, productId);
+        if (validationError is not null)
+            return validationError;
+
         var response = await _orderService.RemoveProductFromOrderByIds(orderId, productId);
         if (!response)
             return NotFound();

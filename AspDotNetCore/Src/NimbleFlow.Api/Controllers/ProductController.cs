@@ -24,9 +24,9 @@ public class ProductController : ControllerBase
     [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto requestBody)
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
         var response = await _productService.CreateProduct(requestBody);
         if (response is null)
@@ -73,18 +73,22 @@ public class ProductController : ControllerBase
     /// <param name="productId"></param>
     /// <param name="requestBody"></param>
     /// <response code="200">Ok</response>
+    /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{productId:guid}")]
-    public async Task<IActionResult> UpdateProductById([FromRoute] Guid productId, [FromBody] UpdateProductDto requestBody)
+    public async Task<IActionResult> UpdateProductById(
+        [FromRoute] Guid productId,
+        [FromBody] UpdateProductDto requestBody
+    )
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
-        var (responseStatus, response) = await _productService.UpdateProductById(productId, requestBody);
-        return StatusCode((int)responseStatus, response);
+        var responseStatus = await _productService.UpdateProductById(productId, requestBody);
+        return StatusCode((int)responseStatus);
     }
 
     /// <summary>Deletes a product by id</summary>

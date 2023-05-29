@@ -41,15 +41,15 @@ public abstract class RepositoryBase<TDbContext, TEntity>
         return QueryEntities(DbEntities.Where(x => x.DeletedAt == null));
     }
 
+    public Task<bool> ExistsById(Guid entityId)
+        => DbEntities.AnyAsync(x => x.Id == entityId);
+
     public Task<TEntity?> GetEntityById(Guid entityId)
         => DbEntities.FirstOrDefaultAsync(x => x.Id == entityId);
 
-    public async Task<TEntity?> UpdateEntity(TEntity entity)
+    public async Task<bool> UpdateEntity(TEntity entity)
     {
         DbContext.Update(entity);
-        if (await DbContext.SaveChangesAsync() != 1)
-            return null;
-
-        return entity;
+        return await DbContext.SaveChangesAsync() == 1;
     }
 }

@@ -56,10 +56,15 @@ public class OrderRepository : RepositoryBase<NimbleFlowContext, Order>
         return await DbContext.SaveChangesAsync() == 1;
     }
 
-    public async Task<bool> RemoveProductFromOrder(OrderProduct entity)
+    public async Task<bool> RemoveProductFromOrder(Guid orderId, Guid productId)
     {
-        entity.DeletedAt = DateTime.UtcNow;
-        _ = _orderProductEntities.Update(entity);
-        return await DbContext.SaveChangesAsync() != 0;
+        var orderProductEntity = await _orderProductEntities
+            .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductId == productId);
+        if (orderProductEntity is null)
+            return false;
+
+        orderProductEntity.DeletedAt = DateTime.UtcNow;
+        _ = _orderProductEntities.Update(orderProductEntity);
+        return await DbContext.SaveChangesAsync() == 1;
     }
 }

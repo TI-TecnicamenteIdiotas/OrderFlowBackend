@@ -40,11 +40,11 @@ public class OrderService : ServiceBase<NimbleFlowContext, Order>
         return OrderDto.FromModel(response);
     }
 
-    public async Task<(HttpStatusCode, OrderDto?)> UpdateOrderById(Guid orderId, UpdateOrderDto orderDto)
+    public async Task<HttpStatusCode> UpdateOrderById(Guid orderId, UpdateOrderDto orderDto)
     {
         var orderEntity = await _orderRepository.GetEntityById(orderId);
         if (orderEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
         if (orderDto.TableId is not null && orderDto.TableId != Guid.Empty && orderDto.TableId != orderEntity.TableId)
@@ -66,13 +66,12 @@ public class OrderService : ServiceBase<NimbleFlowContext, Order>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _orderRepository.UpdateEntity(orderEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        if (!await _orderRepository.UpdateEntity(orderEntity))
+            return HttpStatusCode.InternalServerError;
 
-        return (HttpStatusCode.OK, OrderDto.FromModel(response));
+        return HttpStatusCode.OK;
     }
 
     public async Task<OrderWithRelationsDto?> GetOrderWithRelationsById(Guid tableId, bool includeDeleted)
@@ -100,12 +99,5 @@ public class OrderService : ServiceBase<NimbleFlowContext, Order>
     }
 
     public async Task<bool> RemoveProductFromOrderByIds(Guid orderId, Guid productId)
-    {
-        var order = await _orderRepository.GetOrderWithRelationsById(orderId, false);
-        var orderProduct = order?.OrderProducts.FirstOrDefault(x => x.Product.Id == productId);
-        if (orderProduct is null)
-            return false;
-
-        return await _orderRepository.RemoveProductFromOrder(orderProduct);
-    }
+        => await _orderRepository.RemoveProductFromOrder(orderId, productId);
 }

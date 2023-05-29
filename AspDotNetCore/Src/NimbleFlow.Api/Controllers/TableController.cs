@@ -24,9 +24,9 @@ public class TableController : ControllerBase
     [ProducesResponseType(typeof(TableDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTable([FromBody] CreateTableDto requestBody)
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
         var response = await _tableService.CreateTable(requestBody);
         if (response is null)
@@ -81,12 +81,12 @@ public class TableController : ControllerBase
     [HttpPut("{tableId:guid}")]
     public async Task<IActionResult> UpdateTableById([FromRoute] Guid tableId, [FromBody] UpdateTableDto requestBody)
     {
-        var requestBodyValidationError = requestBody.Validate();
-        if (requestBodyValidationError is not null)
-            return requestBodyValidationError;
+        var validationError = requestBody.Validate();
+        if (validationError is not null)
+            return validationError;
 
-        var (responseStatus, response) = await _tableService.UpdateTableById(tableId, requestBody);
-        return StatusCode((int)responseStatus, response);
+        var responseStatus = await _tableService.UpdateTableById(tableId, requestBody);
+        return StatusCode((int)responseStatus);
     }
 
     /// <summary>Deletes a table by id</summary>

@@ -16,6 +16,9 @@ public abstract class ServiceBase<TDbContext, TEntity>
         _repository = repository;
     }
 
+    public Task<bool> ExistsById(Guid entityId)
+        => _repository.ExistsById(entityId);
+
     public async Task<HttpStatusCode> DeleteEntityById(Guid tableId)
     {
         var tableEntity = await _repository.GetEntityById(tableId);
@@ -27,8 +30,7 @@ public abstract class ServiceBase<TDbContext, TEntity>
 
         tableEntity.DeletedAt = DateTime.UtcNow;
 
-        var response = await _repository.UpdateEntity(tableEntity);
-        if (response is null)
+        if (await _repository.UpdateEntity(tableEntity))
             return HttpStatusCode.InternalServerError;
 
         return HttpStatusCode.OK;
