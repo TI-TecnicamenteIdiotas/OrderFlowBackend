@@ -25,6 +25,7 @@ public class TestBase : IDisposable
 
         var dbContextOptionsBuilder = new DbContextOptionsBuilder<NimbleFlowContext>().UseSqlite(_connection);
         var dbContext = new NimbleFlowContext(dbContextOptionsBuilder.Options);
+        _ = dbContext.Database.EnsureCreated();
 
         var categoryRepository = new CategoryRepository(dbContext);
         var categoryService = new CategoryService(categoryRepository);
@@ -41,8 +42,6 @@ public class TestBase : IDisposable
         var tableRepository = new TableRepository(dbContext);
         var tableService = new TableService(tableRepository);
         TableController = new TableController(tableService);
-
-        dbContext.Database.EnsureCreated();
     }
 
     public void Dispose()
