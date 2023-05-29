@@ -13,22 +13,16 @@ public class TableRepository : RepositoryBase<NimbleFlowContext, Table>
 
     public async Task<Table?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)
     {
-        if (includeDeleted)
-            return await DbEntities
-                .Include(x => x.Orders)
-                .ThenInclude(x => x.OrderProducts)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Category)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == tableId);
-
-        var response = await DbEntities
+        var query = DbEntities
             .Include(x => x.Orders)
             .ThenInclude(x => x.OrderProducts)
             .ThenInclude(x => x.Product)
-            .ThenInclude(x => x.Category)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.DeletedAt == null && x.Id == tableId);
+            .ThenInclude(x => x.Category);
+
+        if (includeDeleted)
+            return await query.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tableId);
+
+        var response = await query.AsNoTracking().FirstOrDefaultAsync(x => x.DeletedAt == null && x.Id == tableId);
         if (response is null)
             return null;
 

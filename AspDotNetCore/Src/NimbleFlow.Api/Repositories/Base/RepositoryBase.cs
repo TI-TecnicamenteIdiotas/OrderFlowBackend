@@ -49,7 +49,7 @@ public abstract class RepositoryBase<TDbContext, TEntity>
 
     public async Task<bool> UpdateEntity(TEntity entity)
     {
-        DbContext.Update(entity);
+        _ = DbContext.Update(entity);
         return await DbContext.SaveChangesAsync() == 1;
     }
 }
