@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Controllers;
 using NimbleFlow.Contracts.DTOs.Categories;
 using NimbleFlow.Tests.Base;
+using NimbleFlow.Tests.Helpers;
 
 namespace NimbleFlow.Tests;
 
@@ -49,16 +50,10 @@ public class CategoryTests : IClassFixture<TestBase>
     public async Task Get_CategoryById_ShouldReturnOkObjectResult()
     {
         // Arrange
-        var categoryDto = new CreateCategoryDto
-        {
-            Title = "Category D"
-        };
-        var createCategoryResponse = await _categoryController.CreateCategory(categoryDto);
-        var createdCategory = ((createCategoryResponse as CreatedResult)!.Value as CategoryDto)!;
-        var createdCategoryId = createdCategory.Id;
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category D");
 
         // Act
-        var actionResult = await _categoryController.GetCategoryById(createdCategoryId);
+        var actionResult = await _categoryController.GetCategoryById(createdCategory.Id);
 
         // Assert
         Assert.True(actionResult is OkObjectResult);
@@ -68,21 +63,14 @@ public class CategoryTests : IClassFixture<TestBase>
     public async Task Update_CategoryById_ShouldReturnStatusCodeResult_WithStatusCode200()
     {
         // Arrange
-        var categoryDto = new CreateCategoryDto
-        {
-            Title = "Category E"
-        };
-        var createCategoryResponse = await _categoryController.CreateCategory(categoryDto);
-        var createdCategory = ((createCategoryResponse as CreatedResult)!.Value as CategoryDto)!;
-        var createdCategoryId = createdCategory.Id;
-
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category E");
         var updateCategoryDto = new UpdateCategoryDto
         {
             Title = "Category E Updated"
         };
 
         // Act
-        var actionResult = await _categoryController.UpdateCategoryById(createdCategoryId, updateCategoryDto);
+        var actionResult = await _categoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
         var statusCodeResult = actionResult as StatusCodeResult;
 
         // Assert
@@ -93,16 +81,10 @@ public class CategoryTests : IClassFixture<TestBase>
     public async Task Delete_CategoryById_ShouldReturnStatusCodeResult_WithStatusCode200()
     {
         // Arrange
-        var categoryDto = new CreateCategoryDto
-        {
-            Title = "Category F"
-        };
-        var createCategoryResponse = await _categoryController.CreateCategory(categoryDto);
-        var createdCategory = ((createCategoryResponse as CreatedResult)!.Value as CategoryDto)!;
-        var createdCategoryId = createdCategory.Id;
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category F");
 
         // Act
-        var actionResult = await _categoryController.DeleteCategoryById(createdCategoryId);
+        var actionResult = await _categoryController.DeleteCategoryById(createdCategory.Id);
         var statusCodeResult = actionResult as StatusCodeResult;
 
         // Assert
