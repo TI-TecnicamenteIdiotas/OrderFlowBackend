@@ -1,23 +1,6 @@
 package com.nimbleflow.api.domain.purchase;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.nimbleflow.api.exception.response.example.ExceptionResponseExample;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,6 +9,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,7 +59,7 @@ public class PurchaseController {
         @RequestParam(value = "inactive", required = false) boolean inactive
     ) {
         List<PurchaseDTO> body = purchaseService.findPurchaseByOrderId(orderId, inactive);
-        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 
@@ -79,10 +71,40 @@ public class PurchaseController {
     })
     public ResponseEntity<List<PurchaseDTO>> deletePurchaseByOrderId(@PathVariable UUID orderId) {
         List<PurchaseDTO> body = purchaseService.deletePurchaseByOrderId(orderId);
-        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 
-    //TODO: GetMonthReport, GetReportByInterval, GetTopSoldProducts
+    @GetMapping("/month-report")
+    @Operation(description = "Get purchases month report")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
+    })
+    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
+            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases
+    ) {
+        List<PurchaseDTO> body = purchaseService.getPurchaseMonthReport(getInactivePurchases);
+        HttpStatus httpStatus = body != null && !body.isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return new ResponseEntity<>(body, httpStatus);
+    }
+
+    @GetMapping("/")
+    @Operation(description = "Get purchases by interval")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
+    })
+    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
+            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases,
+            @RequestParam(value = "starDate") ZonedDateTime startDate,
+            @RequestParam(value = "endDate") ZonedDateTime endDate
+    ) {
+        List<PurchaseDTO> body = purchaseService.getPurchasesByInterval(startDate, endDate, getInactivePurchases);
+        HttpStatus httpStatus = body != null && !body.isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return new ResponseEntity<>(body, httpStatus);
+    }
+
+    // TODO: GetTopSoldProducts
 
 }
