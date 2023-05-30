@@ -1,6 +1,7 @@
-package com.nimbleflow.api.domain.purchase;
+package com.nimbleflow.api.domain.order;
 
 import com.nimbleflow.api.exception.BadRequestException;
+import com.nimbleflow.api.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -8,86 +9,114 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PurchaseService {
+public class OrderService {
 
-    private final PurchaseRepository purchaseRepository;
+    private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
 
-    public PurchaseDTO savePurchase(PurchaseDTO purchaseDTO) {
-        List<PurchaseDTO> purchaseExists = findPurchaseByOrderId(purchaseDTO.getOrderId());
-        if (purchaseExists != null && !purchaseExists.isEmpty()) {
-            throw new BadRequestException("Purchase already registered");
+    public OrderDTO saveOrder(OrderDTO orderDTO) {
+        if (orderDTO.getId() != null) {
+            orderDTO.setId(null);
         }
 
-        Purchase purchase = modelMapper.map(purchaseDTO, Purchase.class);
-        purchase = purchaseRepository.save(purchase);
-        purchaseDTO = modelMapper.map(purchase, PurchaseDTO.class);
-        return purchaseDTO;
+        Order order = modelMapper.map(orderDTO, Order.class);
+        order = orderRepository.save(order);
+        orderDTO = modelMapper.map(order, OrderDTO.class);
+        return orderDTO;
     }
 
-    public List<PurchaseDTO> findPurchaseByOrderId(UUID orderId) {
-        return findPurchaseByOrderId(orderId, false);
+    public OrderDTO updateOrderById(OrderDTO orderDTO) throws NotFoundException {
+        if (orderDTO.getId() == null)
+            throw new BadRequestException("Please inform the id of the order you want to update");
+
+        Order order = findOrderById(orderDTO.getId())
+                .orElseThrow(() -> new NotFoundException(String.format("The order with id %s was not found", orderDTO.getId())));
+
+        order = orderRepository.save(order);
+        return modelMapper.map(order, OrderDTO.class);
     }
 
-    public List<PurchaseDTO> findPurchaseByOrderId(UUID orderId, boolean inactive) {
-        List<Purchase> purchases = purchaseRepository.findByOrderIdAndActive(orderId, !inactive);
-        List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
+    public List<OrderDTO> findOrdersByTableId(final UUID orderId) {
+        return findOrdersByTableId(orderId, false);
+    }
 
-        if (purchases.isEmpty()) return null;
+    public List<OrderDTO> findOrdersByTableId(UUID orderId, boolean getInactivePurchases) {
+        List<Order> orders = orderRepository.findByTableIdAndActive(orderId, !getInactivePurchases);
+        List<OrderDTO> purchasesDTOs = new ArrayList<OrderDTO>();
 
-        purchases.forEach(purchase -> {
-            purchasesDTOs.add(modelMapper.map(purchase, PurchaseDTO.class));
+        if (orders.isEmpty()) return null;
+
+        orders.forEach(order -> {
+            purchasesDTOs.add(modelMapper.map(order, OrderDTO.class));
         });
 
         return purchasesDTOs;
     }
 
-    public List<PurchaseDTO> deletePurchaseByOrderId(UUID orderId) {
-        List<Purchase> purchases = purchaseRepository.findByOrderId(orderId);
-        List<PurchaseDTO> purchasesDTOs = new ArrayList<PurchaseDTO>();
+    public List<OrderDTO> deleteOrderByTableId(UUID orderId) {
+        List<Order> orders = orderRepository.findByTableId(orderId);
+        List<OrderDTO> purchasesDTOs = new ArrayList<OrderDTO>();
         
-        if (purchases.isEmpty()) {
+        if (orders.isEmpty()) {
             return null;
         }
 
-        purchases.forEach(purchase -> {
-            purchase.setActive(false);
-            purchase = purchaseRepository.save(purchase);
-            purchasesDTOs.add(modelMapper.map(purchase, PurchaseDTO.class));
+        orders.forEach(order -> {
+            order.setActive(false);
+            order = orderRepository.save(order);
+            purchasesDTOs.add(modelMapper.map(order, OrderDTO.class));
         });
         
         return purchasesDTOs;
     }
 
-    public List<PurchaseDTO> getPurchaseMonthReport(boolean getInactivePurchases) {
+    public List<OrderDTO> getOrdersMonthReport(boolean getInactiveOrders) {
         int dayOfMonth = ZonedDateTime.now().getDayOfMonth();
         int daysToSubtract = (dayOfMonth + 1) - dayOfMonth;
         ZonedDateTime startDate = ZonedDateTime.now().minusDays(daysToSubtract);
 
-        return getPurchasesByInterval(startDate, ZonedDateTime.now(), getInactivePurchases);
+        return findOrdersByInterval(startDate, ZonedDateTime.now(), getInactiveOrders);
     }
 
-    public List<PurchaseDTO> getPurchasesByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getInactivePurchases) {
-        List<Purchase> purchases;
+    public List<OrderDTO> findOrdersByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getInactiveOrders) {
+        List<Order> orders;
 
-        if (getInactivePurchases) {
-            purchases = purchaseRepository.findPurchasesByPurchaseDateBetween(startDate, endDate);
+        if (getInactiveOrders) {
+            orders = orderRepository.findByOrderDateBetween(startDate, endDate);
         } else {
-            purchases = purchaseRepository.findPurchasesByPurchaseDateBetweenAndActiveTrue(startDate, endDate);
+            orders = orderRepository.findByOrderDateBetweenAndActiveTrue(startDate, endDate);
         }
 
-        return purchases.stream()
-                .map(this::mapPurchaseToPurchaseDTO)
+        return orders.stream()
+                .map(this::mapOrderToOrderDTO)
                 .toList();
     }
 
-    private PurchaseDTO mapPurchaseToPurchaseDTO(Purchase purchase) {
-        return modelMapper.map(purchase, PurchaseDTO.class);
+    public List<OrderDTO> findAllOrders(boolean getInactiveOrders) {
+        List<Order> orders;
+
+        if (getInactiveOrders) {
+            orders = orderRepository.findAll();
+        } else {
+            orders = orderRepository.findByActiveTrue();
+        }
+
+        return orders.stream()
+                .map(this::mapOrderToOrderDTO)
+                .toList();
+    }
+
+    public Optional<Order> findOrderById(UUID id) {
+        return orderRepository.findById(id);
+    }
+
+    private OrderDTO mapOrderToOrderDTO(Order order) {
+        return modelMapper.map(order, OrderDTO.class);
     }
 
 }

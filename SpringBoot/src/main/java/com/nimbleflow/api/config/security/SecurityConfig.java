@@ -1,5 +1,8 @@
 package com.nimbleflow.api.config.security;
 
+import com.nimbleflow.api.config.CustomAuthenticationEntryPointConfig;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,11 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.nimbleflow.api.config.CustomAuthenticationEntryPointConfig;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 @Configuration
 @EnableWebSecurity

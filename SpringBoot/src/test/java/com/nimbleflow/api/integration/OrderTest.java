@@ -9,7 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("docker")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ApiApplication.class)
-public class PurchaseTest {
+public class OrderTest {
 
 
     

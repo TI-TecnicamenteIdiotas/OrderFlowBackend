@@ -1,7 +1,6 @@
 package com.nimbleflow.api.domain.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

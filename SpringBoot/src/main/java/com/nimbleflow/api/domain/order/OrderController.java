@@ -1,4 +1,4 @@
-package com.nimbleflow.api.domain.purchase;
+package com.nimbleflow.api.domain.order;
 
 import com.nimbleflow.api.exception.response.example.ExceptionResponseExample;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,20 +21,20 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Purchase Controller")
+@Tag(name = "Order Controller")
 @SecurityRequirement(name = "Bearer Authorization")
 @ApiResponse(
     responseCode = "401", 
     description = "Unauthorized", 
     content = @Content(schema = @Schema(implementation = ExceptionResponseExample.UnauthorizedException.class))
 )
-@RequestMapping(value = "api/v1/purchase", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PurchaseController {
+@RequestMapping(value = "api/v1/order", produces = MediaType.APPLICATION_JSON_VALUE)
+public class OrderController {
 
-    private final PurchaseService purchaseService;
+    private final OrderService purchaseService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) 
-    @Operation(description = "Save purchase informations")
+    @Operation(description = "Save order informations")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(
@@ -43,68 +43,66 @@ public class PurchaseController {
             content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
         )
     })
-    public ResponseEntity<PurchaseDTO> savePurchase(@RequestBody @Validated PurchaseDTO dto) {
-        PurchaseDTO body = purchaseService.savePurchase(dto);
+    public ResponseEntity<OrderDTO> saveOrder(@RequestBody @Validated OrderDTO dto) {
+        OrderDTO body = purchaseService.saveOrder(dto);
         return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
-    @GetMapping("{orderId}")
-    @Operation(description = "Find purchase by it's orderId")
+    @GetMapping("{tableId}")
+    @Operation(description = "Find orders by tableId")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Ok"),
         @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
-        @PathVariable UUID orderId,
+    public ResponseEntity<List<OrderDTO>> findOrdersByInterval(
+        @PathVariable UUID tableId,
         @RequestParam(value = "inactive", required = false) boolean inactive
     ) {
-        List<PurchaseDTO> body = purchaseService.findPurchaseByOrderId(orderId, inactive);
+        List<OrderDTO> body = purchaseService.findOrdersByTableId(tableId, inactive);
         HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 
-    @DeleteMapping("{orderId}")
-    @Operation(description = "Delete purchase by it's orderId (logical exclusion)")
+    @DeleteMapping("{tableId}")
+    @Operation(description = "Delete orders by tableId (logical exclusion)")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Ok"),
         @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<List<PurchaseDTO>> deletePurchaseByOrderId(@PathVariable UUID orderId) {
-        List<PurchaseDTO> body = purchaseService.deletePurchaseByOrderId(orderId);
+    public ResponseEntity<List<OrderDTO>> deleteOrdersByTableId(@PathVariable UUID tableId) {
+        List<OrderDTO> body = purchaseService.deleteOrderByTableId(tableId);
         HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 
     @GetMapping("/month-report")
-    @Operation(description = "Get purchases month report")
+    @Operation(description = "Get orders month report")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
+    public ResponseEntity<List<OrderDTO>> findOrdersByInterval(
             @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases
     ) {
-        List<PurchaseDTO> body = purchaseService.getPurchaseMonthReport(getInactivePurchases);
+        List<OrderDTO> body = purchaseService.getOrdersMonthReport(getInactivePurchases);
         HttpStatus httpStatus = body != null && !body.isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 
-    @GetMapping("/")
-    @Operation(description = "Get purchases by interval")
+    @GetMapping("/interval")
+    @Operation(description = "Find orders by interval")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
-    public ResponseEntity<List<PurchaseDTO>> getPurchaseByOrderId(
+    public ResponseEntity<List<OrderDTO>> findOrdersByInterval(
             @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases,
             @RequestParam(value = "starDate") ZonedDateTime startDate,
             @RequestParam(value = "endDate") ZonedDateTime endDate
     ) {
-        List<PurchaseDTO> body = purchaseService.getPurchasesByInterval(startDate, endDate, getInactivePurchases);
+        List<OrderDTO> body = purchaseService.findOrdersByInterval(startDate, endDate, getInactivePurchases);
         HttpStatus httpStatus = body != null && !body.isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
-
-    // TODO: GetTopSoldProducts
 
 }

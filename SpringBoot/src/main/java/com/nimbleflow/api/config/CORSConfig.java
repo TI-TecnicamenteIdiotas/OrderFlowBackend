@@ -1,11 +1,11 @@
 package com.nimbleflow.api.config;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.*;
+
+import java.util.Arrays;
 
 @Configuration
 public class CORSConfig {

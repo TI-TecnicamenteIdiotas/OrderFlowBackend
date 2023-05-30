@@ -1,18 +1,16 @@
 package com.nimbleflow.api.domain.auth;
 
-import java.util.HashMap;
-
+import com.nimbleflow.api.config.security.JwtService;
+import com.nimbleflow.api.exception.UnauthorizedException;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.nimbleflow.api.config.security.JwtService;
-import com.nimbleflow.api.exception.UnauthorizedException;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor

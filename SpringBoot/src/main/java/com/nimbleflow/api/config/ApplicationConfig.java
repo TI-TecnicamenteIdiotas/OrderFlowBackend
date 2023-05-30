@@ -1,8 +1,8 @@
 package com.nimbleflow.api.config;
 
-import java.util.Collections;
-import java.util.Optional;
-
+import com.nimbleflow.api.config.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.nimbleflow.api.config.security.UserDetailsImpl;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -1,9 +1,9 @@
 package com.nimbleflow.api.exception.response.example;
 
-import java.time.ZonedDateTime;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+
+import java.time.ZonedDateTime;
 
 public interface ExceptionResponseExample {
 
