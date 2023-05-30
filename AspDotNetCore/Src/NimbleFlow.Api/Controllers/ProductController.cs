@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Products;
-using NimbleFlow.Data.Partials.Dtos;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Api.Controllers;
 

@@ -6,7 +6,7 @@ using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Products;
 using NimbleFlow.Data.Context;
 using NimbleFlow.Data.Models;
-using NimbleFlow.Data.Partials.Dtos;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Api.Services;
 

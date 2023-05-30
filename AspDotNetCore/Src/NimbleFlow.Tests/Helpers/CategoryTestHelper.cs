@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Controllers;
 using NimbleFlow.Contracts.DTOs.Categories;
-using NimbleFlow.Data.Partials.Dtos;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Tests.Helpers;
 

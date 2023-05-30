@@ -1,4 +1,4 @@
-﻿namespace NimbleFlow.Data.Partials.Dtos;
+﻿namespace NimbleFlow.Data.Partials.DTOs;
 
 public class ProductDto
 {

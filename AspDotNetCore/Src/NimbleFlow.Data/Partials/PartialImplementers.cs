@@ -1,4 +1,4 @@
-﻿using NimbleFlow.Data.Partials.Dtos;
+﻿using NimbleFlow.Data.Partials.DTOs;
 using NimbleFlow.Data.Partials.Interfaces;
 
 // ReSharper disable once CheckNamespace

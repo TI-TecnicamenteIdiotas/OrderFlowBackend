@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Controllers;
 using NimbleFlow.Contracts.DTOs.Categories;

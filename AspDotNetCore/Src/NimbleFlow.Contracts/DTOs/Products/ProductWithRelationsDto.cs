@@ -1,5 +1,5 @@
 using NimbleFlow.Data.Models;
-using NimbleFlow.Data.Partials.Dtos;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
