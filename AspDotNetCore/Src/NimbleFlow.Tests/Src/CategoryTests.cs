@@ -8,29 +8,19 @@ namespace NimbleFlow.Tests;
 
 public class CategoryTests : TestBase
 {
-    private readonly CategoryController _categoryController;
-
-    public CategoryTests()
-    {
-        _categoryController = CategoryController;
-    }
-
     #region Create
 
-    [Theory]
-    [InlineData("Category A")]
-    [InlineData("Category B")]
-    [InlineData("Category C")]
-    public async Task Create_Category_ShouldReturnCreatedResult(string title)
+    [Fact]
+    public async Task Create_Category_ShouldReturnCreatedResult()
     {
         // Arrange
         var categoryDto = new CreateCategoryDto
         {
-            Title = title
+            Title = "Category A"
         };
 
         // Act
-        var actionResult = await _categoryController.CreateCategory(categoryDto);
+        var actionResult = await CategoryController.CreateCategory(categoryDto);
 
         // Assert
         Assert.True(actionResult is CreatedResult);
@@ -44,13 +34,24 @@ public class CategoryTests : TestBase
     public async Task GetAll_CategoriesPaginated_ShouldReturnOkObjectResult()
     {
         // Arrange
-        _ = await _categoryController.CreateCategoryTestHelper("Category A");
+        _ = await CategoryController.CreateCategoryTestHelper("Category A");
 
         // Act
-        var actionResult = await _categoryController.GetAllCategoriesPaginated();
+        var actionResult = await CategoryController.GetAllCategoriesPaginated();
 
         // Assert
         Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task GetAll_CategoriesPaginated_ShouldReturnNoContentResult()
+    {
+        // Arrange
+        // Act
+        var actionResult = await CategoryController.GetAllCategoriesPaginated();
+
+        // Assert
+        Assert.True(actionResult is NoContentResult);
     }
 
     #endregion
@@ -61,13 +62,26 @@ public class CategoryTests : TestBase
     public async Task Get_CategoryById_ShouldReturnOkObjectResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
 
         // Act
-        var actionResult = await _categoryController.GetCategoryById(createdCategory.Id);
+        var actionResult = await CategoryController.GetCategoryById(createdCategory.Id);
 
         // Assert
         Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task Get_CategoryById_ShouldReturnNotFound()
+    {
+        // Arrange
+        var categoryId = Guid.NewGuid();
+
+        // Act
+        var actionResult = await CategoryController.GetCategoryById(categoryId);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
     }
 
     #endregion
@@ -78,14 +92,14 @@ public class CategoryTests : TestBase
     public async Task Update_CategoryById_ShouldReturnOkResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
         var updateCategoryDto = new UpdateCategoryDto
         {
             Title = "Category A Updated"
         };
 
         // Act
-        var actionResult = await _categoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
+        var actionResult = await CategoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
 
         // Assert
         Assert.True(actionResult is OkResult);
@@ -95,15 +109,15 @@ public class CategoryTests : TestBase
     public async Task Update_CategoryById_ShouldReturnConflictResult()
     {
         // Arrange
-        _ = await _categoryController.CreateCategoryTestHelper("Category A");
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category B");
+        _ = await CategoryController.CreateCategoryTestHelper("Category A");
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category B");
         var updateCategoryDto = new UpdateCategoryDto
         {
             Title = "Category A"
         };
 
         // Act
-        var actionResult = await _categoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
+        var actionResult = await CategoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
 
         // Assert
         Assert.True(actionResult is ConflictResult);
@@ -117,13 +131,26 @@ public class CategoryTests : TestBase
     public async Task Delete_CategoryById_ShouldReturnOkResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
 
         // Act
-        var actionResult = await _categoryController.DeleteCategoryById(createdCategory.Id);
+        var actionResult = await CategoryController.DeleteCategoryById(createdCategory.Id);
 
         // Assert
         Assert.True(actionResult is OkResult);
+    }
+
+    [Fact]
+    public async Task Delete_CategoryById_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var categoryId = Guid.NewGuid();
+
+        // Act
+        var actionResult = await CategoryController.DeleteCategoryById(categoryId);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
     }
 
     #endregion

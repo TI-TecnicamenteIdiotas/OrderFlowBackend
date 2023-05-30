@@ -12,8 +12,8 @@ public abstract class TestBase : IDisposable
     private readonly SqliteConnection _connection;
 
     protected readonly CategoryController CategoryController;
-    public readonly ProductController ProductController;
-    public readonly TableController TableController;
+    protected readonly ProductController ProductController;
+    protected readonly TableController TableController;
 
     protected TestBase()
     {

@@ -7,14 +7,14 @@ namespace NimbleFlow.Tests.Helpers;
 
 internal static class CategoryTestHelper
 {
-    public static async Task<CategoryDto> CreateCategoryTestHelper(
+    internal static async Task<CategoryDto> CreateCategoryTestHelper(
         this CategoryController categoryController,
-        string categoryName
+        string categoryTitle
     )
     {
         var categoryDto = new CreateCategoryDto
         {
-            Title = categoryName
+            Title = categoryTitle
         };
 
         var createCategoryResponse = await categoryController.CreateCategory(categoryDto);
