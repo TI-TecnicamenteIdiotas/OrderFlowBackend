@@ -7,25 +7,27 @@ using NimbleFlow.Tests.Helpers;
 
 namespace NimbleFlow.Tests;
 
-public class CategoryTests : IClassFixture<TestBase>
+public class CategoryTests : TestBase
 {
     private readonly CategoryController _categoryController;
 
-    public CategoryTests(TestBase testBase)
+    public CategoryTests()
     {
-        _categoryController = testBase.CategoryController;
+        _categoryController = CategoryController;
     }
+
+    #region Create
 
     [Theory]
     [InlineData("Category A")]
     [InlineData("Category B")]
     [InlineData("Category C")]
-    public async Task Create_Category_ShouldReturnCreatedResult(string categoryTitle)
+    public async Task Create_Category_ShouldReturnCreatedResult(string title)
     {
         // Arrange
         var categoryDto = new CreateCategoryDto
         {
-            Title = categoryTitle
+            Title = title
         };
 
         // Act
@@ -35,10 +37,16 @@ public class CategoryTests : IClassFixture<TestBase>
         Assert.True(actionResult is CreatedResult);
     }
 
+    #endregion
+
+    #region Get All Paginated
+
     [Fact]
     public async Task GetAll_CategoriesPaginated_ShouldReturnOkObjectResult()
     {
         // Arrange
+        _ = await _categoryController.CreateCategoryTestHelper("Category A");
+
         // Act
         var actionResult = await _categoryController.GetAllCategoriesPaginated();
 
@@ -46,11 +54,15 @@ public class CategoryTests : IClassFixture<TestBase>
         Assert.True(actionResult is OkObjectResult);
     }
 
+    #endregion
+
+    #region By Id
+
     [Fact]
     public async Task Get_CategoryById_ShouldReturnOkObjectResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category D");
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
 
         // Act
         var actionResult = await _categoryController.GetCategoryById(createdCategory.Id);
@@ -59,35 +71,61 @@ public class CategoryTests : IClassFixture<TestBase>
         Assert.True(actionResult is OkObjectResult);
     }
 
+    #endregion
+
+    #region Update By Id
+
     [Fact]
-    public async Task Update_CategoryById_ShouldReturnStatusCodeResult_WithStatusCode200()
+    public async Task Update_CategoryById_ShouldReturnOkResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category E");
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
         var updateCategoryDto = new UpdateCategoryDto
         {
-            Title = "Category E Updated"
+            Title = "Category A Updated"
         };
 
         // Act
         var actionResult = await _categoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
-        var statusCodeResult = actionResult as StatusCodeResult;
 
         // Assert
-        Assert.True(statusCodeResult?.StatusCode is StatusCodes.Status200OK);
+        Assert.True(actionResult is OkResult);
     }
 
     [Fact]
-    public async Task Delete_CategoryById_ShouldReturnStatusCodeResult_WithStatusCode200()
+    public async Task Update_CategoryById_ShouldReturnConflictResult()
     {
         // Arrange
-        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category F");
+        _ = await _categoryController.CreateCategoryTestHelper("Category A");
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category B");
+        var updateCategoryDto = new UpdateCategoryDto
+        {
+            Title = "Category A"
+        };
+
+        // Act
+        var actionResult = await _categoryController.UpdateCategoryById(createdCategory.Id, updateCategoryDto);
+
+        // Assert
+        Assert.True(actionResult is ConflictResult);
+    }
+
+    #endregion
+
+    #region Delete By Id
+
+    [Fact]
+    public async Task Delete_CategoryById_ShouldReturnOkResult()
+    {
+        // Arrange
+        var createdCategory = await _categoryController.CreateCategoryTestHelper("Category A");
 
         // Act
         var actionResult = await _categoryController.DeleteCategoryById(createdCategory.Id);
-        var statusCodeResult = actionResult as StatusCodeResult;
 
         // Assert
-        Assert.True(statusCodeResult?.StatusCode is StatusCodes.Status200OK);
+        Assert.True(actionResult is OkResult);
     }
+
+    #endregion
 }

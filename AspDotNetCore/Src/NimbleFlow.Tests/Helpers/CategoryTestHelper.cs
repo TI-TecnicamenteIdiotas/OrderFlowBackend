@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Controllers;
 using NimbleFlow.Contracts.DTOs.Categories;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Tests.Helpers;
 
-public static class CategoryTestHelper
+internal static class CategoryTestHelper
 {
     public static async Task<CategoryDto> CreateCategoryTestHelper(
         this CategoryController categoryController,

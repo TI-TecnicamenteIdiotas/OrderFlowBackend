@@ -1,5 +1,5 @@
-using NimbleFlow.Contracts.DTOs.Categories;
 using NimbleFlow.Data.Models;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
@@ -24,6 +24,6 @@ public class ProductWithRelationsDto
             Price = product.Price,
             ImageUrl = product.ImageUrl,
             IsFavorite = product.IsFavorite,
-            Category = CategoryDto.FromModel(product.Category)
+            Category = product.Category.ToDto()
         };
 }

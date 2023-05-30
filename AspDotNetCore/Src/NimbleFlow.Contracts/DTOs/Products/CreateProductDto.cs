@@ -1,8 +1,9 @@
-﻿using NimbleFlow.Data.Models;
+﻿using NimbleFlow.Contracts.Interfaces;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
-public class CreateProductDto
+public class CreateProductDto : IToModel<Product>
 {
     public string Title { get; set; } = null!;
     public string? Description { get; set; }

@@ -1,13 +1,16 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Repositories.Base;
+using NimbleFlow.Contracts.Interfaces;
 using NimbleFlow.Data.Partials.Interfaces;
 
 namespace NimbleFlow.Api.Services.Base;
 
-public abstract class ServiceBase<TDbContext, TEntity>
+public abstract class ServiceBase<TCreateDto, TDto, TDbContext, TEntity>
+    where TCreateDto : IToModel<TEntity>
+    where TDto : class
     where TDbContext : DbContext
-    where TEntity : class, IIdentifiable<Guid>, ICreatedAtDeletedAt
+    where TEntity : class, IIdentifiable<Guid>, ICreatedAtDeletedAt, IToDto<TDto>
 {
     private readonly RepositoryBase<TDbContext, TEntity> _repository;
 
@@ -16,8 +19,33 @@ public abstract class ServiceBase<TDbContext, TEntity>
         _repository = repository;
     }
 
-    public Task<bool> ExistsById(Guid entityId)
-        => _repository.ExistsById(entityId);
+    public async Task<(HttpStatusCode, TDto?)> Create(TCreateDto createDto)
+    {
+        try
+        {
+            var response = await _repository.CreateEntity(createDto.ToModel());
+            if (response is null)
+                return (HttpStatusCode.InternalServerError, null);
+
+            return (HttpStatusCode.Created, response.ToDto());
+        }
+        catch (DbUpdateException)
+        {
+            return (HttpStatusCode.Conflict, null);
+        }
+    }
+
+    public async Task<IEnumerable<TDto>> GetAllPaginated(int page, int limit, bool includeDeleted)
+    {
+        var response = await _repository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return response.Select(x => x.ToDto());
+    }
+
+    public async Task<TDto?> GetById(Guid entityId)
+    {
+        var response = await _repository.GetEntityById(entityId);
+        return response?.ToDto();
+    }
 
     public async Task<HttpStatusCode> DeleteEntityById(Guid entityId)
     {

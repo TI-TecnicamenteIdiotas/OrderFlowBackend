@@ -1,44 +1,22 @@
 ﻿using System.Net;
+using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Extensions;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Categories;
 using NimbleFlow.Data.Context;
 using NimbleFlow.Data.Models;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Api.Services;
 
-public class CategoryService : ServiceBase<NimbleFlowContext, Category>
+public class CategoryService : ServiceBase<CreateCategoryDto, CategoryDto, NimbleFlowContext, Category>
 {
     private readonly CategoryRepository _categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) : base(categoryRepository)
     {
         _categoryRepository = categoryRepository;
-    }
-
-    public async Task<CategoryDto?> CreateCategory(CreateCategoryDto categoryDto)
-    {
-        var response = await _categoryRepository.CreateEntity(categoryDto.ToModel());
-        if (response is null)
-            return null;
-
-        return CategoryDto.FromModel(response);
-    }
-
-    public async Task<IEnumerable<CategoryDto>> GetAllCategoriesPaginated(int page, int limit, bool includeDeleted)
-    {
-        var response = await _categoryRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
-        return response.Select(CategoryDto.FromModel);
-    }
-
-    public async Task<CategoryDto?> GetCategoryById(Guid categoryId)
-    {
-        var response = await _categoryRepository.GetEntityById(categoryId);
-        if (response is null)
-            return null;
-
-        return CategoryDto.FromModel(response);
     }
 
     public async Task<HttpStatusCode> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
@@ -69,8 +47,15 @@ public class CategoryService : ServiceBase<NimbleFlowContext, Category>
         if (!shouldUpdate)
             return HttpStatusCode.NotModified;
 
-        if (!await _categoryRepository.UpdateEntity(categoryEntity))
-            return HttpStatusCode.InternalServerError;
+        try
+        {
+            if (!await _categoryRepository.UpdateEntity(categoryEntity))
+                return HttpStatusCode.NotModified;
+        }
+        catch (DbUpdateException)
+        {
+            return HttpStatusCode.Conflict;
+        }
 
         return HttpStatusCode.OK;
     }

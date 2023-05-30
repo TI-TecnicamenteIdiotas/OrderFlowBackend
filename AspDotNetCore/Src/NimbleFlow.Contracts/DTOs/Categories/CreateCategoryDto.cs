@@ -1,8 +1,9 @@
-﻿using NimbleFlow.Data.Models;
+﻿using NimbleFlow.Contracts.Interfaces;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Contracts.DTOs.Categories;
 
-public class CreateCategoryDto
+public class CreateCategoryDto : IToModel<Category>
 {
     public string Title { get; set; } = null!;
     public int? ColorTheme { get; set; }

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NimbleFlow.Api.Helpers;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Categories;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -9,6 +10,7 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class CategoryController : ControllerBase
 {
+    private const int MaxTitleLength = 32;
     private readonly CategoryService _categoryService;
 
     public CategoryController(CategoryService categoryService)
@@ -19,20 +21,31 @@ public class CategoryController : ControllerBase
     /// <summary>Creates a category</summary>
     /// <param name="requestBody"></param>
     /// <response code="400">Bad Request</response>
+    /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPost]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto requestBody)
     {
-        var validationError = requestBody.Validate();
-        if (validationError is not null)
-            return validationError;
+        if (string.IsNullOrWhiteSpace(requestBody.Title))
+            return BadRequest($"{nameof(requestBody.Title)} must not be null or composed by white spaces only");
 
-        var response = await _categoryService.CreateCategory(requestBody);
-        if (response is null)
-            return Problem();
+        if (requestBody.Title.Length > MaxTitleLength)
+            return BadRequest($"{nameof(requestBody.Title)} must be under {MaxTitleLength + 1} characters");
 
-        return Created(string.Empty, response);
+        if (requestBody.ColorTheme < 0)
+            return BadRequest($"{nameof(requestBody.ColorTheme)} must be positive");
+
+        if (requestBody.CategoryIcon < 0)
+            return BadRequest($"{nameof(requestBody.CategoryIcon)} must be positive");
+
+        var (responseStatus, response) = await _categoryService.Create(requestBody);
+        return responseStatus switch
+        {
+            HttpStatusCode.Created => Created(string.Empty, response),
+            HttpStatusCode.Conflict => Conflict(),
+            _ => Problem()
+        };
     }
 
     /// <summary>Gets all categories paginated</summary>
@@ -48,7 +61,7 @@ public class CategoryController : ControllerBase
         [FromQuery] bool includeDeleted = false
     )
     {
-        var response = await _categoryService.GetAllCategoriesPaginated(page, limit, includeDeleted);
+        var response = await _categoryService.GetAllPaginated(page, limit, includeDeleted);
         if (!response.Any())
             return NoContent();
 
@@ -62,7 +75,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
     {
-        var response = await _categoryService.GetCategoryById(categoryId);
+        var response = await _categoryService.GetById(categoryId);
         if (response is null)
             return NotFound();
 
@@ -76,6 +89,7 @@ public class CategoryController : ControllerBase
     /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
+    /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{categoryId:guid}")]
     public async Task<IActionResult> UpdateCategoryById(
@@ -83,12 +97,27 @@ public class CategoryController : ControllerBase
         [FromBody] UpdateCategoryDto requestBody
     )
     {
-        var validationError = requestBody.Validate();
-        if (validationError is not null)
-            return validationError;
+        if (string.IsNullOrWhiteSpace(requestBody.Title))
+            return BadRequest($"{nameof(requestBody.Title)} must not be null or composed by white spaces only");
+
+        if (requestBody.Title.Length > MaxTitleLength)
+            return BadRequest($"{nameof(requestBody.Title)} length must be under {MaxTitleLength + 1} characters");
+
+        if (requestBody.ColorTheme < 0)
+            return BadRequest($"{nameof(requestBody.ColorTheme)} must be positive");
+
+        if (requestBody.CategoryIcon < 0)
+            return BadRequest($"{nameof(requestBody.CategoryIcon)} must be positive");
 
         var responseStatus = await _categoryService.UpdateCategoryById(categoryId, requestBody);
-        return StatusCode((int)responseStatus);
+        return responseStatus switch
+        {
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.NotModified => StatusCode((int)HttpStatusCode.NotModified),
+            HttpStatusCode.NotFound => NotFound(),
+            HttpStatusCode.Conflict => Conflict(),
+            _ => Problem()
+        };
     }
 
     /// <summary>Deletes a category by id</summary>
@@ -100,6 +129,11 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> DeleteCategoryById([FromRoute] Guid categoryId)
     {
         var responseStatus = await _categoryService.DeleteEntityById(categoryId);
-        return StatusCode((int)responseStatus);
+        return responseStatus switch
+        {
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.NotFound => NotFound(),
+            _ => Problem()
+        };
     }
 }

@@ -7,16 +7,15 @@ using NimbleFlow.Data.Context;
 
 namespace NimbleFlow.Tests.Base;
 
-public class TestBase : IDisposable
+public abstract class TestBase : IDisposable
 {
     private readonly SqliteConnection _connection;
 
-    public readonly CategoryController CategoryController;
+    protected readonly CategoryController CategoryController;
     public readonly ProductController ProductController;
-    public readonly OrderController OrderController;
     public readonly TableController TableController;
 
-    public TestBase()
+    protected TestBase()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
@@ -34,10 +33,6 @@ public class TestBase : IDisposable
         var productRepository = new ProductRepository(dbContext);
         var productService = new ProductService(productRepository);
         ProductController = new ProductController(productService);
-
-        var orderRepository = new OrderRepository(dbContext);
-        var orderService = new OrderService(orderRepository);
-        OrderController = new OrderController(orderService, productService);
 
         var tableRepository = new TableRepository(dbContext);
         var tableService = new TableService(tableRepository);

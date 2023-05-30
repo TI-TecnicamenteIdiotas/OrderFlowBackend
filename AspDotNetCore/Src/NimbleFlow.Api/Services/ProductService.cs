@@ -1,44 +1,22 @@
 ﻿using System.Net;
+using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Extensions;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Products;
 using NimbleFlow.Data.Context;
 using NimbleFlow.Data.Models;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Api.Services;
 
-public class ProductService : ServiceBase<NimbleFlowContext, Product>
+public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFlowContext, Product>
 {
     private readonly ProductRepository _productRepository;
 
     public ProductService(ProductRepository productRepository) : base(productRepository)
     {
         _productRepository = productRepository;
-    }
-
-    public async Task<ProductDto?> CreateProduct(CreateProductDto productDto)
-    {
-        var response = await _productRepository.CreateEntity(productDto.ToModel());
-        if (response is null)
-            return null;
-
-        return ProductDto.FromModel(response);
-    }
-
-    public async Task<IEnumerable<ProductDto>> GetAllProductsPaginated(int page, int limit, bool includeDeleted)
-    {
-        var response = await _productRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
-        return response.Select(ProductDto.FromModel);
-    }
-
-    public async Task<ProductDto?> GetProductById(Guid productId)
-    {
-        var response = await _productRepository.GetEntityById(productId);
-        if (response is null)
-            return null;
-
-        return ProductDto.FromModel(response);
     }
 
     public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
@@ -93,8 +71,15 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         if (!shouldUpdate)
             return HttpStatusCode.NotModified;
 
-        if (!await _productRepository.UpdateEntity(productEntity))
-            return HttpStatusCode.InternalServerError;
+        try
+        {
+            if (!await _productRepository.UpdateEntity(productEntity))
+                return HttpStatusCode.InternalServerError;
+        }
+        catch (DbUpdateException)
+        {
+            return HttpStatusCode.Conflict;
+        }
 
         return HttpStatusCode.OK;
     }

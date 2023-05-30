@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NimbleFlow.Api.Helpers;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Tables;
+using NimbleFlow.Data.Partials.Dtos;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -9,6 +10,7 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class TableController : ControllerBase
 {
+    private const int MaxAccountableLength = 256;
     private readonly TableService _tableService;
 
     public TableController(TableService tableService)
@@ -19,20 +21,22 @@ public class TableController : ControllerBase
     /// <summary>Creates a table</summary>
     /// <param name="requestBody"></param>
     /// <response code="400">Bad Request</response>
+    /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPost]
     [ProducesResponseType(typeof(TableDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTable([FromBody] CreateTableDto requestBody)
     {
-        var validationError = requestBody.Validate();
-        if (validationError is not null)
-            return validationError;
+        if (requestBody.Accountable.Length > MaxAccountableLength)
+            return BadRequest($"{nameof(requestBody.Accountable)} must be under {MaxAccountableLength + 1} characters");
 
-        var response = await _tableService.CreateTable(requestBody);
-        if (response is null)
-            return Problem();
-
-        return Created(string.Empty, response);
+        var (responseStatus, response) = await _tableService.Create(requestBody);
+        return responseStatus switch
+        {
+            HttpStatusCode.Created => Created(string.Empty, response),
+            HttpStatusCode.Conflict => Conflict(),
+            _ => Problem()
+        };
     }
 
     /// <summary>Gets all tables paginated</summary>
@@ -48,7 +52,7 @@ public class TableController : ControllerBase
         [FromQuery] bool includeDeleted = false
     )
     {
-        var response = await _tableService.GetAllTablesPaginated(page, limit, includeDeleted);
+        var response = await _tableService.GetAllPaginated(page, limit, includeDeleted);
         if (!response.Any())
             return NoContent();
 
@@ -57,13 +61,12 @@ public class TableController : ControllerBase
 
     /// <summary>Gets a table by id</summary>
     /// <param name="tableId"></param>
-    /// <param name="includeDeleted"></param>
     /// <response code="404">Not Found</response>
     [HttpGet("{tableId:guid}")]
-    [ProducesResponseType(typeof(TableWithRelationsDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTableById([FromRoute] Guid tableId, [FromQuery] bool includeDeleted = false)
+    [ProducesResponseType(typeof(TableDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTableById([FromRoute] Guid tableId)
     {
-        var response = await _tableService.GetTableWithRelationsById(tableId, includeDeleted);
+        var response = await _tableService.GetById(tableId);
         if (response is null)
             return NotFound();
 
@@ -77,16 +80,23 @@ public class TableController : ControllerBase
     /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
+    /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{tableId:guid}")]
     public async Task<IActionResult> UpdateTableById([FromRoute] Guid tableId, [FromBody] UpdateTableDto requestBody)
     {
-        var validationError = requestBody.Validate();
-        if (validationError is not null)
-            return validationError;
+        if (requestBody.Accountable?.Length > MaxAccountableLength)
+            return BadRequest($"{nameof(requestBody.Accountable)} must be under {MaxAccountableLength + 1} characters");
 
         var responseStatus = await _tableService.UpdateTableById(tableId, requestBody);
-        return StatusCode((int)responseStatus);
+        return responseStatus switch
+        {
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.NotModified => StatusCode((int)HttpStatusCode.NotModified),
+            HttpStatusCode.NotFound => NotFound(),
+            HttpStatusCode.Conflict => Conflict(),
+            _ => Problem()
+        };
     }
 
     /// <summary>Deletes a table by id</summary>
@@ -98,6 +108,11 @@ public class TableController : ControllerBase
     public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
         var responseStatus = await _tableService.DeleteEntityById(tableId);
-        return StatusCode((int)responseStatus);
+        return responseStatus switch
+        {
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.NotFound => NotFound(),
+            _ => Problem()
+        };
     }
 }
