@@ -13,9 +13,10 @@
         "SQL_DATABASE_DATABASE": "postgres",
         "SQL_DATABASE_USER": "postgres",
         "SQL_DATABASE_PASSWORD": "postgres123",
-        "AWS_ACCESS_KEY": "CHANGE_ME",
-        "AWS_SECRET_ACCESS_KEY": "CHANGE_ME",
-        "AWS_REGION": "CHANGE_ME"
+        "AWS_ACCESS_KEY_ID": "<CHANGE_ME_IF_NEEDED>",
+        "AWS_SECRET_ACCESS_KEY": "<CHANGE_ME_IF_NEEDED>",
+        "AWS_REGION": "CHANGE_ME",
+        "AWS_S3_SERVICE_URL": "http://localhost:10502"
       }
     }
   }

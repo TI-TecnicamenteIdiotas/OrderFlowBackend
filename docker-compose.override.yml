@@ -36,15 +36,15 @@ services:
       - nimbleflow.nosql.db:/home/dynamodblocal/data
     working_dir: /home/dynamodblocal
     restart: always
-    
+
   nimbleflow.nosql.db.up:
     depends_on:
-        - nimbleflow.nosql.db
+      - nimbleflow.nosql.db
     image: amazon/aws-cli
     container_name: nimbleflow.nosql.db.up
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     command:
       "dynamodb create-table
       --table-name order
@@ -55,7 +55,38 @@ services:
       --endpoint-url ${NO_SQL_DATABASE_PATH}
       --region ${AWS_REGION}"
 
+  nimbleflow.minio:
+    image: minio/minio:latest
+    container_name: nimbleflow.minio
+    environment:
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+    command: 'minio server /data/minio --console-address ":9090"'
+    ports:
+      - "10502:9000"
+      - "10503:9090"
+    volumes:
+      - nimbleflow.minio:/data
+    restart: always
+
+  nimbleflow.minio.up:
+    depends_on:
+      - nimbleflow.minio
+    image: amazon/aws-cli
+    container_name: nimbleflow.minio.up
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_SERVICE_URL=${AWS_S3_SERVICE_URL}
+      - AWS_REGION=${AWS_REGION}
+    command:
+      "s3api create-bucket
+      --bucket nimbleflow
+      --endpoint-url ${AWS_S3_SERVICE_URL}
+      --acl public-read"
+
   nimbleflow.aspnetcore:
+#    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_ECR_REPOSITORY}:${TAG}
     build:
       context: ./AspDotNetCore
       dockerfile: Src/NimbleFlow.Api/Dockerfile
@@ -64,15 +95,20 @@ services:
         condition: service_healthy
       nimbleflow.nosql.db:
         condition: service_started
+      nimbleflow.minio:
+        condition: service_started
 
   nimbleflow.java:
-    build: 
+#    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_ECR_REPOSITORY}:${TAG}
+    build:
       context: ./SpringBoot
-      dockerfile: Dockerfile.development
+      dockerfile: Dockerfile
     depends_on:
       nimbleflow.sql.db:
         condition: service_healthy
       nimbleflow.nosql.db:
+        condition: service_started
+      nimbleflow.minio:
         condition: service_started
 
 networks:
@@ -83,4 +119,6 @@ volumes:
   nimbleflow.sql.db:
     driver: local
   nimbleflow.nosql.db:
+    driver: local
+  nimbleflow.minio:
     driver: local

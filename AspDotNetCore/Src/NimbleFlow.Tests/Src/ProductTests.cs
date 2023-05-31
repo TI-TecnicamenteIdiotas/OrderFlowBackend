@@ -31,6 +31,27 @@ public class ProductTests : TestBase
         Assert.True(actionResult is CreatedResult);
     }
 
+    [Fact]
+    public async Task Create_Product_ShouldReturnBadRequestResult()
+    {
+        // Arrange
+        var productDto = new CreateProductDto
+        {
+            Title = "Product A",
+            Description = null,
+            Price = new decimal(10.0),
+            ImageUrl = null,
+            IsFavorite = false,
+            CategoryId = Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await ProductController.CreateProduct(productDto);
+
+        // Assert
+        Assert.True(actionResult is BadRequestResult);
+    }
+
     #endregion
 
     #region Get All Paginated

@@ -44,6 +44,7 @@ public class ProductController : ControllerBase
         return responseStatus switch
         {
             HttpStatusCode.Created => Created(string.Empty, response),
+            HttpStatusCode.BadRequest => BadRequest(),
             HttpStatusCode.Conflict => Conflict(),
             _ => Problem()
         };

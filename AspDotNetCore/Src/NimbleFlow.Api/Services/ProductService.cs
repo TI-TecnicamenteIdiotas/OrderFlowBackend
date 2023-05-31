@@ -19,6 +19,25 @@ public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFl
         _productRepository = productRepository;
     }
 
+    public new async Task<(HttpStatusCode, ProductDto?)> Create(CreateProductDto createDto)
+    {
+        try
+        {
+            var response = await _productRepository.CreateEntity(createDto.ToModel());
+            if (response is null)
+                return (HttpStatusCode.InternalServerError, null);
+
+            return (HttpStatusCode.Created, response.ToDto());
+        }
+        catch (DbUpdateException e)
+        {
+            if (e.InnerException?.Message.Contains("FOREIGN", StringComparison.InvariantCultureIgnoreCase) ?? false)
+                return (HttpStatusCode.BadRequest, null);
+
+            return (HttpStatusCode.Conflict, null);
+        }
+    }
+
     public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
         var productEntity = await _productRepository.GetEntityById(productId);

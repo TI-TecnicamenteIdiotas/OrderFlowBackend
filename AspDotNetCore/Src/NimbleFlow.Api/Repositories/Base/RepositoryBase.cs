@@ -7,19 +7,19 @@ public abstract class RepositoryBase<TDbContext, TEntity>
     where TDbContext : DbContext
     where TEntity : class, IIdentifiable<Guid>, ICreatedAtDeletedAt
 {
-    protected readonly TDbContext DbContext;
-    protected readonly DbSet<TEntity> DbEntities;
+    private readonly TDbContext _dbContext;
+    private readonly DbSet<TEntity> _dbEntities;
 
     protected RepositoryBase(TDbContext dbContext)
     {
-        DbContext = dbContext;
-        DbEntities = DbContext.Set<TEntity>();
+        _dbContext = dbContext;
+        _dbEntities = _dbContext.Set<TEntity>();
     }
 
     public async Task<TEntity?> CreateEntity(TEntity entity)
     {
-        var entityEntry = await DbEntities.AddAsync(entity);
-        if (await DbContext.SaveChangesAsync() != 1)
+        var entityEntry = await _dbEntities.AddAsync(entity);
+        if (await _dbContext.SaveChangesAsync() != 1)
             return null;
 
         return entityEntry.Entity;
@@ -36,20 +36,20 @@ public abstract class RepositoryBase<TDbContext, TEntity>
                 .ToArrayAsync();
 
         if (includeDeleted)
-            return QueryEntities(DbEntities);
+            return QueryEntities(_dbEntities);
 
-        return QueryEntities(DbEntities.Where(x => x.DeletedAt == null));
+        return QueryEntities(_dbEntities.Where(x => x.DeletedAt == null));
     }
 
     public Task<bool> ExistsById(Guid entityId)
-        => DbEntities.AnyAsync(x => x.Id == entityId);
+        => _dbEntities.AnyAsync(x => x.Id == entityId);
 
     public Task<TEntity?> GetEntityById(Guid entityId)
-        => DbEntities.FirstOrDefaultAsync(x => x.Id == entityId);
+        => _dbEntities.FirstOrDefaultAsync(x => x.Id == entityId);
 
     public async Task<bool> UpdateEntity(TEntity entity)
     {
-        _ = DbContext.Update(entity);
-        return await DbContext.SaveChangesAsync() == 1;
+        _ = _dbContext.Update(entity);
+        return await _dbContext.SaveChangesAsync() == 1;
     }
 }
