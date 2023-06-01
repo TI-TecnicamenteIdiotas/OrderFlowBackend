@@ -8,44 +8,48 @@ namespace NimbleFlow.Api.Services;
 
 public class UploadService
 {
-    private const string BucketName = "nimbleflow";
-
-    public async Task<(HttpStatusCode, string)> UploadFileAsync(Stream stream)
+    public async Task<(HttpStatusCode, string)> UploadFileAsync(Stream stream, string contentType, string fileExtension)
     {
         var credentials = new EnvironmentVariablesAWSCredentials();
-
+        var isDevelopmentEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") is "Development"
+                                       || Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+        var objectKey = string.Join(string.Empty, Guid.NewGuid(), fileExtension);
+        var bucketName = Environment.GetEnvironmentVariable("AWS_S3_BUCKET_NAME");
+        var serviceUrl = Environment.GetEnvironmentVariable("AWS_S3_SERVICE_URL");
+        var awsRegion = Environment.GetEnvironmentVariable("AWS_REGION");
+        AmazonS3Config config;
         // Virtual-hosted–style access
         // https://bucket-name.s3.region-code.amazonaws.com/key-name
         // Path-style access should be used to work with minio
-        var isDevelopmentEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") is "Development"
-                                       || Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-        AmazonS3Config config;
+        var objectPath = isDevelopmentEnvironment
+            ? $"{serviceUrl}/{bucketName}/{objectKey}"
+            : $"https://{bucketName}.s3.{awsRegion}.amazonaws.com/{objectKey}";
+
         if (isDevelopmentEnvironment)
             config = new AmazonS3Config
             {
-                ServiceURL = Environment.GetEnvironmentVariable("AWS_S3_SERVICE_URL")!,
+                ServiceURL = serviceUrl!,
                 ForcePathStyle = true
             };
         else
             config = new AmazonS3Config
             {
-                RegionEndpoint = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("AWS_REGION")!)
+                RegionEndpoint = RegionEndpoint.GetBySystemName(awsRegion!)
             };
 
         using var client = new AmazonS3Client(credentials, config);
         var fileTransferUtility = new TransferUtility(client);
-        var objectKey = Guid.NewGuid().ToString();
         var fileTransferUtilityRequest = new TransferUtilityUploadRequest
         {
-            BucketName = BucketName,
+            BucketName = bucketName,
             InputStream = stream,
             StorageClass = S3StorageClass.Standard,
             PartSize = stream.Length,
             Key = objectKey,
             CannedACL = S3CannedACL.PublicRead,
-            ContentType = "image/jpeg"
+            ContentType = contentType
         };
         await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
-        return (HttpStatusCode.Created, $"{BucketName}/{objectKey}");
+        return (HttpStatusCode.Created, objectPath);
     }
 }

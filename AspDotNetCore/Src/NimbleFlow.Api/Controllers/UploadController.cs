@@ -1,8 +1,10 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Net.Http.Headers;
 using NimbleFlow.Api.Helpers;
 using NimbleFlow.Api.Services;
+using NimbleFlow.Contracts.Enums;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -14,10 +16,10 @@ public class UploadController : ControllerBase
     private const int FileSizeLimit = 1048576;
     private readonly UploadService _uploadService;
 
-    private readonly Dictionary<string, byte[]> _validFileHeaders = new()
+    private readonly Dictionary<FileTypesEnum, byte[]> _validFileHeaders = new()
     {
-        { "jpeg;jpg", new byte[] { 0xFF, 0xD8 } },
-        { "png", new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } }
+        { FileTypesEnum.Jpeg, new byte[] { 0xFF, 0xD8 } },
+        { FileTypesEnum.Png, new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } }
     };
 
     public UploadController(UploadService uploadService)
@@ -44,10 +46,17 @@ public class UploadController : ControllerBase
             return BadRequest();
 
         var fileBytes = memoryStream.ToArray();
-        if (!fileBytes.IsFileTypeValid(_validFileHeaders))
+        var fileType = fileBytes.GetByteArrayFileType(_validFileHeaders);
+        if (fileType is FileTypesEnum.Invalid)
             return new UnsupportedMediaTypeResult();
+        var (contentType, fileExtension) = fileType switch
+        {
+            FileTypesEnum.Jpeg => ("image/jpeg", ".jpeg"),
+            FileTypesEnum.Png => ("image/png", ".png"),
+            _ => (string.Empty, string.Empty)
+        };
 
-        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream);
+        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream, contentType, fileExtension);
         return responseStatus switch
         {
             HttpStatusCode.Created => Created(string.Empty, response),
@@ -63,6 +72,7 @@ public class UploadController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> UploadBinaryImage()
     {
+        Request.Headers.TryGetValue(HeaderNames.ContentType, out var contentType);
         await using var fileBuffer = new FileBufferingReadStream(
             Request.Body,
             FileSizeLimit,
@@ -76,10 +86,17 @@ public class UploadController : ControllerBase
             return BadRequest();
 
         var fileBytes = memoryStream.ToArray();
-        if (!fileBytes.IsFileTypeValid(_validFileHeaders))
+        var fileType = fileBytes.GetByteArrayFileType(_validFileHeaders);
+        if (fileType is FileTypesEnum.Invalid)
             return new UnsupportedMediaTypeResult();
+        var fileExtension = fileType switch
+        {
+            FileTypesEnum.Jpeg => ".jpeg",
+            FileTypesEnum.Png => ".png",
+            _ => string.Empty
+        };
 
-        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream);
+        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream, contentType, fileExtension);
         return responseStatus switch
         {
             HttpStatusCode.Created => Created(string.Empty, response),

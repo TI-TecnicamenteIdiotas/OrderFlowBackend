@@ -16,7 +16,8 @@
         "AWS_ACCESS_KEY_ID": "<CHANGE_ME_IF_NEEDED>",
         "AWS_SECRET_ACCESS_KEY": "<CHANGE_ME_IF_NEEDED>",
         "AWS_REGION": "CHANGE_ME",
-        "AWS_S3_SERVICE_URL": "http://localhost:10502"
+        "AWS_S3_SERVICE_URL": "http://localhost:10502",
+        "AWS_S3_BUCKET_NAME": "nimbleflow"
       }
     }
   }

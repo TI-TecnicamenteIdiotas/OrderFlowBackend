@@ -1,8 +1,13 @@
+using NimbleFlow.Contracts.Enums;
+
 namespace NimbleFlow.Api.Helpers;
 
 public static class FilesHelper
 {
-    public static bool IsFileTypeValid(this byte[] data, Dictionary<string, byte[]> validFileHeaders)
+    public static FileTypesEnum GetByteArrayFileType(
+        this byte[] data,
+        Dictionary<FileTypesEnum, byte[]> validFileHeaders
+    )
     {
         foreach (var check in validFileHeaders)
         {
@@ -11,9 +16,9 @@ public static class FilesHelper
 
             var slice = data[..check.Value.Length];
             if (slice.SequenceEqual(check.Value))
-                return true;
+                return check.Key;
         }
 
-        return false;
+        return FileTypesEnum.Invalid;
     }
 }
