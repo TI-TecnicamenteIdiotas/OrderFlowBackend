@@ -1,8 +1,8 @@
 namespace NimbleFlow.Contracts.Enums;
 
-public enum FileTypesEnum
+public enum FileTypeEnum
 {
-    Invalid,
+    Unknown,
     Jpeg,
     Png
 }

@@ -4,12 +4,12 @@ namespace NimbleFlow.Api.Helpers;
 
 public static class FilesHelper
 {
-    public static FileTypesEnum GetByteArrayFileType(
+    public static FileTypeEnum GetFileTypeBySignature(
         this byte[] data,
-        Dictionary<FileTypesEnum, byte[]> validFileHeaders
+        Dictionary<FileTypeEnum, byte[]> fileSignatures
     )
     {
-        foreach (var check in validFileHeaders)
+        foreach (var check in fileSignatures)
         {
             if (data.Length < check.Value.Length)
                 continue;
@@ -19,6 +19,6 @@ public static class FilesHelper
                 return check.Key;
         }
 
-        return FileTypesEnum.Invalid;
+        return FileTypeEnum.Unknown;
     }
 }

@@ -3,6 +3,7 @@ version: '3.9'
 services:
   nimbleflow.aspnetcore:
     container_name: nimbleflow.aspnetcore
+    image: ${CONTAINER_REGISTRY}:${TAG-latest}
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
@@ -19,6 +20,7 @@ services:
 
   nimbleflow.java:
     container_name: nimbleflow.java
+    image: ${CONTAINER_REGISTRY}:${TAG-latest}
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}

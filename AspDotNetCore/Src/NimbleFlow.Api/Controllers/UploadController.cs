@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using NimbleFlow.Api.Helpers;
 using NimbleFlow.Api.Services;
+using NimbleFlow.Contracts.Constants;
 using NimbleFlow.Contracts.Enums;
 
 namespace NimbleFlow.Api.Controllers;
@@ -14,62 +15,26 @@ public class UploadController : ControllerBase
 {
     // 1mb in binary bytes
     private const int FileSizeLimit = 1048576;
-    private readonly UploadService _uploadService;
 
-    private readonly Dictionary<FileTypesEnum, byte[]> _validFileHeaders = new()
+    private readonly Dictionary<FileTypeEnum, byte[]> _acceptedFileSignatures = new()
     {
-        { FileTypesEnum.Jpeg, new byte[] { 0xFF, 0xD8 } },
-        { FileTypesEnum.Png, new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } }
+        { FileTypeEnum.Jpeg, FileSignatures.Jpeg },
+        { FileTypeEnum.Png, FileSignatures.Png }
     };
+
+    private readonly UploadService _uploadService;
 
     public UploadController(UploadService uploadService)
     {
         _uploadService = uploadService;
     }
 
-    /// <summary>Sends a image file to storage</summary>
-    /// <param name="file"></param>
+    /// <summary>Sends a image file to storage, consumes a binary file</summary>
     /// <response code="400">Bad Request</response>
     /// <response code="415">Unsupported Media Type</response>
-    [HttpPost]
-    [Consumes("multipart/form-data")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UploadImage(IFormFile file)
-    {
-        if (file.Length > FileSizeLimit)
-            return BadRequest();
-
-        await using var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream);
-
-        if (memoryStream.Length > FileSizeLimit)
-            return BadRequest();
-
-        var fileBytes = memoryStream.ToArray();
-        var fileType = fileBytes.GetByteArrayFileType(_validFileHeaders);
-        if (fileType is FileTypesEnum.Invalid)
-            return new UnsupportedMediaTypeResult();
-        var (contentType, fileExtension) = fileType switch
-        {
-            FileTypesEnum.Jpeg => ("image/jpeg", ".jpeg"),
-            FileTypesEnum.Png => ("image/png", ".png"),
-            _ => (string.Empty, string.Empty)
-        };
-
-        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream, contentType, fileExtension);
-        return responseStatus switch
-        {
-            HttpStatusCode.Created => Created(string.Empty, response),
-            _ => Problem()
-        };
-    }
-
-    /// <summary>Sends a image file to storage</summary>
-    /// <response code="400">Bad Request</response>
-    /// <response code="415">Unsupported Media Type</response>
-    [HttpPost("binary")]
+    [HttpPost("image")]
     [Consumes("image/jpeg", "image/png")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
     public async Task<IActionResult> UploadBinaryImage()
     {
         Request.Headers.TryGetValue(HeaderNames.ContentType, out var contentType);
@@ -86,13 +51,13 @@ public class UploadController : ControllerBase
             return BadRequest();
 
         var fileBytes = memoryStream.ToArray();
-        var fileType = fileBytes.GetByteArrayFileType(_validFileHeaders);
-        if (fileType is FileTypesEnum.Invalid)
+        var fileSignatureType = fileBytes.GetFileTypeBySignature(_acceptedFileSignatures);
+        if (fileSignatureType is FileTypeEnum.Unknown)
             return new UnsupportedMediaTypeResult();
-        var fileExtension = fileType switch
+        var fileExtension = fileSignatureType switch
         {
-            FileTypesEnum.Jpeg => ".jpeg",
-            FileTypesEnum.Png => ".png",
+            FileTypeEnum.Jpeg => ".jpeg",
+            FileTypeEnum.Png => ".png",
             _ => string.Empty
         };
 
