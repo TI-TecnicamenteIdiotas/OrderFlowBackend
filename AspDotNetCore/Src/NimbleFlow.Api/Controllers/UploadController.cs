@@ -14,7 +14,7 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class UploadController : ControllerBase
 {
-    // 1mb in binary bytes
+    /// 1mb in binary bytes
     private const int FileSizeLimit = 1048576;
 
     private readonly Dictionary<FileTypeEnum, byte[]> _acceptedFileSignatures = new()
@@ -38,33 +38,37 @@ public class UploadController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status201Created, MediaTypeNames.Text.Plain)]
     public async Task<IActionResult> UploadBinaryImage()
     {
-        Request.Headers.TryGetValue(HeaderNames.ContentType, out var contentType);
-        await using var fileBuffer = new FileBufferingReadStream(
-            Request.Body,
-            FileSizeLimit,
-            FileSizeLimit,
-            string.Empty
-        );
-        await using var memoryStream = new MemoryStream();
-        await fileBuffer.CopyToAsync(memoryStream);
-
-        if (memoryStream.Length > FileSizeLimit)
-            return BadRequest();
-
-        var fileBytes = memoryStream.ToArray();
-        var fileSignatureType = fileBytes.GetFileTypeBySignature(_acceptedFileSignatures);
-        if (fileSignatureType is FileTypeEnum.Unknown)
-            return new UnsupportedMediaTypeResult();
-
-        var (responseStatus, response) = await _uploadService.UploadFileAsync(
-            memoryStream,
-            contentType,
-            fileSignatureType
-        );
-        return responseStatus switch
+        try
         {
-            HttpStatusCode.Created => Created(string.Empty, response),
-            _ => Problem()
-        };
+            await using var fileBuffer = new FileBufferingReadStream(
+                Request.Body,
+                FileSizeLimit,
+                FileSizeLimit,
+                string.Empty
+            );
+            await using var memoryStream = new MemoryStream();
+            await fileBuffer.CopyToAsync(memoryStream);
+
+            var fileBytes = memoryStream.ToArray();
+            var fileSignatureType = fileBytes.GetFileTypeBySignature(_acceptedFileSignatures);
+            if (fileSignatureType is FileTypeEnum.Unknown)
+                return new UnsupportedMediaTypeResult();
+
+            Request.Headers.TryGetValue(HeaderNames.ContentType, out var contentType);
+            var (responseStatus, response) = await _uploadService.UploadFileAsync(
+                memoryStream,
+                contentType,
+                fileSignatureType
+            );
+            return responseStatus switch
+            {
+                HttpStatusCode.Created => Created(string.Empty, response),
+                _ => Problem()
+            };
+        }
+        catch (IOException)
+        {
+            return BadRequest("file_is_too_large");
+        }
     }
 }
