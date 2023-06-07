@@ -8,10 +8,9 @@ Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 builder.Host.UseSerilog();
 
 builder.Configuration.ConfigureSwaggerOptions();
-builder.Configuration.ConfigurePostgresOptions();
 builder.Services.InjectCors();
 builder.Services.InjectOptions(builder.Configuration);
-builder.Services.InjectDatabases();
+builder.Services.InjectDatabases(builder.Configuration);
 builder.Services.InjectRepositories();
 builder.Services.InjectServices();
 builder.Services.AddControllers();

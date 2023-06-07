@@ -6,18 +6,12 @@ namespace NimbleFlow.Api.ServiceCollectionExtensions;
 
 public static partial class ServiceCollectionExtensions
 {
-    public static void InjectDatabases(this IServiceCollection services)
+    public static void InjectDatabases(this IServiceCollection services, IConfiguration configuration)
     {
-        var postgresOptions = PostgresOptions.GetConfiguredInstance();
-        var postgresConnectionString = $"Server={postgresOptions.Server};" +
-                                       $"Port={postgresOptions.Port};" +
-                                       $"Database={postgresOptions.Database};" +
-                                       $"User Id={postgresOptions.User};" +
-                                       $"Password={postgresOptions.Password}";
-
         services.AddDbContext<NimbleFlowContext>(optionsBuilder =>
-            optionsBuilder.UseNpgsql(postgresConnectionString, builder =>
-                builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)
+            optionsBuilder.UseNpgsql(
+                configuration["SQL_CONNECTION_STRING"],
+                builder => builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)
             )
         );
     }

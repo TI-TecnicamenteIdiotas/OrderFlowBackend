@@ -19,11 +19,12 @@ public static partial class ServiceCollectionExtensions
 
         services.Configure<AmazonS3Options>(x =>
         {
-            var isDevelopmentEnvironment = configuration["ASPNETCORE_ENVIRONMENT"] is "Development";
-            var isContainerEnvironment = configuration["DOTNET_RUNNING_IN_CONTAINER"] is "true";
+            var isDevelopment = configuration["ASPNETCORE_ENVIRONMENT"] is "Development";
+            var isContainer = configuration["DOTNET_RUNNING_IN_CONTAINER"] is "true";
+            var isProduction = configuration["ASPNETCORE_ENVIRONMENT"] is "Production";
             var regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS_REGION"]);
 
-            x.AmazonS3Config = isDevelopmentEnvironment || isContainerEnvironment
+            x.AmazonS3Config = isDevelopment || isContainer && !isProduction
                 ? new AmazonS3Config
                 {
                     ServiceURL = configuration["AWS_S3_SERVICE_URL"],
@@ -35,9 +36,9 @@ public static partial class ServiceCollectionExtensions
                 };
             x.RegionEndpoint = regionEndpoint;
             x.BucketName = configuration["AWS_S3_BUCKET_NAME"];
-            x.ServiceUrl = configuration["AWS_S3_SERVICE_URL"];
-            x.IsDevelopmentEnvironment = isDevelopmentEnvironment;
-            x.IsContainerEnvironment = isContainerEnvironment;
+            x.IsDevelopmentEnvironment = isDevelopment;
+            x.IsContainerEnvironment = isContainer;
+            x.IsProductionEnvironment = isProduction;
         });
     }
 }
