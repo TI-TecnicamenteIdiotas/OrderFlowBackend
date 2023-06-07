@@ -1,8 +1,14 @@
 ﻿namespace NimbleFlow.Data.Partials.DTOs;
 
-public sealed class TableDto
+public class TableDto
 {
-    public Guid Id { get; set; }
-    public string Accountable { get; set; } = null!;
-    public bool IsFullyPaid { get; set; }
+    public Guid Id { get; init; }
+    public string Accountable { get; init; }
+    public bool IsFullyPaid { get; init; }
+
+    public TableDto(Guid id, string accountable)
+    {
+        Id = id;
+        Accountable = accountable;
+    }
 }

@@ -7,10 +7,8 @@ namespace NimbleFlow.Data.Models;
 public partial class Category : IIdentifiable<Guid>, ICreatedAtDeletedAt, IToDto<CategoryDto>
 {
     public CategoryDto ToDto()
-        => new()
+        => new(Id, Title)
         {
-            Id = Id,
-            Title = Title,
             ColorTheme = ColorTheme,
             CategoryIcon = CategoryIcon
         };
@@ -19,25 +17,20 @@ public partial class Category : IIdentifiable<Guid>, ICreatedAtDeletedAt, IToDto
 public partial class Product : IIdentifiable<Guid>, ICreatedAtDeletedAt, IToDto<ProductDto>
 {
     public ProductDto ToDto()
-        => new()
+        => new(Id, Title, CategoryId)
         {
-            Id = Id,
-            Title = Title,
             Description = Description,
             Price = Price,
             ImageUrl = ImageUrl,
-            IsFavorite = IsFavorite,
-            CategoryId = CategoryId
+            IsFavorite = IsFavorite
         };
 }
 
 public partial class Table : IIdentifiable<Guid>, ICreatedAtDeletedAt, IToDto<TableDto>
 {
     public TableDto ToDto()
-        => new()
+        => new(Id, Accountable)
         {
-            Id = Id,
-            Accountable = Accountable,
             IsFullyPaid = IsFullyPaid
         };
 }

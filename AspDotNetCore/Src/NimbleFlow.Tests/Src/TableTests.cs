@@ -13,9 +13,8 @@ public class TableTests : TestBase
     public async Task Create_Table_ShouldReturnCreatedResult()
     {
         // Arrange
-        var tableDto = new CreateTableDto
+        var tableDto = new CreateTableDto("Accountable A")
         {
-            Accountable = "Accountable A",
             IsFullyPaid = false
         };
 

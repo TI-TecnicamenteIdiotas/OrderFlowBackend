@@ -14,10 +14,7 @@ public class CategoryTests : TestBase
     public async Task Create_Category_ShouldReturnCreatedResult()
     {
         // Arrange
-        var categoryDto = new CreateCategoryDto
-        {
-            Title = "Category A"
-        };
+        var categoryDto = new CreateCategoryDto("Category A");
 
         // Act
         var actionResult = await CategoryController.CreateCategory(categoryDto);

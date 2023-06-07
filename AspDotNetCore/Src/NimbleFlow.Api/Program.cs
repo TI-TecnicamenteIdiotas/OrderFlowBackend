@@ -10,6 +10,7 @@ builder.Host.UseSerilog();
 builder.Configuration.ConfigureSwaggerOptions();
 builder.Configuration.ConfigurePostgresOptions();
 builder.Services.InjectCors();
+builder.Services.InjectOptions(builder.Configuration);
 builder.Services.InjectDatabases();
 builder.Services.InjectRepositories();
 builder.Services.InjectServices();

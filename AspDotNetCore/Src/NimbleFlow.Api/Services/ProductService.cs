@@ -38,6 +38,22 @@ public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFl
         }
     }
 
+    public async Task<IEnumerable<ProductDto>> GetAllProductsPaginatedByCategoryId(
+        int page,
+        int limit,
+        bool includeDeleted,
+        Guid categoryId
+    )
+    {
+        var response = await _productRepository.GetAllProductsPaginatedByCategoryId(
+            page,
+            limit,
+            includeDeleted,
+            categoryId
+        );
+        return response.Select(x => x.ToDto());
+    }
+
     public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
         var productEntity = await _productRepository.GetEntityById(productId);

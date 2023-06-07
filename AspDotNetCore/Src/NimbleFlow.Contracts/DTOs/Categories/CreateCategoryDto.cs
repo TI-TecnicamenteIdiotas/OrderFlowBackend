@@ -5,9 +5,14 @@ namespace NimbleFlow.Contracts.DTOs.Categories;
 
 public class CreateCategoryDto : IToModel<Category>
 {
-    public string Title { get; set; } = null!;
-    public int? ColorTheme { get; set; }
-    public int? CategoryIcon { get; set; }
+    public string Title { get; init; }
+    public int? ColorTheme { get; init; }
+    public int? CategoryIcon { get; init; }
+
+    public CreateCategoryDto(string title)
+    {
+        Title = title;
+    }
 
     public Category ToModel()
         => new()

@@ -14,14 +14,12 @@ public class ProductTests : TestBase
     {
         // Arrange
         var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
-        var productDto = new CreateProductDto
+        var productDto = new CreateProductDto("Product A", createdCategory.Id)
         {
-            Title = "Product A",
             Description = null,
             Price = new decimal(10.0),
             ImageUrl = null,
             IsFavorite = false,
-            CategoryId = createdCategory.Id
         };
 
         // Act
@@ -35,14 +33,12 @@ public class ProductTests : TestBase
     public async Task Create_Product_ShouldReturnBadRequestResult()
     {
         // Arrange
-        var productDto = new CreateProductDto
+        var productDto = new CreateProductDto("Product A", Guid.NewGuid())
         {
-            Title = "Product A",
             Description = null,
             Price = new decimal(10.0),
             ImageUrl = null,
             IsFavorite = false,
-            CategoryId = Guid.NewGuid()
         };
 
         // Act

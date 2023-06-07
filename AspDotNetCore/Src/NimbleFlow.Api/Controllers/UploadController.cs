@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -34,7 +35,7 @@ public class UploadController : ControllerBase
     /// <response code="415">Unsupported Media Type</response>
     [HttpPost("image")]
     [Consumes("image/jpeg", "image/png")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status201Created, MediaTypeNames.Text.Plain)]
     public async Task<IActionResult> UploadBinaryImage()
     {
         Request.Headers.TryGetValue(HeaderNames.ContentType, out var contentType);
@@ -54,14 +55,12 @@ public class UploadController : ControllerBase
         var fileSignatureType = fileBytes.GetFileTypeBySignature(_acceptedFileSignatures);
         if (fileSignatureType is FileTypeEnum.Unknown)
             return new UnsupportedMediaTypeResult();
-        var fileExtension = fileSignatureType switch
-        {
-            FileTypeEnum.Jpeg => ".jpeg",
-            FileTypeEnum.Png => ".png",
-            _ => string.Empty
-        };
 
-        var (responseStatus, response) = await _uploadService.UploadFileAsync(memoryStream, contentType, fileExtension);
+        var (responseStatus, response) = await _uploadService.UploadFileAsync(
+            memoryStream,
+            contentType,
+            fileSignatureType
+        );
         return responseStatus switch
         {
             HttpStatusCode.Created => Created(string.Empty, response),

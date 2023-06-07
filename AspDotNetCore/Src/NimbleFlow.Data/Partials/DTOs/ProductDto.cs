@@ -2,11 +2,18 @@
 
 public class ProductDto
 {
-    public Guid Id { get; set; }
-    public string Title { get; set; } = null!;
-    public string? Description { get; set; }
-    public decimal Price { get; set; }
-    public string? ImageUrl { get; set; }
-    public bool IsFavorite { get; set; }
-    public Guid CategoryId { get; set; }
+    public Guid Id { get; init; }
+    public string Title { get; init; }
+    public string? Description { get; init; }
+    public decimal Price { get; init; }
+    public string? ImageUrl { get; init; }
+    public bool IsFavorite { get; init; }
+    public Guid CategoryId { get; init; }
+
+    public ProductDto(Guid id, string title, Guid categoryId)
+    {
+        Id = id;
+        Title = title;
+        CategoryId = categoryId;
+    }
 }

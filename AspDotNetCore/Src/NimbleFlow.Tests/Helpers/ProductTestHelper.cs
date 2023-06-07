@@ -9,18 +9,16 @@ internal static class ProductTestHelper
 {
     internal static async Task<ProductDto> CreateProductTestHelper(
         this ProductController productController,
-        string productName,
+        string productTitle,
         CategoryDto categoryDto
     )
     {
-        var productDto = new CreateProductDto
+        var productDto = new CreateProductDto(productTitle, categoryDto.Id)
         {
-            Title = productName,
             Description = null,
             Price = new decimal(10.0),
             ImageUrl = null,
-            IsFavorite = false,
-            CategoryId = categoryDto.Id
+            IsFavorite = false
         };
 
         var createProductResponse = await productController.CreateProduct(productDto);

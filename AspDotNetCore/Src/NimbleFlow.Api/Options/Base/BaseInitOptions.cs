@@ -1,4 +1,4 @@
-namespace NimbleFlow.Api.Options;
+namespace NimbleFlow.Api.Options.Base;
 
 public abstract class BaseInitOptions<T>
 {

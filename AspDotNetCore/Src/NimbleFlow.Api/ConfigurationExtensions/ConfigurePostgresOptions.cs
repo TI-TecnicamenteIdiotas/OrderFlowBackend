@@ -9,7 +9,7 @@ public static partial class ConfigurationExtensions
         PostgresOptions.ConfigureInstance(new PostgresOptions
         {
             Server = configuration["SQL_DATABASE_SERVER"],
-            Port = ushort.Parse(configuration["SQL_DATABASE_PORT"]),
+            Port = int.Parse(configuration["SQL_DATABASE_PORT"]),
             Database = configuration["SQL_DATABASE_DATABASE"],
             User = configuration["SQL_DATABASE_USER"],
             Password = configuration["SQL_DATABASE_PASSWORD"]

@@ -50,20 +50,31 @@ public class ProductController : ControllerBase
         };
     }
 
-    /// <summary>Gets all products paginated</summary>
+    /// <summary>Gets all products paginated or filter all products by category id</summary>
     /// <param name="page"></param>
     /// <param name="limit"></param>
     /// <param name="includeDeleted"></param>
+    /// <param name="categoryId"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
     [ProducesResponseType(typeof(ProductDto[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllProductsPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
-        [FromQuery] bool includeDeleted = false
+        [FromQuery] bool includeDeleted = false,
+        [FromQuery] Guid? categoryId = null
     )
     {
-        var response = await _productService.GetAllPaginated(page, limit, includeDeleted);
+        var response = categoryId switch
+        {
+            not null => await _productService.GetAllProductsPaginatedByCategoryId(
+                page,
+                limit,
+                includeDeleted,
+                categoryId.Value
+            ),
+            _ => await _productService.GetAllPaginated(page, limit, includeDeleted)
+        };
         if (!response.Any())
             return NoContent();
 

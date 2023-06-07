@@ -12,11 +12,7 @@ internal static class CategoryTestHelper
         string categoryTitle
     )
     {
-        var categoryDto = new CreateCategoryDto
-        {
-            Title = categoryTitle
-        };
-
+        var categoryDto = new CreateCategoryDto(categoryTitle);
         var createCategoryResponse = await categoryController.CreateCategory(categoryDto);
         var createdCategory = ((createCategoryResponse as CreatedResult)!.Value as CategoryDto)!;
         return createdCategory;

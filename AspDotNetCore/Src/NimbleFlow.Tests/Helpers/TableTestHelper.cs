@@ -12,9 +12,8 @@ internal static class TableTestHelper
         string tableAccountable
     )
     {
-        var tableDto = new CreateTableDto
+        var tableDto = new CreateTableDto(tableAccountable)
         {
-            Accountable = tableAccountable,
             IsFullyPaid = false
         };
 
