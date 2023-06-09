@@ -1,8 +1,13 @@
 ﻿using System.Net;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using NimbleFlow.Api.Options;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs.Tables;
 using NimbleFlow.Data.Partials.DTOs;
+using TableHubPublisherServiceClient = NimbleFlowHub.Contracts.TableHubPublisherService.TableHubPublisherServiceClient;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -11,11 +16,19 @@ namespace NimbleFlow.Api.Controllers;
 public class TableController : ControllerBase
 {
     private const int MaxAccountableLength = 256;
+    private readonly bool _canNotifySubscribers;
     private readonly TableService _tableService;
+    private readonly HubServiceOptions _hubServiceOptions;
 
-    public TableController(TableService tableService)
+    public TableController(
+        TableService tableService,
+        IOptions<HubServiceOptions> hubServiceOptions,
+        bool canNotifySubscribers = true
+    )
     {
         _tableService = tableService;
+        _canNotifySubscribers = canNotifySubscribers;
+        _hubServiceOptions = hubServiceOptions.Value;
     }
 
     /// <summary>Creates a table</summary>
@@ -31,12 +44,23 @@ public class TableController : ControllerBase
             return BadRequest($"{nameof(requestBody.Accountable)} must be under {MaxAccountableLength + 1} characters");
 
         var (responseStatus, response) = await _tableService.Create(requestBody);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.Created => Created(string.Empty, response),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.Created:
+            {
+                if (!_canNotifySubscribers)
+                    return Created(string.Empty, response);
+
+                using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
+                var grpcClient = new TableHubPublisherServiceClient(channel);
+                _ = await grpcClient.NotifyCreatedAsync(new Empty());
+                return Created(string.Empty, response);
+            }
+            case HttpStatusCode.Conflict:
+                return Conflict();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Gets all tables paginated</summary>

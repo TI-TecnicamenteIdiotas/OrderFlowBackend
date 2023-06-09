@@ -29,7 +29,7 @@ public abstract class RepositoryBase<TDbContext, TEntity>
     {
         Task<TEntity[]> QueryEntities(IQueryable<TEntity> entities)
             => entities
-                .OrderByDescending(x => x.CreatedAt)
+                .OrderBy(x => x.CreatedAt)
                 .Skip(page * limit)
                 .Take(limit)
                 .AsNoTracking()

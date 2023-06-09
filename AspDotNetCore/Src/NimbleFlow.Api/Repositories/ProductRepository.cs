@@ -20,7 +20,7 @@ public class ProductRepository : RepositoryBase<NimbleFlowContext, Product>
     {
         Task<Product[]> QueryEntities(IQueryable<Product> entities)
             => entities
-                .OrderByDescending(x => x.CreatedAt)
+                .OrderBy(x => x.CreatedAt)
                 .Skip(page * limit)
                 .Take(limit)
                 .Where(x => x.CategoryId == categoryId)

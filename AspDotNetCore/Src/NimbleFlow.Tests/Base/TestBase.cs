@@ -1,6 +1,8 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NimbleFlow.Api.Controllers;
+using NimbleFlow.Api.Options;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Data.Context;
@@ -36,7 +38,8 @@ public abstract class TestBase : IDisposable
 
         var tableRepository = new TableRepository(dbContext);
         var tableService = new TableService(tableRepository);
-        TableController = new TableController(tableService);
+        var hubConnectionOptions = Options.Create(new HubServiceOptions());
+        TableController = new TableController(tableService, hubConnectionOptions, false);
     }
 
     public void Dispose()

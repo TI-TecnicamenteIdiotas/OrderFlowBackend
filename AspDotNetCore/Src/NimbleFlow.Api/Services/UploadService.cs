@@ -1,5 +1,4 @@
 using System.Net;
-using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Transfer;
@@ -13,10 +12,7 @@ public class UploadService
 {
     private readonly AWSCredentials _awsCredentials;
     private readonly AmazonS3Config _amazonS3Config;
-    private readonly RegionEndpoint _amazonS3Region;
     private readonly string _bucketName;
-    private readonly bool _isDevelopmentEnvironment;
-    private readonly bool _isContainerEnvironment;
     private readonly bool _isProductionEnvironment;
 
     public UploadService(IOptions<AmazonOptions> amazonOptions, IOptions<AmazonS3Options> amazonS3Options)
@@ -25,10 +21,7 @@ public class UploadService
 
         (
             _amazonS3Config,
-            _amazonS3Region,
             _bucketName,
-            _isDevelopmentEnvironment,
-            _isContainerEnvironment,
             _isProductionEnvironment
         ) = amazonS3Options.Value;
     }
@@ -46,11 +39,10 @@ public class UploadService
         );
 
     private string GetObjectPath(string objectKey)
-        => _isContainerEnvironment switch
+        => _isProductionEnvironment switch
         {
-            true when _isDevelopmentEnvironment => $"http://localhost:10502/{_bucketName}/{objectKey}",
-            false when _isDevelopmentEnvironment => $"http://localhost:10502/{_bucketName}/{objectKey}",
-            _ => $"https://{_bucketName}.s3.{_amazonS3Region.SystemName}.amazonaws.com/{objectKey}"
+            true => $"https://{_bucketName}.s3.{_amazonS3Config.RegionEndpoint?.SystemName}.amazonaws.com/{objectKey}",
+            _ => $"http://localhost:10502/{_bucketName}/{objectKey}"
         };
 
     public async Task<(HttpStatusCode, string)> UploadFileAsync(

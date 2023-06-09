@@ -9,6 +9,11 @@ public static partial class ServiceCollectionExtensions
 {
     public static void InjectOptions(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<HubServiceOptions>(x =>
+        {
+            x.GrpcConnectionUrl = configuration["HUB_SERVER_URL"];
+        });
+
         services.Configure<AmazonOptions>(x =>
         {
             x.Credentials = new BasicAWSCredentials(
@@ -19,25 +24,20 @@ public static partial class ServiceCollectionExtensions
 
         services.Configure<AmazonS3Options>(x =>
         {
-            var isDevelopment = configuration["ASPNETCORE_ENVIRONMENT"] is "Development";
-            var isContainer = configuration["DOTNET_RUNNING_IN_CONTAINER"] is "true";
             var isProduction = configuration["ASPNETCORE_ENVIRONMENT"] is "Production";
             var regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS_REGION"]);
 
-            x.AmazonS3Config = isDevelopment || isContainer && !isProduction
+            x.AmazonS3Config = isProduction
                 ? new AmazonS3Config
                 {
-                    ServiceURL = configuration["AWS_S3_SERVICE_URL"],
-                    ForcePathStyle = true
+                    RegionEndpoint = regionEndpoint
                 }
                 : new AmazonS3Config
                 {
-                    RegionEndpoint = regionEndpoint
+                    ServiceURL = configuration["AWS_S3_SERVICE_URL"],
+                    ForcePathStyle = true
                 };
-            x.RegionEndpoint = regionEndpoint;
             x.BucketName = configuration["AWS_S3_BUCKET_NAME"];
-            x.IsDevelopmentEnvironment = isDevelopment;
-            x.IsContainerEnvironment = isContainer;
             x.IsProductionEnvironment = isProduction;
         });
     }

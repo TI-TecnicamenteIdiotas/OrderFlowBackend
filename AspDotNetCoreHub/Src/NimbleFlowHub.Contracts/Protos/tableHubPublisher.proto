@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "NimbleFlowHub.Contracts";
+
+import "google/protobuf/empty.proto";
+
+package tableService;
+
+service TableHubPublisherService {
+  rpc NotifyCreated (google.protobuf.Empty) returns (google.protobuf.Empty);
+}

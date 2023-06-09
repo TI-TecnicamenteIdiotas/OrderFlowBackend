@@ -5,15 +5,16 @@
       "dotnetRunMessages": "true",
       "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:10504",
+      "applicationUrl": "http://127.0.0.1:10506",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SQL_CONNECTION_STRING": "Server=127.0.0.1;Port=10500;Database=postgres;User Id=postgres;Password=postgres123",
         "AWS_ACCESS_KEY_ID": "<CHANGE_ME_IF_NEEDED>",
         "AWS_SECRET_ACCESS_KEY": "<CHANGE_ME_IF_NEEDED>",
         "AWS_REGION": "us-east-1",
-        "AWS_S3_SERVICE_URL": "http://localhost:10502",
-        "AWS_S3_BUCKET_NAME": "nimbleflow"
+        "AWS_S3_SERVICE_URL": "http://127.0.0.1:10502",
+        "AWS_S3_BUCKET_NAME": "nimbleflow",
+        "HUB_SERVER_URL": "http://127.0.0.1:10505"
       }
     }
   }

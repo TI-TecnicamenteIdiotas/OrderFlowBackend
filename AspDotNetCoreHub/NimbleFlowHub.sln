@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NimbleFlowHub.Api", "Src\NimbleFlowHub.Api\NimbleFlowHub.Api.csproj", "{12B1315B-AF2D-4573-ABD8-86A270B1DFE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NimbleFlowHub.Contracts", "Src\NimbleFlowHub.Contracts\NimbleFlowHub.Contracts.csproj", "{0F5F968B-100C-4891-981E-B4A9F8699C8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12B1315B-AF2D-4573-ABD8-86A270B1DFE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12B1315B-AF2D-4573-ABD8-86A270B1DFE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12B1315B-AF2D-4573-ABD8-86A270B1DFE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12B1315B-AF2D-4573-ABD8-86A270B1DFE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F5F968B-100C-4891-981E-B4A9F8699C8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F5F968B-100C-4891-981E-B4A9F8699C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F5F968B-100C-4891-981E-B4A9F8699C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F5F968B-100C-4891-981E-B4A9F8699C8F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
