@@ -18,4 +18,6 @@ ENTRYPOINT aws dynamodb create-table \
            aws s3api put-bucket-policy \
            --bucket ${AWS_S3_BUCKET_NAME} \
            --endpoint-url ${AWS_S3_SERVICE_URL} \
-           --policy file://policy.json
+           --policy file://policy.json \
+           && \
+           exit 0

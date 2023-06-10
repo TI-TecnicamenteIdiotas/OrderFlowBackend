@@ -5,7 +5,7 @@
       "dotnetRunMessages": "true",
       "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "http://127.0.0.1:10506",
+      "applicationUrl": "http://*:10506",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SQL_CONNECTION_STRING": "Server=127.0.0.1;Port=10500;Database=postgres;User Id=postgres;Password=postgres123",
