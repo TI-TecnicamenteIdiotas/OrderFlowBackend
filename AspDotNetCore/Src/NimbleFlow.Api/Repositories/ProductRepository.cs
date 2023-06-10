@@ -11,21 +11,26 @@ public class ProductRepository : RepositoryBase<NimbleFlowContext, Product>
     {
     }
 
-    public Task<Product[]> GetAllProductsPaginatedByCategoryId(
+    public Task<(int totalAmount, Product[])> GetAllProductsPaginatedByCategoryId(
         int page,
         int limit,
         bool includeDeleted,
         Guid categoryId
     )
     {
-        Task<Product[]> QueryEntities(IQueryable<Product> entities)
-            => entities
+        async Task<(int totalAmount, Product[])> QueryEntities(IQueryable<Product> entities)
+        {
+            var totalQuery = await entities.CountAsync();
+            var entitiesQuery = await entities
                 .OrderBy(x => x.CreatedAt)
                 .Skip(page * limit)
                 .Take(limit)
                 .Where(x => x.CategoryId == categoryId)
                 .AsNoTracking()
                 .ToArrayAsync();
+
+            return (totalQuery, entitiesQuery);
+        }
 
         if (includeDeleted)
             return QueryEntities(DbEntities);

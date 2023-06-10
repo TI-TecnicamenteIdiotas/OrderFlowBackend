@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NimbleFlow.Api.Options;
 using NimbleFlow.Api.Services;
+using NimbleFlow.Contracts.DTOs;
 using NimbleFlow.Contracts.DTOs.Tables;
 using NimbleFlow.Data.Partials.DTOs;
 using TableHubPublisherServiceClient = NimbleFlowHub.Contracts.TableHubPublisherService.TableHubPublisherServiceClient;
@@ -69,17 +70,18 @@ public class TableController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(TableDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedDto<TableDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllTablesPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
         [FromQuery] bool includeDeleted = false
     )
     {
-        var response = await _tableService.GetAllPaginated(page, limit, includeDeleted);
-        if (!response.Any())
+        var (totalAmount, tables) = await _tableService.GetAllPaginated(page, limit, includeDeleted);
+        if (totalAmount == 0)
             return NoContent();
 
+        var response = new PaginatedDto<TableDto>(totalAmount, tables);
         return Ok(response);
     }
 

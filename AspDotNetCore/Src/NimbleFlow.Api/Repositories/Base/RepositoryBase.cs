@@ -25,15 +25,20 @@ public abstract class RepositoryBase<TDbContext, TEntity>
         return entityEntry.Entity;
     }
 
-    public Task<TEntity[]> GetAllEntitiesPaginated(int page, int limit, bool includeDeleted)
+    public Task<(int totalAmount, TEntity[])> GetAllEntitiesPaginated(int page, int limit, bool includeDeleted)
     {
-        Task<TEntity[]> QueryEntities(IQueryable<TEntity> entities)
-            => entities
+        async Task<(int totalAmount, TEntity[])> QueryEntities(IQueryable<TEntity> entities)
+        {
+            var totalQuery = await entities.CountAsync();
+            var entitiesQuery = await entities
                 .OrderBy(x => x.CreatedAt)
                 .Skip(page * limit)
                 .Take(limit)
                 .AsNoTracking()
                 .ToArrayAsync();
+
+            return (totalQuery, entitiesQuery);
+        }
 
         if (includeDeleted)
             return QueryEntities(DbEntities);

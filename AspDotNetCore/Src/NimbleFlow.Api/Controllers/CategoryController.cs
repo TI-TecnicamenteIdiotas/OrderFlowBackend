@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Services;
+using NimbleFlow.Contracts.DTOs;
 using NimbleFlow.Contracts.DTOs.Categories;
 using NimbleFlow.Data.Partials.DTOs;
 
@@ -54,17 +55,18 @@ public class CategoryController : ControllerBase
     /// <param name="includeDeleted"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(CategoryDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedDto<CategoryDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllCategoriesPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
         [FromQuery] bool includeDeleted = false
     )
     {
-        var response = await _categoryService.GetAllPaginated(page, limit, includeDeleted);
-        if (!response.Any())
+        var (totalAmount, categories) = await _categoryService.GetAllPaginated(page, limit, includeDeleted);
+        if (totalAmount == 0)
             return NoContent();
 
+        var response = new PaginatedDto<CategoryDto>(totalAmount, categories);
         return Ok(response);
     }
 

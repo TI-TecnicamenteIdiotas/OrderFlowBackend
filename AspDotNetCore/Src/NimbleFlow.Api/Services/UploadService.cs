@@ -1,6 +1,7 @@
 using System.Net;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Microsoft.Extensions.Options;
 using NimbleFlow.Api.Options;
@@ -42,7 +43,7 @@ public class UploadService
         => _isProductionEnvironment switch
         {
             true => $"https://{_bucketName}.s3.{_amazonS3Config.RegionEndpoint?.SystemName}.amazonaws.com/{objectKey}",
-            _ => $"http://localhost:10502/{_bucketName}/{objectKey}"
+            _ => $"{_amazonS3Config.ServiceURL}{_bucketName}/{objectKey}"
         };
 
     public async Task<(HttpStatusCode, string)> UploadFileAsync(

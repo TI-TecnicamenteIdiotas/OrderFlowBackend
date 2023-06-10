@@ -35,10 +35,10 @@ public abstract class ServiceBase<TCreateDto, TDto, TDbContext, TEntity>
         }
     }
 
-    public async Task<IEnumerable<TDto>> GetAllPaginated(int page, int limit, bool includeDeleted)
+    public async Task<(int totalAmount, IEnumerable<TDto>)> GetAllPaginated(int page, int limit, bool includeDeleted)
     {
-        var response = await _repository.GetAllEntitiesPaginated(page, limit, includeDeleted);
-        return response.Select(x => x.ToDto());
+        var (totalAmount, entities) = await _repository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return (totalAmount, entities.Select(x => x.ToDto()));
     }
 
     public async Task<TDto?> GetById(Guid entityId)

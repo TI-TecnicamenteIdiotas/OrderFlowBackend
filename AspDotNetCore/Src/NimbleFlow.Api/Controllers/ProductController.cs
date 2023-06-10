@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using NimbleFlow.Api.Services;
+using NimbleFlow.Contracts.DTOs;
 using NimbleFlow.Contracts.DTOs.Products;
 using NimbleFlow.Data.Partials.DTOs;
 
@@ -57,7 +58,7 @@ public class ProductController : ControllerBase
     /// <param name="categoryId"></param>
     /// <response code="204">No Content</response>
     [HttpGet]
-    [ProducesResponseType(typeof(ProductDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedDto<ProductDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllProductsPaginated(
         [FromQuery] int page = 0,
         [FromQuery] int limit = 12,
@@ -65,7 +66,7 @@ public class ProductController : ControllerBase
         [FromQuery] Guid? categoryId = null
     )
     {
-        var response = categoryId switch
+        var (totalAmount, products) = categoryId switch
         {
             not null => await _productService.GetAllProductsPaginatedByCategoryId(
                 page,
@@ -75,9 +76,10 @@ public class ProductController : ControllerBase
             ),
             _ => await _productService.GetAllPaginated(page, limit, includeDeleted)
         };
-        if (!response.Any())
+        if (totalAmount == 0)
             return NoContent();
 
+        var response = new PaginatedDto<ProductDto>(totalAmount, products);
         return Ok(response);
     }
 
