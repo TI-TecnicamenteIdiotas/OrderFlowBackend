@@ -2,10 +2,6 @@
 {
     public partial class Product
     {
-        public Product()
-        {
-            OrderProducts = new HashSet<OrderProduct>();
-        }
 
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
@@ -18,6 +14,5 @@
         public DateTime? DeletedAt { get; set; }
 
         public virtual Category Category { get; set; } = null!;
-        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }

@@ -1,15 +1,22 @@
-﻿using NimbleFlow.Data.Models;
+﻿using NimbleFlow.Contracts.Interfaces;
+using NimbleFlow.Data.Models;
 
 namespace NimbleFlow.Contracts.DTOs.Products;
 
-public class CreateProductDto
+public class CreateProductDto : IToModel<Product>
 {
-    public string Title { get; set; } = null!;
-    public string? Description { get; set; }
-    public decimal Price { get; set; }
-    public string? ImageUrl { get; set; }
-    public bool IsFavorite { get; set; }
-    public Guid CategoryId { get; set; }
+    public string Title { get; init; }
+    public string? Description { get; init; }
+    public decimal Price { get; init; }
+    public string? ImageUrl { get; init; }
+    public bool IsFavorite { get; init; }
+    public Guid CategoryId { get; init; }
+
+    public CreateProductDto(string title, Guid categoryId)
+    {
+        Title = title;
+        CategoryId = categoryId;
+    }
 
     public Product ToModel()
         => new()
