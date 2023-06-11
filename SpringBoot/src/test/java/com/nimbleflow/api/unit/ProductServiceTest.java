@@ -20,7 +20,6 @@ import java.util.UUID;
 @SpringBootTest
 @DisplayName("ProductService")
 public class ProductServiceTest {
-
     @InjectMocks
     private ProductService underTest;
 

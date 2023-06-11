@@ -11,11 +11,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
-
     @NotNull
     private UUID id;
 
     @NotNull
     private Integer amount;
-
 }

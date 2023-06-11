@@ -18,7 +18,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
@@ -65,7 +64,7 @@ public class OrderService {
     public List<OrderDTO> deleteOrdersByTableId(UUID orderId) {
         List<Order> orders = orderRepository.findByTableId(orderId);
         List<OrderDTO> orderDTOS = new ArrayList<>();
-        
+
         if (orders.isEmpty()) {
             return new ArrayList<>();
         }
@@ -76,7 +75,7 @@ public class OrderService {
             log.info(String.format("Order deleted successfully: %s", order));
             orderDTOS.add(modelMapper.map(order, OrderDTO.class));
         });
-        
+
         return orderDTOS;
     }
 
@@ -123,5 +122,4 @@ public class OrderService {
     private OrderDTO mapOrderToOrderDTO(Order order) {
         return modelMapper.map(order, OrderDTO.class);
     }
-
 }

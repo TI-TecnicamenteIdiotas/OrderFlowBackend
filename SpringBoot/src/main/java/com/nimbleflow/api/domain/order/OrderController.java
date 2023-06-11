@@ -26,24 +26,24 @@ import java.util.UUID;
 @Tag(name = "Order Controller")
 @SecurityRequirement(name = "Bearer Authorization")
 @ApiResponse(
-    responseCode = "401", 
-    description = "Unauthorized", 
-    content = @Content(schema = @Schema(implementation = ExceptionResponseExample.UnauthorizedException.class))
+        responseCode = "401",
+        description = "Unauthorized",
+        content = @Content(schema = @Schema(implementation = ExceptionResponseExample.UnauthorizedException.class))
 )
 @RequestMapping(value = "api/v1/order", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Save order informations")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Created"),
-        @ApiResponse(
-            responseCode = "400", 
-            description = "Bad Request (thrown when dto has invalid (null, empty) parameters)", 
-            content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
-        )
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request (thrown when dto has invalid (null, empty) parameters)",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
+            )
     })
     public ResponseEntity<OrderDTO> saveOrder(@RequestBody @Validated OrderDTO dto) {
         log.info(String.format("Saving order: %s", dto));
@@ -70,12 +70,12 @@ public class OrderController {
     @GetMapping("{tableId}")
     @Operation(description = "Find orders by tableId")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Ok"),
-        @ApiResponse(responseCode = "204", description = "No Content")
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content")
     })
     public ResponseEntity<List<OrderDTO>> findOrdersByTableId(
-        @PathVariable UUID tableId,
-        @RequestParam(value = "inactive", required = false) boolean inactive
+            @PathVariable UUID tableId,
+            @RequestParam(value = "inactive", required = false) boolean inactive
     ) {
         log.info(String.format("Find orders by tableId: %s; inactive: %s", tableId, inactive));
         List<OrderDTO> body = orderService.findOrdersByTableId(tableId, inactive);
@@ -86,8 +86,8 @@ public class OrderController {
     @DeleteMapping("{tableId}")
     @Operation(description = "Delete orders by tableId (logical exclusion)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Ok"),
-        @ApiResponse(responseCode = "204", description = "No Content")
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content")
     })
     public ResponseEntity<List<OrderDTO>> deleteOrdersByTableId(@PathVariable UUID tableId) {
         log.info(String.format("Delete orders by tableId: %s", tableId));
@@ -112,5 +112,4 @@ public class OrderController {
         HttpStatus httpStatus = body.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
         return new ResponseEntity<>(body, httpStatus);
     }
-
 }

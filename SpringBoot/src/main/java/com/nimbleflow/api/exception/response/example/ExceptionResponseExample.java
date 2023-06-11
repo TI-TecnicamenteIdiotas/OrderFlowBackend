@@ -6,10 +6,8 @@ import lombok.Getter;
 import java.time.ZonedDateTime;
 
 public interface ExceptionResponseExample {
-
     @Getter
     public static final class BadRequestException extends BaseExceptionResponseExample {
-
         @Schema(example = "2023-04-30T15:18:24.883+00:00")
         private ZonedDateTime timestamp;
 
@@ -18,12 +16,10 @@ public interface ExceptionResponseExample {
 
         @Schema(example = "Bad Request")
         private String error;
-
     }
 
     @Getter
     public static final class UnauthorizedException extends BaseExceptionResponseExample {
-
         @Schema(example = "2023-04-30T15:18:24.883+00:00")
         private ZonedDateTime timestamp;
 
@@ -32,12 +28,10 @@ public interface ExceptionResponseExample {
 
         @Schema(example = "Unauthorized")
         private String error;
-
     }
 
     @Getter
     public static abstract class BaseExceptionResponseExample {
-
         private ZonedDateTime timestamp;
 
         @Schema(example = "Exception message")
@@ -45,7 +39,5 @@ public interface ExceptionResponseExample {
 
         @Schema(example = "request/path")
         private String path;
-
     }
-    
 }

@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
 public class UnauthorizedException extends ServletException {
-
     public static final String MESSAGE = "Empty or invalid Authorization header";
 
     public UnauthorizedException() {
@@ -16,5 +15,4 @@ public class UnauthorizedException extends ServletException {
     public UnauthorizedException(String message) {
         super(message);
     }
-    
 }

@@ -9,18 +9,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenAPIConfig {
-    
     @Bean
     public OpenAPI openApi() {
         return new OpenAPI()
-                .info(new Info().title("NimbleFlow - Prodcuts Reports API")
-                .description("NimbleFlow Spring-Boot API to generate products reports")
-                .version("v1.0.0")
-                .license(new License().name("MIT")))
+                .info(new Info()
+                        .title("NimbleFlow - Prodcuts Reports API")
+                        .description("NimbleFlow Spring-Boot API to generate products reports")
+                        .version("v1.0.0")
+                        .license(new License().name("MIT")))
                 .externalDocs(new ExternalDocumentation()
-                    .description("NimbleFlow Documentation")
-                    .url("https://github.com/TI-TecnicamenteIdiotas/order-flow-backend"));
+                        .description("NimbleFlow Documentation")
+                        .url("https://github.com/TI-TecnicamenteIdiotas/order-flow-backend"));
     }
-  
-
 }

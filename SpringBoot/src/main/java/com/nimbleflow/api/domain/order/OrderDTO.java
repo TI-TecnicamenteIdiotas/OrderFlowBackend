@@ -15,7 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
-
     private UUID id;
 
     @NotNull
@@ -31,5 +30,4 @@ public class OrderDTO {
     private List<ProductDTO> products;
 
     private Boolean active;
-
 }

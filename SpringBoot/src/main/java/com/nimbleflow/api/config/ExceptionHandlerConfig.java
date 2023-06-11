@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,21 +22,19 @@ import java.util.List;
 @Slf4j
 @ControllerAdvice
 public class ExceptionHandlerConfig {
-
-    @ExceptionHandler({BadRequestException.class, BadCredentialsException.class})
+    @ExceptionHandler({BadRequestException.class})
     @ResponseBody
     public ResponseEntity<BaseExceptionResponse> badRequestHandler(HttpServletRequest request, Exception exception) {
         BaseExceptionResponse responseBody = BaseExceptionResponse.builder()
-            .timestamp(ZonedDateTime.now())
-            .status(400)
-            .error("Bad Request")
-            .message(exception.getMessage())
-            .path(request.getServletPath())
-            .build();
+                .timestamp(ZonedDateTime.now())
+                .status(400)
+                .error("Bad Request")
+                .message(exception.getMessage())
+                .path(request.getServletPath())
+                .build();
 
         log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
-        ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-        return response;
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,51 +46,47 @@ public class ExceptionHandlerConfig {
 
         for (FieldError error : errors) {
             errorList.add(String.format("%s %s", error.getField(), error.getDefaultMessage()));
-        };
+        }
 
         BaseExceptionResponse responseBody = BaseExceptionResponse.builder()
-            .timestamp(ZonedDateTime.now())
-            .status(400)
-            .error("Bad Request")
-            .message(errorList.toString())
-            .path(request.getServletPath())
-            .build();
+                .timestamp(ZonedDateTime.now())
+                .status(400)
+                .error("Bad Request")
+                .message(errorList.toString())
+                .path(request.getServletPath())
+                .build();
 
         log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
-        ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-        return response;
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({UnauthorizedException.class, InsufficientAuthenticationException.class, SignatureException.class})
+    @ExceptionHandler({UnauthorizedException.class, SignatureException.class})
     @ResponseBody
     public ResponseEntity<BaseExceptionResponse> unauthorizedHandler(HttpServletRequest request, Exception exception) {
         BaseExceptionResponse responseBody = BaseExceptionResponse.builder()
-            .timestamp(ZonedDateTime.now())
-            .status(401)
-            .error("Unauthorized")
-            .message(UnauthorizedException.MESSAGE)
-            .path(request.getServletPath())
-            .build();
+                .timestamp(ZonedDateTime.now())
+                .status(401)
+                .error("Unauthorized")
+                .message(UnauthorizedException.MESSAGE)
+                .path(request.getServletPath())
+                .build();
 
         log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
-        ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
-        return response;
+        return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<BaseExceptionResponse> defaultHandler(HttpServletRequest request, Exception exception) {
         BaseExceptionResponse responseBody = BaseExceptionResponse.builder()
-            .timestamp(ZonedDateTime.now())
-            .status(500)
-            .error("Internal Server Error")
-            .message(exception.getMessage())
-            .path(request.getServletPath())
-            .build();
+                .timestamp(ZonedDateTime.now())
+                .status(500)
+                .error("Internal Server Error")
+                .message(exception.getMessage())
+                .path(request.getServletPath())
+                .build();
 
         log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
-        ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        return response;
+        return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

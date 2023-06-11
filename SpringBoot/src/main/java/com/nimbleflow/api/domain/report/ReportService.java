@@ -27,7 +27,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-
     private final OrderService orderService;
     private final ProductService productService;
 
@@ -152,5 +151,4 @@ public class ReportService {
 
         return outputStream.toString();
     }
-
 }

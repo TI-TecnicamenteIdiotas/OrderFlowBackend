@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ObjectBuilder {
-
     public static OrderDTO buildOrderDTO() {
         return OrderDTO.builder()
                 .orderDate(ZonedDateTime.now().minusMonths(1L))
@@ -61,5 +60,4 @@ public class ObjectBuilder {
 
         return List.of(buildOrderDTO(), order);
     }
-
 }

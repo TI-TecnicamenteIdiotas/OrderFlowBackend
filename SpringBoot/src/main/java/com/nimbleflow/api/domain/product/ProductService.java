@@ -46,7 +46,7 @@ public class ProductService {
                     .id(entrySet.getKey())
                     .amount(entrySet.getValue())
                     .build());
-        };
+        }
 
         sortedProductsByAmount.sort(Comparator.comparingInt(ProductDTO::getAmount));
 
@@ -68,5 +68,4 @@ public class ProductService {
 
         return products;
     }
-
 }

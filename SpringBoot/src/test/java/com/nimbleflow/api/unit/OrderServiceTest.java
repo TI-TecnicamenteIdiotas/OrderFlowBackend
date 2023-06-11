@@ -22,7 +22,6 @@ import java.util.UUID;
 @SpringBootTest
 @DisplayName("OrderService")
 public class OrderServiceTest {
-
     @InjectMocks
     private OrderService underTest;
 
@@ -132,5 +131,4 @@ public class OrderServiceTest {
             Assertions.assertFalse(orderDTO.getActive());
         }
     }
-
 }

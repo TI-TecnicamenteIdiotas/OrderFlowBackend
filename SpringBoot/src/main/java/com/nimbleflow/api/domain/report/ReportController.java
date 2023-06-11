@@ -85,5 +85,4 @@ public class ReportController {
         HttpStatus httpStatus = !responseBody.getItems().isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(responseBody, httpStatus);
     }
-
 }

@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
 public class NotFoundException extends ServletException {
-
     public NotFoundException(String message) {
         super(message);
     }
-
 }

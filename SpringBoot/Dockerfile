@@ -14,5 +14,5 @@ RUN mvn clean package -DskipTests
 
 EXPOSE 8080
 
-# Executa a aplicação com o application.properties com o sufixo production na porta 8080 do container
-CMD java -jar target/nimble-flow-backend-3.0.5.jar --spring.profiles.active=docker --server.port=8080
+# Executa a aplicação com o application.properties com o sufixo container na porta 8080 do container
+CMD java -jar target/nimble-flow-backend-3.0.5.jar --spring.profiles.active=container --server.port=8080

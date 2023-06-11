@@ -21,7 +21,6 @@ import java.util.List;
 @SpringBootTest
 @DisplayName("ReportService")
 public class ReportServiceTest {
-
     @InjectMocks
     private ReportService underTest;
 
@@ -80,5 +79,4 @@ public class ReportServiceTest {
         Assertions.assertNotNull(result.getCsv());
         Assertions.assertNotNull(result.getItems());
     }
-
 }

@@ -17,7 +17,6 @@ import java.time.ZonedDateTime;
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.nimbleflow.api")
 public class DynamoDBConfig {
-
     @Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
 
@@ -32,13 +31,12 @@ public class DynamoDBConfig {
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder
-            .standard()
-            .withCredentials(new AWSStaticCredentialsProvider(amazonAWSCredentials()))
-            .withEndpointConfiguration(new EndpointConfiguration(amazonDynamoDBEndpoint, amazonDynamoDBRegion))
-            .build();
-        
-        return amazonDynamoDB;
+
+        return AmazonDynamoDBClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(amazonAWSCredentials()))
+                .withEndpointConfiguration(new EndpointConfiguration(amazonDynamoDBEndpoint, amazonDynamoDBRegion))
+                .build();
     }
 
     @Bean
@@ -47,16 +45,14 @@ public class DynamoDBConfig {
     }
 
     static public class ZonedDateTimeConverter implements DynamoDBTypeConverter<String, ZonedDateTime> {
-
         @Override
         public String convert(final ZonedDateTime time) {
             return time.toString();
         }
-    
+
         @Override
         public ZonedDateTime unconvert(final String stringValue) {
             return ZonedDateTime.parse(stringValue);
         }
     }
-    
 }
