@@ -20,7 +20,7 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
 
-    @Value("${nimbleflow.username}")
+    @Value("${nimbleflow.integration-token}")
     private String API_INTEGRATION_TOKEN;
 
     @Value("${nimbleflow.username}")

@@ -3,6 +3,8 @@ package com.nimbleflow.api.domain.order;
 import com.nimbleflow.api.exception.BadRequestException;
 import com.nimbleflow.api.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public OrderDTO saveOrder(OrderDTO orderDTO) {
         if (orderDTO.getId() != null) {
@@ -26,30 +29,31 @@ public class OrderService {
 
         Order order = modelMapper.map(orderDTO, Order.class);
         order = orderRepository.save(order);
+        log.info(String.format("Order saved successfully: %s", order));
+
         orderDTO = modelMapper.map(order, OrderDTO.class);
         return orderDTO;
     }
 
-    public OrderDTO updateOrderById(OrderDTO orderDTO) throws NotFoundException {
+    @SneakyThrows
+    public OrderDTO updateOrderById(OrderDTO orderDTO) {
         if (orderDTO.getId() == null)
-            throw new BadRequestException("Please inform the id of the order you want to update");
+            throw new BadRequestException("Please, inform the id of the order you want to update");
 
         Order order = findOrderById(orderDTO.getId())
                 .orElseThrow(() -> new NotFoundException(String.format("The order with id %s was not found", orderDTO.getId())));
 
         order = orderRepository.save(order);
-        return modelMapper.map(order, OrderDTO.class);
-    }
+        log.info(String.format("Order updated successfully: %s", order));
 
-    public List<OrderDTO> findOrdersByTableId(final UUID orderId) {
-        return findOrdersByTableId(orderId, false);
+        return modelMapper.map(order, OrderDTO.class);
     }
 
     public List<OrderDTO> findOrdersByTableId(UUID orderId, boolean getInactivePurchases) {
         List<Order> orders = orderRepository.findByTableIdAndActive(orderId, !getInactivePurchases);
-        List<OrderDTO> purchasesDTOs = new ArrayList<OrderDTO>();
+        List<OrderDTO> purchasesDTOs = new ArrayList<>();
 
-        if (orders.isEmpty()) return null;
+        if (orders.isEmpty()) return new ArrayList<>();
 
         orders.forEach(order -> {
             purchasesDTOs.add(modelMapper.map(order, OrderDTO.class));
@@ -58,24 +62,25 @@ public class OrderService {
         return purchasesDTOs;
     }
 
-    public List<OrderDTO> deleteOrderByTableId(UUID orderId) {
+    public List<OrderDTO> deleteOrdersByTableId(UUID orderId) {
         List<Order> orders = orderRepository.findByTableId(orderId);
-        List<OrderDTO> purchasesDTOs = new ArrayList<OrderDTO>();
+        List<OrderDTO> orderDTOS = new ArrayList<>();
         
         if (orders.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
 
         orders.forEach(order -> {
             order.setActive(false);
             order = orderRepository.save(order);
-            purchasesDTOs.add(modelMapper.map(order, OrderDTO.class));
+            log.info(String.format("Order deleted successfully: %s", order));
+            orderDTOS.add(modelMapper.map(order, OrderDTO.class));
         });
         
-        return purchasesDTOs;
+        return orderDTOS;
     }
 
-    public List<OrderDTO> getOrdersMonthReport(boolean getInactiveOrders) {
+    public List<OrderDTO> getAllMothOrders(boolean getInactiveOrders) {
         int dayOfMonth = ZonedDateTime.now().getDayOfMonth();
         int daysToSubtract = (dayOfMonth + 1) - dayOfMonth;
         ZonedDateTime startDate = ZonedDateTime.now().minusDays(daysToSubtract);

@@ -47,7 +47,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     command:
       "dynamodb create-table
-      --table-name purchase
+      --table-name order
       --attribute-definitions AttributeName=id,AttributeType=S
       --key-schema AttributeName=id,KeyType=HASH
       --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5

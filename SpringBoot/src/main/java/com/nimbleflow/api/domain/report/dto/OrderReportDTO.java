@@ -1,12 +1,9 @@
-package com.nimbleflow.api.domain.order;
+package com.nimbleflow.api.domain.report.dto;
 
 import com.nimbleflow.api.domain.order.enums.PaymentMethod;
-import com.nimbleflow.api.domain.product.ProductDTO;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -14,22 +11,13 @@ import java.util.UUID;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDTO {
+public class OrderReportDTO {
 
     private UUID id;
-
-    @NotNull
     private UUID tableId;
-
-    @NotNull
     private ZonedDateTime orderDate;
-
-    @NotNull
     private PaymentMethod paymentMethod;
-
-    @NotNull
-    private List<ProductDTO> products;
-
+    private String productsIdsAndAmount;
     private Boolean active;
 
 }

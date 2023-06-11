@@ -5,6 +5,7 @@ import com.nimbleflow.api.exception.UnauthorizedException;
 import com.nimbleflow.api.exception.response.BaseExceptionResponse;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @ControllerAdvice
 public class ExceptionHandlerConfig {
 
@@ -33,6 +36,7 @@ public class ExceptionHandlerConfig {
             .path(request.getServletPath())
             .build();
 
+        log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
         ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         return response;
     }
@@ -56,6 +60,7 @@ public class ExceptionHandlerConfig {
             .path(request.getServletPath())
             .build();
 
+        log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
         ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         return response;
     }
@@ -71,6 +76,7 @@ public class ExceptionHandlerConfig {
             .path(request.getServletPath())
             .build();
 
+        log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
         ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
         return response;
     }
@@ -86,6 +92,7 @@ public class ExceptionHandlerConfig {
             .path(request.getServletPath())
             .build();
 
+        log.error(String.format("%s: %s (%s)", exception.getCause(), exception.getMessage(), Arrays.toString(exception.getStackTrace())));
         ResponseEntity<BaseExceptionResponse> response = new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
         return response;
     }

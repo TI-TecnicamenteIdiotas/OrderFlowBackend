@@ -13,7 +13,7 @@ import java.util.UUID;
 public class ProductDTO {
 
     @NotNull
-    private UUID postgresId;
+    private UUID id;
 
     @NotNull
     private Integer amount;
