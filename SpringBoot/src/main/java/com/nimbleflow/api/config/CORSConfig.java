@@ -17,7 +17,8 @@ public class CORSConfig {
 		configuration.setAllowedMethods(Arrays.asList(
             HttpMethod.GET.name(), 
             HttpMethod.POST.name(),
-            HttpMethod.DELETE.name()
+            HttpMethod.DELETE.name(),
+			HttpMethod.PUT.name()
         ));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

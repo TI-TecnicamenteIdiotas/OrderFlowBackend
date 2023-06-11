@@ -1,15 +1,11 @@
 package com.nimbleflow.api.utils;
 
-import com.nimbleflow.api.config.security.UserDetailsImpl;
-import com.nimbleflow.api.domain.auth.AuthDTO;
 import com.nimbleflow.api.domain.order.Order;
 import com.nimbleflow.api.domain.order.OrderDTO;
 import com.nimbleflow.api.domain.order.enums.PaymentMethod;
 import com.nimbleflow.api.domain.product.ProductDTO;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,31 +60,6 @@ public class ObjectBuilder {
         order.setId(new UUID(5L, 15L));
 
         return List.of(buildOrderDTO(), order);
-    }
-
-    public static AuthDTO buildValidAuthDTO() {
-        return AuthDTO.builder()
-                .username("test")
-                .password("test")
-                .build();
-    }
-
-    public static AuthDTO buildInvalidAuthDTO() {
-        return AuthDTO.builder()
-                .username("gnbsh")
-                .password("teghsgshd")
-                .build();
-    }
-
-    public static UserDetails buildUserDetails() {
-        return UserDetailsImpl.builder()
-                        .authorities(Collections.emptyList())
-                        .username("test")
-                        .isAccountNonExpired(true)
-                        .isAccountNonLocked(true)
-                        .isCredentialsNonExpired(true)
-                        .isEnabled(true)
-                        .build();
     }
 
 }

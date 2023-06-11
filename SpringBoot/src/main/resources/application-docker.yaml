@@ -13,10 +13,3 @@ amazon:
   dynamodb:
     endpoint: ${NO_SQL_DATABASE_PATH}
     region: ${AWS_REGION}
-
-nimbleflow:
-  username: ${NIMBLEFLOW_JAVA_API_USERNAME}
-  password: ${NIMBLEFLOW_JAVA_API_PASSWORD}
-  integration-token: ${NIMBLEFLOW_JAVA_API_INTEGRATION_TOKEN}
-  jwt:
-    signing-key: ${NIMBLEFLOW_JAVA_API_JWT_SIGNING_KEY}

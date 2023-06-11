@@ -13,10 +13,3 @@ amazon:
   dynamodb:
     endpoint: http://localhost:10501
     region: us-east-1
-
-nimbleflow:
-  username: <CHANGE_ME_IF_NEEDED>
-  password: <CHANGE_ME_IF_NEEDED>
-  integration-token: <CHANGE_ME_IF_NEEDED>
-  jwt:
-    signing-key: oCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDoCHANGEoMEoIFoNEEDEDo
