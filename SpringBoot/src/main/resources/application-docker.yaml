@@ -8,8 +8,8 @@ server:
 
 amazon:
   aws:
-    accesskey: ${AWS_ACCESS_KEY}
-    secretkey: ${AWS_SECRET_KEY}
+    accesskey: ${AWS_ACCESS_KEY_ID}
+    secretkey: ${AWS_SECRET_ACCESS_KEY}
   dynamodb:
     endpoint: ${NO_SQL_DATABASE_PATH}
     region: ${AWS_REGION}
