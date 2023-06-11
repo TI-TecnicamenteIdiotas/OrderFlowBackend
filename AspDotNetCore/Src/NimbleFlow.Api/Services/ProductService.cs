@@ -1,14 +1,16 @@
 ﻿using System.Net;
+using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Extensions;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Products;
 using NimbleFlow.Data.Context;
 using NimbleFlow.Data.Models;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Api.Services;
 
-public class ProductService : ServiceBase<NimbleFlowContext, Product>
+public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFlowContext, Product>
 {
     private readonly ProductRepository _productRepository;
 
@@ -17,35 +19,46 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         _productRepository = productRepository;
     }
 
-    public async Task<ProductDto?> CreateProduct(CreateProductDto productDto)
+    public new async Task<(HttpStatusCode, ProductDto?)> Create(CreateProductDto createDto)
     {
-        var response = await _productRepository.CreateEntity(productDto.ToModel());
-        if (response is null)
-            return null;
+        try
+        {
+            var response = await _productRepository.CreateEntity(createDto.ToModel());
+            if (response is null)
+                return (HttpStatusCode.InternalServerError, null);
 
-        return ProductDto.FromModel(response);
+            return (HttpStatusCode.Created, response.ToDto());
+        }
+        catch (DbUpdateException e)
+        {
+            if (e.InnerException?.Message.Contains("FOREIGN", StringComparison.InvariantCultureIgnoreCase) ?? false)
+                return (HttpStatusCode.BadRequest, null);
+
+            return (HttpStatusCode.Conflict, null);
+        }
     }
 
-    public async Task<IEnumerable<ProductDto>> GetAllProductsPaginated(int page, int limit, bool includeDeleted)
+    public async Task<(int totalAmount, IEnumerable<ProductDto>)> GetAllProductsPaginatedByCategoryId(
+        int page,
+        int limit,
+        bool includeDeleted,
+        Guid categoryId
+    )
     {
-        var response = await _productRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
-        return response.Select(ProductDto.FromModel);
+        var (totalAmount, products) = await _productRepository.GetAllProductsPaginatedByCategoryId(
+            page,
+            limit,
+            includeDeleted,
+            categoryId
+        );
+        return (totalAmount, products.Select(x => x.ToDto()));
     }
 
-    public async Task<ProductDto?> GetProductById(Guid productId)
-    {
-        var response = await _productRepository.GetEntityById(productId);
-        if (response is null)
-            return null;
-
-        return ProductDto.FromModel(response);
-    }
-
-    public async Task<(HttpStatusCode, ProductDto?)> UpdateProductById(Guid productId, UpdateProductDto productDto)
+    public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
         var productEntity = await _productRepository.GetEntityById(productId);
         if (productEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
         if (productDto.Title.IsNotNullAndNotEquals(productEntity.Title))
@@ -91,12 +104,18 @@ public class ProductService : ServiceBase<NimbleFlowContext, Product>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _productRepository.UpdateEntity(productEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        try
+        {
+            if (!await _productRepository.UpdateEntity(productEntity))
+                return HttpStatusCode.InternalServerError;
+        }
+        catch (DbUpdateException)
+        {
+            return HttpStatusCode.Conflict;
+        }
 
-        return (HttpStatusCode.OK, ProductDto.FromModel(response));
+        return HttpStatusCode.OK;
     }
 }

@@ -3,23 +3,23 @@ version: '3.9'
 services:
   nimbleflow.sql.db:
     container_name: nimbleflow.sql.db
-    image: postgres:${POSTGRES_TAG}
+    image: postgres:alpine
     environment:
-      - POSTGRES_DB=${SQL_DATABASE_DATABASE}
-      - POSTGRES_USER=${SQL_DATABASE_USER}
-      - POSTGRES_PASSWORD=${SQL_DATABASE_PASSWORD}
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${SQL_DATABASE_USER} -d ${SQL_DATABASE_DATABASE}"
+          "pg_isready -U postgres -d postgres"
         ]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
     ports:
-      - "10500:${SQL_DATABASE_PORT}"
+      - "10500:5432"
     volumes:
       - nimbleflow.sql.db:/var/lib/postgresql/data
       - .assets/initsql:/docker-entrypoint-initdb.d
@@ -36,43 +36,64 @@ services:
       - nimbleflow.nosql.db:/home/dynamodblocal/data
     working_dir: /home/dynamodblocal
     restart: always
-    
-  nimbleflow.nosql.db.up:
-    depends_on:
-        - nimbleflow.nosql.db
-    image: amazon/aws-cli
-    container_name: nimbleflow.nosql.db.up
+
+  nimbleflow.minio:
+    container_name: nimbleflow.minio
+    image: minio/minio:latest
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-    command:
-      "dynamodb create-table
-      --table-name order
-      --attribute-definitions AttributeName=id,AttributeType=S
-      --key-schema AttributeName=id,KeyType=HASH
-      --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
-      --table-class STANDARD
-      --endpoint-url ${NO_SQL_DATABASE_PATH}
-      --region ${AWS_REGION}"
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+    command: 'minio server /data/minio --console-address ":9090"'
+    ports:
+      - "10502:9000"
+      - "10503:9090"
+    volumes:
+      - nimbleflow.minio:/data
+    restart: always
+
+  nimbleflow.aws.up:
+    container_name: nimbleflow.aws.up
+    build:
+      dockerfile: .assets/initaws/Dockerfile
+      context: .
+    depends_on:
+      nimbleflow.nosql.db:
+        condition: service_started
+      nimbleflow.minio:
+        condition: service_started
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_SERVICE_URL=${AWS_S3_SERVICE_URL}
+      - NO_SQL_CONNECTION_STRING=${NO_SQL_CONNECTION_STRING}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+
+  nimbleflow.aspnetcore.hub:
+    build:
+      context: ./AspDotNetCoreHub
+      dockerfile: Src/NimbleFlowHub.Api/Dockerfile
 
   nimbleflow.aspnetcore:
     build:
       context: ./AspDotNetCore
       dockerfile: Src/NimbleFlow.Api/Dockerfile
     depends_on:
+      nimbleflow.aspnetcore.hub:
+        condition: service_started
       nimbleflow.sql.db:
         condition: service_healthy
-      nimbleflow.nosql.db:
+      nimbleflow.aws.up:
         condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   nimbleflow.java:
-    build: 
+    build:
       context: ./SpringBoot
-      dockerfile: Dockerfile.development
+      dockerfile: Dockerfile
     depends_on:
-      nimbleflow.sql.db:
-        condition: service_healthy
-      nimbleflow.nosql.db:
+      nimbleflow.aspnetcore:
         condition: service_started
 
 networks:
@@ -83,4 +104,6 @@ volumes:
   nimbleflow.sql.db:
     driver: local
   nimbleflow.nosql.db:
+    driver: local
+  nimbleflow.minio:
     driver: local

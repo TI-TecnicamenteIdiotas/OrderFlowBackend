@@ -1,14 +1,16 @@
 ﻿using System.Net;
+using Microsoft.EntityFrameworkCore;
 using NimbleFlow.Api.Extensions;
 using NimbleFlow.Api.Repositories;
 using NimbleFlow.Api.Services.Base;
 using NimbleFlow.Contracts.DTOs.Tables;
 using NimbleFlow.Data.Context;
 using NimbleFlow.Data.Models;
+using NimbleFlow.Data.Partials.DTOs;
 
 namespace NimbleFlow.Api.Services;
 
-public class TableService : ServiceBase<NimbleFlowContext, Table>
+public class TableService : ServiceBase<CreateTableDto, TableDto, NimbleFlowContext, Table>
 {
     private readonly TableRepository _tableRepository;
 
@@ -17,38 +19,14 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         _tableRepository = tableRepository;
     }
 
-    public async Task<TableDto?> CreateTable(CreateTableDto tableDto)
-    {
-        var response = await _tableRepository.CreateEntity(tableDto.ToModel());
-        if (response is null)
-            return null;
-
-        return TableDto.FromModel(response);
-    }
-
-    public async Task<IEnumerable<TableDto>> GetAllTablesPaginated(int page, int limit, bool includeDeleted)
-    {
-        var response = await _tableRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
-        return response.Select(TableDto.FromModel);
-    }
-
-    public async Task<TableDto?> GetTableById(Guid tableId)
-    {
-        var response = await _tableRepository.GetEntityById(tableId);
-        if (response is null)
-            return null;
-
-        return TableDto.FromModel(response);
-    }
-
-    public async Task<(HttpStatusCode, TableDto?)> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
+    public async Task<HttpStatusCode> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
     {
         var tableEntity = await _tableRepository.GetEntityById(tableId);
         if (tableEntity is null)
-            return (HttpStatusCode.NotFound, null);
+            return HttpStatusCode.NotFound;
 
         var shouldUpdate = false;
-        if (tableDto.Accountable.IsNotNullAndNotEquals(tableDto.Accountable))
+        if (tableDto.Accountable.IsNotNullAndNotEquals(tableEntity.Accountable))
         {
             tableEntity.Accountable = tableDto.Accountable ?? throw new NullReferenceException();
             shouldUpdate = true;
@@ -61,21 +39,18 @@ public class TableService : ServiceBase<NimbleFlowContext, Table>
         }
 
         if (!shouldUpdate)
-            return (HttpStatusCode.NotModified, null);
+            return HttpStatusCode.NotModified;
 
-        var response = await _tableRepository.UpdateEntity(tableEntity);
-        if (response is null)
-            return (HttpStatusCode.InternalServerError, null);
+        try
+        {
+            if (!await _tableRepository.UpdateEntity(tableEntity))
+                return HttpStatusCode.InternalServerError;
+        }
+        catch (DbUpdateException)
+        {
+            return HttpStatusCode.Conflict;
+        }
 
-        return (HttpStatusCode.OK, TableDto.FromModel(response));
-    }
-
-    public async Task<TableWithRelationsDto?> GetTableWithRelationsById(Guid tableId, bool includeDeleted)
-    {
-        var response = await _tableRepository.GetTableById(tableId, includeDeleted);
-        if (response is null)
-            return null;
-
-        return TableWithRelationsDto.FromModels(response);
+        return HttpStatusCode.OK;
     }
 }

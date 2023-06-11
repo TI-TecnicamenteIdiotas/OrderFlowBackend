@@ -1,3 +1,5 @@
+using NimbleFlow.Api.Options.Base;
+
 namespace NimbleFlow.Api.Options;
 
 public class SwaggerOptions : BaseInitOptions<SwaggerOptions>
