@@ -11,5 +11,5 @@ amazon:
     accesskey: ${AWS_ACCESS_KEY}
     secretkey: ${AWS_SECRET_KEY}
   dynamodb:
-    endpoint: ${NO_SQL_DATABASE_PATH}
+    endpoint: ${NO_SQL_CONNECTION_STRING}
     region: ${AWS_REGION}

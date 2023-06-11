@@ -8,7 +8,7 @@ RUN aws dynamodb create-table \
                --key-schema AttributeName=id,KeyType=HASH \
                --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
                --table-class STANDARD \
-               --endpoint-url ${NO_SQL_DATABASE_PATH} \
+               --endpoint-url ${NO_SQL_CONNECTION_STRING} \
                --region ${AWS_REGION} || true
 
 RUN aws s3api create-bucket \
