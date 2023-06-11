@@ -50,6 +50,9 @@ public class UploadController : ControllerBase
             await fileBuffer.CopyToAsync(memoryStream);
 
             var fileBytes = memoryStream.ToArray();
+            if (fileBytes.Length == 0)
+                return BadRequest("no_content");
+
             var fileSignatureType = fileBytes.GetFileTypeBySignature(_acceptedFileSignatures);
             if (fileSignatureType is FileTypeEnum.Unknown)
                 return new UnsupportedMediaTypeResult();

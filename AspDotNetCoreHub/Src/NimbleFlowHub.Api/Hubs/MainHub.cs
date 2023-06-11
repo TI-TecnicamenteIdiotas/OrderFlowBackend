@@ -2,6 +2,6 @@
 
 namespace NimbleFlowHub.Api.Hubs;
 
-public class TableHub : Hub
+public class MainHub : Hub
 {
 }

@@ -1,14 +1,9 @@
 ﻿using System.Net;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using NimbleFlow.Api.Options;
 using NimbleFlow.Api.Services;
 using NimbleFlow.Contracts.DTOs;
 using NimbleFlow.Contracts.DTOs.Tables;
 using NimbleFlow.Data.Partials.DTOs;
-using TableHubPublisherServiceClient = NimbleFlowHub.Contracts.TableHubPublisherService.TableHubPublisherServiceClient;
 
 namespace NimbleFlow.Api.Controllers;
 
@@ -17,19 +12,13 @@ namespace NimbleFlow.Api.Controllers;
 public class TableController : ControllerBase
 {
     private const int MaxAccountableLength = 256;
-    private readonly bool _canNotifySubscribers;
     private readonly TableService _tableService;
-    private readonly HubServiceOptions _hubServiceOptions;
+    private readonly HubService? _hubService;
 
-    public TableController(
-        TableService tableService,
-        IOptions<HubServiceOptions> hubServiceOptions,
-        bool canNotifySubscribers = true
-    )
+    public TableController(TableService tableService, HubService? hubService)
     {
         _tableService = tableService;
-        _canNotifySubscribers = canNotifySubscribers;
-        _hubServiceOptions = hubServiceOptions.Value;
+        _hubService = hubService;
     }
 
     /// <summary>Creates a table</summary>
@@ -47,14 +36,10 @@ public class TableController : ControllerBase
         var (responseStatus, response) = await _tableService.Create(requestBody);
         switch (responseStatus)
         {
-            case HttpStatusCode.Created:
+            case HttpStatusCode.Created when response is not null:
             {
-                if (!_canNotifySubscribers)
-                    return Created(string.Empty, response);
-
-                using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
-                var grpcClient = new TableHubPublisherServiceClient(channel);
-                _ = await grpcClient.NotifyCreatedAsync(new Empty());
+                if (_hubService is not null)
+                    await _hubService.PublishTableCreatedAsync(response);
                 return Created(string.Empty, response);
             }
             case HttpStatusCode.Conflict:

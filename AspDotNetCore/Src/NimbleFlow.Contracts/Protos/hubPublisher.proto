@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "NimbleFlowHub.Contracts";
+
+import "google/protobuf/empty.proto";
+
+package hubPublisher;
+
+service HubPublisher {
+  rpc PublishTableCreated (PublishTableValue) returns (google.protobuf.Empty);
+}
+
+message PublishTableValue {
+  string id = 1;
+  string accountable = 2;
+  bool is_fully_paid = 3;
+}
