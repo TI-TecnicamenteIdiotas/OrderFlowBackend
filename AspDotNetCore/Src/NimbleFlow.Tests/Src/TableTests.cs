@@ -55,6 +55,45 @@ public class TableTests : TestBase
 
     #endregion
 
+    #region Get By Ids
+
+    [Fact]
+    public async Task Get_TablesByIds_ShouldReturnOkObjectResult()
+    {
+        // Arrange
+        var createdTables = await TableController.CreateManyTablesTestHelper(
+            "Table A",
+            "Table B",
+            "Table C"
+        );
+        var tablesIds = createdTables.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await TableController.GetTablesByIds(tablesIds);
+
+        // Assert
+        Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task Get_TablesByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var tablesIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await TableController.GetTablesByIds(tablesIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
+    }
+
+    #endregion
+
     #region Get By Id
 
     [Fact]
@@ -102,6 +141,45 @@ public class TableTests : TestBase
 
         // Assert
         Assert.True(actionResult is OkResult);
+    }
+
+    #endregion
+
+    #region Delete By Ids
+
+    [Fact]
+    public async Task Delete_TablesByIds_ShouldReturnOkResult()
+    {
+        // Arrange
+        var createdTables = await TableController.CreateManyTablesTestHelper(
+            "Table A",
+            "Table B",
+            "Table C"
+        );
+        var tablesIds = createdTables.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await TableController.DeleteTablesByIds(tablesIds);
+
+        // Assert
+        Assert.True(actionResult is OkResult);
+    }
+
+    [Fact]
+    public async Task Delete_TablesByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var tablesIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await TableController.DeleteTablesByIds(tablesIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
     }
 
     #endregion

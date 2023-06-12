@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using NimbleFlow.Api.Controllers;
 using NimbleFlow.Contracts.DTOs.Categories;
 using NimbleFlow.Tests.Base;
 using NimbleFlow.Tests.Helpers;

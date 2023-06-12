@@ -70,6 +70,24 @@ public class TableController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>Gets tables by ids</summary>
+    /// <param name="tablesIds"></param>
+    /// <param name="includeDeleted"></param>
+    /// <response code="404">Not Found</response>
+    [HttpGet("by-ids")]
+    [ProducesResponseType(typeof(TableDto[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTablesByIds(
+        [FromBody] Guid[] tablesIds,
+        [FromQuery] bool includeDeleted = false
+    )
+    {
+        var response = await _tableService.GetManyById(tablesIds, includeDeleted);
+        if (!response.Any())
+            return NotFound();
+
+        return Ok(response);
+    }
+
     /// <summary>Gets a table by id</summary>
     /// <param name="tableId"></param>
     /// <response code="404">Not Found</response>
@@ -108,6 +126,20 @@ public class TableController : ControllerBase
             HttpStatusCode.Conflict => Conflict(),
             _ => Problem()
         };
+    }
+
+    /// <summary>Deletes tables by ids</summary>
+    /// <param name="tablesIds"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="404">Not Found</response>
+    [HttpDelete("by-ids")]
+    public async Task<IActionResult> DeleteTablesByIds([FromBody] Guid[] tablesIds)
+    {
+        var response = await _tableService.DeleteManyByIds(tablesIds);
+        if (!response)
+            return NotFound();
+
+        return Ok();
     }
 
     /// <summary>Deletes a table by id</summary>

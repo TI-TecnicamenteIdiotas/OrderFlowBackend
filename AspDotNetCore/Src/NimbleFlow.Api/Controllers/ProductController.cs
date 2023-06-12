@@ -83,6 +83,24 @@ public class ProductController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>Gets products by ids</summary>
+    /// <param name="productsIds"></param>
+    /// <param name="includeDeleted"></param>
+    /// <response code="404">Not Found</response>
+    [HttpGet("by-ids")]
+    [ProducesResponseType(typeof(ProductDto[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProductsByIds(
+        [FromBody] Guid[] productsIds,
+        [FromQuery] bool includeDeleted = false
+    )
+    {
+        var response = await _productService.GetManyById(productsIds, includeDeleted);
+        if (!response.Any())
+            return NotFound();
+
+        return Ok(response);
+    }
+
     /// <summary>Gets a product by id</summary>
     /// <param name="productId"></param>
     /// <response code="404">Not Found</response>
@@ -133,6 +151,20 @@ public class ProductController : ControllerBase
             HttpStatusCode.Conflict => Conflict(),
             _ => Problem()
         };
+    }
+
+    /// <summary>Deletes products by ids</summary>
+    /// <param name="productsIds"></param>
+    /// <response code="200">Ok</response>
+    /// <response code="404">Not Found</response>
+    [HttpDelete("by-ids")]
+    public async Task<IActionResult> DeleteProductsByIds([FromBody] Guid[] productsIds)
+    {
+        var response = await _productService.DeleteManyByIds(productsIds);
+        if (!response)
+            return NotFound();
+
+        return Ok();
     }
 
     /// <summary>Deletes a product by id</summary>
