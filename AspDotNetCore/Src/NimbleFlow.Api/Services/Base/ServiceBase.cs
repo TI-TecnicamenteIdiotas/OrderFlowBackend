@@ -41,13 +41,28 @@ public abstract class ServiceBase<TCreateDto, TDto, TDbContext, TEntity>
         return (totalAmount, entities.Select(x => x.ToDto()));
     }
 
+    public async Task<IEnumerable<TDto>> GetManyById(Guid[] entityIds, bool includeDeleted)
+    {
+        var entities = await _repository.GetManyEntitiesByIds(entityIds, includeDeleted);
+        return entities.Select(x => x.ToDto());
+    }
+
     public async Task<TDto?> GetById(Guid entityId)
     {
         var response = await _repository.GetEntityById(entityId);
         return response?.ToDto();
     }
 
-    public async Task<HttpStatusCode> DeleteEntityById(Guid entityId)
+    public async Task<bool> DeleteManyByIds(Guid[] entityIds)
+    {
+        var entities = await _repository.GetManyEntitiesByIds(entityIds, false);
+        foreach (var entity in entities)
+            entity.DeletedAt = DateTime.UtcNow;
+
+        return await _repository.UpdateManyEntities(entities);
+    }
+
+    public async Task<HttpStatusCode> DeleteById(Guid entityId)
     {
         var entity = await _repository.GetEntityById(entityId);
         if (entity is null)

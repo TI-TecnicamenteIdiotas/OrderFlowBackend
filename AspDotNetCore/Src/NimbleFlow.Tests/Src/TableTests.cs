@@ -55,7 +55,7 @@ public class TableTests : TestBase
 
     #endregion
 
-    #region By Id
+    #region Get By Id
 
     [Fact]
     public async Task Get_TableById_ShouldReturnOkObjectResult()

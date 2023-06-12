@@ -53,7 +53,46 @@ public class CategoryTests : TestBase
 
     #endregion
 
-    #region By Id
+    #region Get By Ids
+
+    [Fact]
+    public async Task Get_CategoriesByIds_ShouldReturnOkObjectResult()
+    {
+        // Arrange
+        var createdCategories = await CategoryController.CreateManyCategoriesTestHelper(
+            "Category A",
+            "Category B",
+            "Category C"
+        );
+        var categoriesIds = createdCategories.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await CategoryController.GetCategoriesByIds(categoriesIds);
+
+        // Assert
+        Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task Get_CategoriesByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var categoriesIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await CategoryController.GetCategoriesByIds(categoriesIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
+    }
+
+    #endregion
+
+    #region Get By Id
 
     [Fact]
     public async Task Get_CategoryById_ShouldReturnOkObjectResult()
@@ -118,6 +157,45 @@ public class CategoryTests : TestBase
 
         // Assert
         Assert.True(actionResult is ConflictResult);
+    }
+
+    #endregion
+
+    #region Delete By Ids
+
+    [Fact]
+    public async Task Delete_CategoriesByIds_ShouldReturnOkResult()
+    {
+        // Arrange
+        var createdCategories = await CategoryController.CreateManyCategoriesTestHelper(
+            "Category A",
+            "Category B",
+            "Category C"
+        );
+        var categoriesIds = createdCategories.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await CategoryController.DeleteCategoriesByIds(categoriesIds);
+
+        // Assert
+        Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task Delete_CategoriesByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var categoriesIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await CategoryController.DeleteCategoriesByIds(categoriesIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
     }
 
     #endregion

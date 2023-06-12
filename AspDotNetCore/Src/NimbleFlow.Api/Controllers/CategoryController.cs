@@ -70,6 +70,24 @@ public class CategoryController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>Gets categories by ids</summary>
+    /// <param name="categoriesIds"></param>
+    /// <param name="includeDeleted"></param>
+    /// <response code="404">Not Found</response>
+    [HttpGet("by-ids")]
+    [ProducesResponseType(typeof(CategoryDto[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetCategoriesByIds(
+        [FromBody] Guid[] categoriesIds,
+        [FromQuery] bool includeDeleted = false
+    )
+    {
+        var response = await _categoryService.GetManyById(categoriesIds, includeDeleted);
+        if (!response.Any())
+            return NotFound();
+
+        return Ok(response);
+    }
+
     /// <summary>Gets a category by id</summary>
     /// <param name="categoryId"></param>
     /// <response code="404">Not Found</response>
@@ -122,6 +140,20 @@ public class CategoryController : ControllerBase
         };
     }
 
+    /// <summary>Deletes categories by ids</summary>
+    /// <param name="categoriesIds"></param>
+    /// <response code="404">Not Found</response>
+    [HttpDelete("by-ids")]
+    [ProducesResponseType(typeof(CategoryDto[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteCategoriesByIds([FromBody] Guid[] categoriesIds)
+    {
+        var response = await _categoryService.DeleteManyByIds(categoriesIds);
+        if (!response)
+            return NotFound();
+
+        return Ok(response);
+    }
+
     /// <summary>Deletes a category by id</summary>
     /// <param name="categoryId"></param>
     /// <response code="200">Ok</response>
@@ -130,7 +162,7 @@ public class CategoryController : ControllerBase
     [HttpDelete("{categoryId:guid}")]
     public async Task<IActionResult> DeleteCategoryById([FromRoute] Guid categoryId)
     {
-        var responseStatus = await _categoryService.DeleteEntityById(categoryId);
+        var responseStatus = await _categoryService.DeleteById(categoryId);
         return responseStatus switch
         {
             HttpStatusCode.OK => Ok(),

@@ -118,7 +118,7 @@ public class TableController : ControllerBase
     [HttpDelete("{tableId:guid}")]
     public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
-        var responseStatus = await _tableService.DeleteEntityById(tableId);
+        var responseStatus = await _tableService.DeleteById(tableId);
         return responseStatus switch
         {
             HttpStatusCode.OK => Ok(),

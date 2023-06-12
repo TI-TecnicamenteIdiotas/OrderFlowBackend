@@ -46,11 +46,22 @@ public abstract class RepositoryBase<TDbContext, TEntity>
         return QueryEntities(DbEntities.Where(x => x.DeletedAt == null));
     }
 
-    public Task<bool> ExistsById(Guid entityId)
-        => DbEntities.AnyAsync(x => x.Id == entityId);
+    public Task<TEntity[]> GetManyEntitiesByIds(Guid[] entityIds, bool includeDeleted)
+    {
+        if (includeDeleted)
+            return DbEntities.Where(x => entityIds.Contains(x.Id)).ToArrayAsync();
+
+        return DbEntities.Where(x => x.DeletedAt == null && entityIds.Contains(x.Id)).ToArrayAsync();
+    }
 
     public Task<TEntity?> GetEntityById(Guid entityId)
         => DbEntities.FirstOrDefaultAsync(x => x.Id == entityId);
+
+    public async Task<bool> UpdateManyEntities(TEntity[] entities)
+    {
+        DbEntities.UpdateRange(entities);
+        return await _dbContext.SaveChangesAsync() != 0;
+    }
 
     public async Task<bool> UpdateEntity(TEntity entity)
     {

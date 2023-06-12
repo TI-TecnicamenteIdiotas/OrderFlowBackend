@@ -79,7 +79,7 @@ public class ProductTests : TestBase
 
     #endregion
 
-    #region By Id
+    #region Get By Id
 
     [Fact]
     public async Task Get_ProductById_ShouldReturnOkObjectResult()

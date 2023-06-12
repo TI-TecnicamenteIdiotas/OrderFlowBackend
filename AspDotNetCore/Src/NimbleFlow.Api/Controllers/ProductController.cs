@@ -143,7 +143,7 @@ public class ProductController : ControllerBase
     [HttpDelete("{productId:guid}")]
     public async Task<IActionResult> DeleteProductById([FromRoute] Guid productId)
     {
-        var responseStatus = await _productService.DeleteEntityById(productId);
+        var responseStatus = await _productService.DeleteById(productId);
         return responseStatus switch
         {
             HttpStatusCode.OK => Ok(),
