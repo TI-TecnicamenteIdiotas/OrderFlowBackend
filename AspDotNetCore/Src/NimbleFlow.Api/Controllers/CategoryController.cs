@@ -142,16 +142,16 @@ public class CategoryController : ControllerBase
 
     /// <summary>Deletes categories by ids</summary>
     /// <param name="categoriesIds"></param>
+    /// <response code="200">Ok</response>
     /// <response code="404">Not Found</response>
     [HttpDelete("by-ids")]
-    [ProducesResponseType(typeof(CategoryDto[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteCategoriesByIds([FromBody] Guid[] categoriesIds)
     {
         var response = await _categoryService.DeleteManyByIds(categoriesIds);
         if (!response)
             return NotFound();
 
-        return Ok(response);
+        return Ok();
     }
 
     /// <summary>Deletes a category by id</summary>

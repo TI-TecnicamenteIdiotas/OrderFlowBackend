@@ -178,7 +178,7 @@ public class CategoryTests : TestBase
         var actionResult = await CategoryController.DeleteCategoriesByIds(categoriesIds);
 
         // Assert
-        Assert.True(actionResult is OkObjectResult);
+        Assert.True(actionResult is OkResult);
     }
 
     [Fact]
