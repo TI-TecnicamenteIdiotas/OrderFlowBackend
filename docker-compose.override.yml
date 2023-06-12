@@ -54,8 +54,8 @@ services:
   nimbleflow.aws.up:
     container_name: nimbleflow.aws.up
     build:
-      dockerfile: .assets/initaws/Dockerfile
-      context: .
+      context: ./.assets/initaws
+      dockerfile: Dockerfile
     depends_on:
       nimbleflow.nosql.db:
         condition: service_started
@@ -84,7 +84,7 @@ services:
       nimbleflow.sql.db:
         condition: service_healthy
       nimbleflow.aws.up:
-        condition: service_started
+        condition: service_completed_successfully
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

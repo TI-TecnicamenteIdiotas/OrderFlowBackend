@@ -79,7 +79,48 @@ public class ProductTests : TestBase
 
     #endregion
 
-    #region By Id
+    #region Get By Ids
+
+    [Fact]
+    public async Task Get_ProductsByIds_ShouldReturnOkObjectResult()
+    {
+        // Arrange
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
+        var createdProducts = await ProductController.CreateManyProductsTestHelper(
+            createdCategory,
+            "Product A",
+            "Product B",
+            "Product C"
+        );
+        var productsIds = createdProducts.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await ProductController.GetProductsByIds(productsIds);
+
+        // Assert
+        Assert.True(actionResult is OkObjectResult);
+    }
+
+    [Fact]
+    public async Task Get_ProductsByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var productsIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await ProductController.GetProductsByIds(productsIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
+    }
+
+    #endregion
+
+    #region Get By Id
 
     [Fact]
     public async Task Get_ProductById_ShouldReturnOkObjectResult()
@@ -147,6 +188,47 @@ public class ProductTests : TestBase
 
         // Assert
         Assert.True(actionResult is ConflictResult);
+    }
+
+    #endregion
+
+    #region Delete By Ids
+
+    [Fact]
+    public async Task Delete_ProductsByIds_ShouldReturnOkResult()
+    {
+        // Arrange
+        var createdCategory = await CategoryController.CreateCategoryTestHelper("Category A");
+        var createdProducts = await ProductController.CreateManyProductsTestHelper(
+            createdCategory,
+            "Product A",
+            "Product B",
+            "Product C"
+        );
+        var productsIds = createdProducts.Select(x => x.Id).ToArray();
+
+        // Act
+        var actionResult = await ProductController.DeleteProductsByIds(productsIds);
+
+        // Assert
+        Assert.True(actionResult is OkResult);
+    }
+
+    [Fact]
+    public async Task Delete_ProductsByIds_ShouldReturnNotFoundResult()
+    {
+        // Arrange
+        var productsIds = new[]
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        // Act
+        var actionResult = await ProductController.DeleteProductsByIds(productsIds);
+
+        // Assert
+        Assert.True(actionResult is NotFoundResult);
     }
 
     #endregion

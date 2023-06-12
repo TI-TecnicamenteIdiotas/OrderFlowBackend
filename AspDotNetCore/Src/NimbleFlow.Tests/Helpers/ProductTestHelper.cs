@@ -25,4 +25,21 @@ internal static class ProductTestHelper
         var createdProduct = ((createProductResponse as CreatedResult)!.Value as ProductDto)!;
         return createdProduct;
     }
+
+    internal static async Task<ProductDto[]> CreateManyProductsTestHelper(
+        this ProductController categoryController,
+        CategoryDto categoryDto,
+        params string[] productTitles
+    )
+    {
+        var productsDto = productTitles.Select(x => new CreateProductDto(x, categoryDto.Id)).ToArray();
+        var createProductResponses = new List<IActionResult>();
+        foreach (var productDto in productsDto)
+        {
+            var response = await categoryController.CreateProduct(productDto);
+            createProductResponses.Add(response);
+        }
+
+        return createProductResponses.Select(x => ((x as CreatedResult)!.Value as ProductDto)!).ToArray();
+    }
 }
