@@ -30,18 +30,18 @@ public class ReportService {
     private final OrderService orderService;
     private final ProductService productService;
 
-    public ReportDTO<OrderDTO> getOrdersMonthReport(boolean getInactiveOrders) {
-        List<OrderDTO> orders = orderService.getAllMothOrders(getInactiveOrders);
+    public ReportDTO<OrderDTO> getOrdersMonthReport(boolean getDeletedOrders) {
+        List<OrderDTO> orders = orderService.getAllMothOrders(getDeletedOrders);
         return getOrderDTOReportDTO(orders);
     }
 
-    public ReportDTO<OrderDTO> getOrdersReportByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getInactiveOrders) {
-        List<OrderDTO> orders = orderService.findOrdersByInterval(startDate, endDate, getInactiveOrders);
+    public ReportDTO<OrderDTO> getOrdersReportByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getDeletedOrders) {
+        List<OrderDTO> orders = orderService.findOrdersByInterval(startDate, endDate, getDeletedOrders);
         return getOrderDTOReportDTO(orders);
     }
 
-    public ReportDTO<ProductDTO> getTopSoldProductsReport(Integer maxProducts, boolean getInactiveOrders) {
-        List<ProductDTO> products = productService.getTopSoldProducts(maxProducts, getInactiveOrders);
+    public ReportDTO<ProductDTO> getTopSoldProductsReport(Integer maxProducts, boolean getDeletedOrders) {
+        List<ProductDTO> products = productService.getTopSoldProducts(maxProducts, getDeletedOrders);
 
         if (products.isEmpty()) {
             return ReportDTO.<ProductDTO>builder().build();

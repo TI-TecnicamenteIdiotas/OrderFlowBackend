@@ -26,7 +26,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Purchase Controller")
+@Tag(name = "Report Controller")
 @SecurityRequirement(name = "Bearer Authorization")
 @ApiResponse(
         responseCode = "401",
@@ -45,10 +45,10 @@ public class ReportController {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
     public ResponseEntity<ReportDTO<OrderDTO>> findOrdersByInterval(
-            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases
+            @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders
     ) {
-        log.info(String.format("Getting orders month report, inactive: %s", getInactivePurchases));
-        ReportDTO<OrderDTO> responseBody = reportService.getOrdersMonthReport(getInactivePurchases);
+        log.info(String.format("Getting orders month report, getDeletedOrders: %s", getDeletedOrders));
+        ReportDTO<OrderDTO> responseBody = reportService.getOrdersMonthReport(getDeletedOrders);
         HttpStatus httpStatus = !responseBody.getItems().isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(responseBody, httpStatus);
     }
@@ -60,12 +60,12 @@ public class ReportController {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
     public ResponseEntity<ReportDTO<OrderDTO>> getOrdersReportByInterval(
-            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases,
+            @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders,
             @RequestParam(value = "starDate") ZonedDateTime startDate,
             @RequestParam(value = "endDate") ZonedDateTime endDate
     ) {
-        log.info(String.format("Getting orders report by interval (startDate: %s, endDate: %s, inactive: %s)", startDate, endDate, getInactivePurchases));
-        ReportDTO<OrderDTO> responseBody = reportService.getOrdersReportByInterval(startDate, endDate, getInactivePurchases);
+        log.info(String.format("Getting orders report by interval (startDate: %s, endDate: %s, getDeletedOrders: %s)", startDate, endDate, getDeletedOrders));
+        ReportDTO<OrderDTO> responseBody = reportService.getOrdersReportByInterval(startDate, endDate, getDeletedOrders);
         HttpStatus httpStatus = !responseBody.getItems().isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(responseBody, httpStatus);
     }
@@ -77,11 +77,11 @@ public class ReportController {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content)
     })
     public ResponseEntity<ReportDTO<ProductDTO>> getTopSoldProductsReport(
-            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases,
+            @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders,
             @RequestParam(value = "maxProducts", required = false) Integer maxProducts
     ) {
-        log.info(String.format("Getting top sold products report (maxProducts: %s, inactive: %s)", maxProducts, getInactivePurchases));
-        ReportDTO<ProductDTO> responseBody = reportService.getTopSoldProductsReport(maxProducts, getInactivePurchases);
+        log.info(String.format("Getting top sold products report (maxProducts: %s, getDeletedOrders: %s)", maxProducts, getDeletedOrders));
+        ReportDTO<ProductDTO> responseBody = reportService.getTopSoldProductsReport(maxProducts, getDeletedOrders);
         HttpStatus httpStatus = !responseBody.getItems().isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(responseBody, httpStatus);
     }
