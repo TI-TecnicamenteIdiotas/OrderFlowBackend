@@ -129,7 +129,7 @@ public class CategoryController : ControllerBase
         if (requestBody.CategoryIcon < 0)
             return BadRequest($"{nameof(requestBody.CategoryIcon)} must be positive");
 
-        var responseStatus = await _categoryService.UpdateCategoryById(categoryId, requestBody);
+        var (responseStatus, _) = await _categoryService.UpdateCategoryById(categoryId, requestBody);
         return responseStatus switch
         {
             HttpStatusCode.OK => Ok(),

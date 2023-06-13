@@ -27,4 +27,16 @@ public class HubService
             IsFullyPaid = message.IsFullyPaid
         });
     }
+
+    public async Task PublishTableUpdatedAsync(TableDto message)
+    {
+        using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
+        var grpcClient = new HubPublisherServiceClient(channel);
+        _ = await grpcClient.PublishTableUpdatedAsync(new PublishTableValue
+        {
+            Id = message.Id.ToString(),
+            Accountable = message.Accountable,
+            IsFullyPaid = message.IsFullyPaid
+        });
+    }
 }

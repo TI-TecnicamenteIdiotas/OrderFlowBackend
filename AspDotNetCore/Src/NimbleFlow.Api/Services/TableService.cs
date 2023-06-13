@@ -19,11 +19,11 @@ public class TableService : ServiceBase<CreateTableDto, TableDto, NimbleFlowCont
         _tableRepository = tableRepository;
     }
 
-    public async Task<HttpStatusCode> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
+    public async Task<(HttpStatusCode, TableDto?)> UpdateTableById(Guid tableId, UpdateTableDto tableDto)
     {
         var tableEntity = await _tableRepository.GetEntityById(tableId);
         if (tableEntity is null)
-            return HttpStatusCode.NotFound;
+            return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
         if (tableDto.Accountable.IsNotNullAndNotEquals(tableEntity.Accountable))
@@ -39,18 +39,12 @@ public class TableService : ServiceBase<CreateTableDto, TableDto, NimbleFlowCont
         }
 
         if (!shouldUpdate)
-            return HttpStatusCode.NotModified;
+            return (HttpStatusCode.NotModified, null);
 
-        try
-        {
-            if (!await _tableRepository.UpdateEntity(tableEntity))
-                return HttpStatusCode.InternalServerError;
-        }
-        catch (DbUpdateException)
-        {
-            return HttpStatusCode.Conflict;
-        }
+        var updatedTable = await _tableRepository.UpdateEntity(tableEntity);
+        if (updatedTable is null)
+            return (HttpStatusCode.NotModified, null);
 
-        return HttpStatusCode.OK;
+        return (HttpStatusCode.OK, updatedTable.ToDto());
     }
 }

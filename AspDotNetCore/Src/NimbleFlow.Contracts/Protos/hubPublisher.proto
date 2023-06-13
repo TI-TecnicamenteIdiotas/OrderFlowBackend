@@ -8,6 +8,7 @@ package hubPublisher;
 
 service HubPublisher {
   rpc PublishTableCreated (PublishTableValue) returns (google.protobuf.Empty);
+  rpc PublishTableUpdated (PublishTableValue) returns (google.protobuf.Empty);
 }
 
 message PublishTableValue {
