@@ -12,8 +12,8 @@ import java.util.UUID;
 public class ObjectBuilder {
     public static OrderDTO buildOrderDTO() {
         return OrderDTO.builder()
-                .orderDate(ZonedDateTime.now().minusMonths(1L))
-                .active(true)
+                .createdAt(ZonedDateTime.now().minusMonths(1L))
+                .deletedAt(null)
                 .id(new UUID(5L, 15L))
                 .tableId(new UUID(7L, 15L))
                 .paymentMethod(PaymentMethod.CASH)
@@ -31,10 +31,10 @@ public class ObjectBuilder {
     public static Order buildOrder() {
         return Order.builder()
                 .id(new UUID(5L, 15L))
-                .active(true)
+                .deletedAt(null)
                 .tableId(new UUID(5L, 15L))
                 .products(buildListOfProductDTO())
-                .orderDate(ZonedDateTime.now().minusMonths(1L))
+                .createdAt(ZonedDateTime.now().minusMonths(1L))
                 .paymentMethod(PaymentMethod.CASH)
                 .build();
     }

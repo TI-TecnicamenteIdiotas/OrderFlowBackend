@@ -15,9 +15,9 @@ public class OrderReportDTO {
 
     private UUID id;
     private UUID tableId;
-    private ZonedDateTime orderDate;
+    private ZonedDateTime createdAt;
     private PaymentMethod paymentMethod;
     private String productsIdsAndAmount;
-    private Boolean active;
+    private ZonedDateTime deletedAt;
 
 }

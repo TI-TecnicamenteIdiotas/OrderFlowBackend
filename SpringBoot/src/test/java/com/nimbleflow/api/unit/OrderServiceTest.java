@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,10 +42,10 @@ public class OrderServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(order.getId(), result.getId());
         Assertions.assertEquals(order.getTableId(), result.getTableId());
-        Assertions.assertEquals(order.getOrderDate(), result.getOrderDate());
+        Assertions.assertEquals(order.getCreatedAt(), result.getCreatedAt());
         Assertions.assertEquals(order.getProducts(), result.getProducts());
         Assertions.assertEquals(order.getPaymentMethod(), result.getPaymentMethod());
-        Assertions.assertEquals(order.isActive(), result.getActive());
+        Assertions.assertEquals(order.getDeletedAt(), result.getDeletedAt());
     }
 
     @Test
@@ -63,10 +64,10 @@ public class OrderServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(order.getId(), result.getId());
         Assertions.assertEquals(order.getTableId(), result.getTableId());
-        Assertions.assertEquals(order.getOrderDate(), result.getOrderDate());
+        Assertions.assertEquals(order.getCreatedAt(), result.getCreatedAt());
         Assertions.assertEquals(order.getProducts(), result.getProducts());
         Assertions.assertEquals(order.getPaymentMethod(), result.getPaymentMethod());
-        Assertions.assertEquals(order.isActive(), result.getActive());
+        Assertions.assertEquals(order.getDeletedAt(), result.getDeletedAt());
     }
 
     @Test
@@ -95,11 +96,11 @@ public class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("Validate if findOrdersByTableIdSuccess() returns the expected values")
+    @DisplayName("Validate if findOrdersByTableId() returns the expected values")
     void findOrdersByTableIdSuccess() {
         List<Order> orders = ObjectBuilder.buildListOfOrder();
 
-        Mockito.when(orderRepository.findByTableIdAndActive(Mockito.any(UUID.class), Mockito.anyBoolean()))
+        Mockito.when(orderRepository.findByTableIdAndDeletedAtIsNullOrDeletedAtIsEmpty(Mockito.any(UUID.class)))
                 .thenReturn(orders);
 
         List<OrderDTO> result = underTest.findOrdersByTableId(ObjectBuilder.buildOrder().getTableId(), false);
@@ -109,7 +110,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("Validate if findOrdersByTableIdSuccess() returns the expected values")
+    @DisplayName("Validate if findOrdersByTableIdSuccess() deletes the orders as expected")
     void deleteOrdersByTableIdSuccess() {
         List<Order> orders = ObjectBuilder.buildListOfOrder();
 
@@ -117,7 +118,7 @@ public class OrderServiceTest {
                 .thenReturn(orders);
 
         Order order = ObjectBuilder.buildOrder();
-        order.setActive(false);
+        order.setDeletedAt(ZonedDateTime.now());
 
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenReturn(order);
@@ -128,7 +129,25 @@ public class OrderServiceTest {
         Assertions.assertEquals(orders.size(), result.size());
 
         for (OrderDTO orderDTO : result) {
-            Assertions.assertFalse(orderDTO.getActive());
+            Assertions.assertNotNull(orderDTO.getDeletedAt());
         }
+    }
+
+    @Test
+    @DisplayName("Validate if findOrdersByIdSuccess() deletes the order as expected")
+    void deleteOrdersByIdSuccess() {
+        Mockito.when(orderRepository.findById(Mockito.any(UUID.class)))
+                .thenReturn(Optional.of(ObjectBuilder.buildOrder()));
+
+        Order order = ObjectBuilder.buildOrder();
+        order.setDeletedAt(ZonedDateTime.now());
+
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenReturn(order);
+
+        OrderDTO result = underTest.deleteOrderById(ObjectBuilder.buildOrder().getTableId());
+
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getDeletedAt());
     }
 }

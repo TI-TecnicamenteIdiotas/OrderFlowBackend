@@ -36,7 +36,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "Save order informations")
+    @Operation(description = "Save order information")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(
@@ -52,7 +52,7 @@ public class OrderController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "Update order informations")
+    @Operation(description = "Update order information")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(
@@ -75,10 +75,10 @@ public class OrderController {
     })
     public ResponseEntity<List<OrderDTO>> findOrdersByTableId(
             @PathVariable UUID tableId,
-            @RequestParam(value = "inactive", required = false) boolean inactive
+            @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders
     ) {
-        log.info(String.format("Find orders by tableId: %s; inactive: %s", tableId, inactive));
-        List<OrderDTO> body = orderService.findOrdersByTableId(tableId, inactive);
+        log.info(String.format("Find orders by tableId: %s; getDeletedOrders: %s", tableId, getDeletedOrders));
+        List<OrderDTO> body = orderService.findOrdersByTableId(tableId, getDeletedOrders);
         HttpStatus httpStatus = body.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
         return new ResponseEntity<>(body, httpStatus);
     }
@@ -96,6 +96,19 @@ public class OrderController {
         return new ResponseEntity<>(body, httpStatus);
     }
 
+    @DeleteMapping("{id}")
+    @Operation(description = "Delete orders by tableId (logical exclusion)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content")
+    })
+    public ResponseEntity<OrderDTO> deleteOrderById(@PathVariable UUID id) {
+        log.info(String.format("Delete order by id: %s", id));
+        OrderDTO body = orderService.deleteOrderById(id);
+        HttpStatus httpStatus = body != null ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return new ResponseEntity<>(body, httpStatus);
+    }
+
     @GetMapping("/interval")
     @Operation(description = "Find orders by interval")
     @ApiResponses({
@@ -103,12 +116,12 @@ public class OrderController {
             @ApiResponse(responseCode = "204", description = "No Content")
     })
     public ResponseEntity<List<OrderDTO>> findOrdersByInterval(
-            @RequestParam(value = "getInactivePurchases", required = false) boolean getInactivePurchases,
+            @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders,
             @RequestParam(value = "starDate") ZonedDateTime startDate,
             @RequestParam(value = "endDate") ZonedDateTime endDate
     ) {
-        log.info(String.format("Find orders by interval: %s, %s; inactive: %s", startDate, endDate, getInactivePurchases));
-        List<OrderDTO> body = orderService.findOrdersByInterval(startDate, endDate, getInactivePurchases);
+        log.info(String.format("Find orders by interval: %s, %s; getDeletedOrders: %s", startDate, endDate, getDeletedOrders));
+        List<OrderDTO> body = orderService.findOrdersByInterval(startDate, endDate, getDeletedOrders);
         HttpStatus httpStatus = body.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
         return new ResponseEntity<>(body, httpStatus);
     }

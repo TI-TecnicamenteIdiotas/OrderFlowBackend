@@ -48,17 +48,24 @@ public class OrderService {
         return modelMapper.map(order, OrderDTO.class);
     }
 
-    public List<OrderDTO> findOrdersByTableId(UUID orderId, boolean getInactivePurchases) {
-        List<Order> orders = orderRepository.findByTableIdAndActive(orderId, !getInactivePurchases);
-        List<OrderDTO> purchasesDTOs = new ArrayList<>();
+    public List<OrderDTO> findOrdersByTableId(UUID tableId, boolean getDeletedOrders) {
+        List<Order> orders;
+
+        if (getDeletedOrders) {
+            orders = orderRepository.findByTableId(tableId);
+        } else {
+            orders = orderRepository.findByTableIdAndDeletedAtIsNullOrDeletedAtIsEmpty(tableId);
+        }
 
         if (orders.isEmpty()) return new ArrayList<>();
 
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+
         orders.forEach(order -> {
-            purchasesDTOs.add(modelMapper.map(order, OrderDTO.class));
+            orderDTOS.add(modelMapper.map(order, OrderDTO.class));
         });
 
-        return purchasesDTOs;
+        return orderDTOS;
     }
 
     public List<OrderDTO> deleteOrdersByTableId(UUID orderId) {
@@ -70,7 +77,7 @@ public class OrderService {
         }
 
         orders.forEach(order -> {
-            order.setActive(false);
+            order.setDeletedAt(ZonedDateTime.now());
             order = orderRepository.save(order);
             log.info(String.format("Order deleted successfully: %s", order));
             orderDTOS.add(modelMapper.map(order, OrderDTO.class));
@@ -79,21 +86,33 @@ public class OrderService {
         return orderDTOS;
     }
 
-    public List<OrderDTO> getAllMothOrders(boolean getInactiveOrders) {
+    public OrderDTO deleteOrderById(UUID orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null) return null;
+
+        order.setDeletedAt(ZonedDateTime.now());
+        order = orderRepository.save(order);
+        log.info(String.format("Order deleted successfully: %s", order));
+
+        return modelMapper.map(order, OrderDTO.class);
+    }
+
+    public List<OrderDTO> getAllMothOrders(boolean getDeletedOrders) {
         int dayOfMonth = ZonedDateTime.now().getDayOfMonth();
         int daysToSubtract = (dayOfMonth + 1) - dayOfMonth;
         ZonedDateTime startDate = ZonedDateTime.now().minusDays(daysToSubtract);
 
-        return findOrdersByInterval(startDate, ZonedDateTime.now(), getInactiveOrders);
+        return findOrdersByInterval(startDate, ZonedDateTime.now(), getDeletedOrders);
     }
 
-    public List<OrderDTO> findOrdersByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getInactiveOrders) {
+    public List<OrderDTO> findOrdersByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getDeletedOrders) {
         List<Order> orders;
 
-        if (getInactiveOrders) {
-            orders = orderRepository.findByOrderDateBetween(startDate, endDate);
+        if (getDeletedOrders) {
+            orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
         } else {
-            orders = orderRepository.findByOrderDateBetweenAndActiveTrue(startDate, endDate);
+            orders = orderRepository.findByCreatedAtBetweenAndDeletedAtIsNullOrDeletedAtIsEmpty(startDate, endDate);
         }
 
         return orders.stream()
@@ -101,13 +120,13 @@ public class OrderService {
                 .toList();
     }
 
-    public List<OrderDTO> findAllOrders(boolean getInactiveOrders) {
+    public List<OrderDTO> findAllOrders(boolean getDeletedOrders) {
         List<Order> orders;
 
-        if (getInactiveOrders) {
+        if (getDeletedOrders) {
             orders = orderRepository.findAll();
         } else {
-            orders = orderRepository.findByActiveTrue();
+            orders = orderRepository.findByDeletedAtIsNullOrDeletedAtIsEmpty();
         }
 
         return orders.stream()
@@ -122,4 +141,5 @@ public class OrderService {
     private OrderDTO mapOrderToOrderDTO(Order order) {
         return modelMapper.map(order, OrderDTO.class);
     }
+
 }

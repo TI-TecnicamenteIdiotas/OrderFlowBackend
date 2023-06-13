@@ -16,13 +16,13 @@ public interface OrderRepository extends CrudRepository<Order, String> {
 
     Optional<Order> findById(UUID id);
 
-    List<Order> findByActiveTrue();
+    List<Order> findByDeletedAtIsNullOrDeletedAtIsEmpty();
 
     List<Order> findByTableId(UUID tableId);
 
-    List<Order> findByTableIdAndActive(UUID orderId, boolean active);
+    List<Order> findByTableIdAndDeletedAtIsNullOrDeletedAtIsEmpty(UUID orderId);
 
-    List<Order> findByOrderDateBetween(ZonedDateTime startDate, ZonedDateTime endDate);
+    List<Order> findByCreatedAtBetween(ZonedDateTime startDate, ZonedDateTime endDate);
 
-    List<Order> findByOrderDateBetweenAndActiveTrue(ZonedDateTime startDate, ZonedDateTime endDate);
+    List<Order> findByCreatedAtBetweenAndDeletedAtIsNullOrDeletedAtIsEmpty(ZonedDateTime startDate, ZonedDateTime endDate);
 }

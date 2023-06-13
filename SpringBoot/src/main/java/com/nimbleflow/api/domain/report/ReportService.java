@@ -65,10 +65,10 @@ public class ReportService {
         Map<String, String> headersAndRespectiveAttributes = new HashMap<>();
         headersAndRespectiveAttributes.put("Order id", "id");
         headersAndRespectiveAttributes.put("Table id", "tableId");
-        headersAndRespectiveAttributes.put("Order date", "orderDate");
+        headersAndRespectiveAttributes.put("Creation date", "createdAt");
         headersAndRespectiveAttributes.put("Payment method", "paymentMethod");
         headersAndRespectiveAttributes.put("Products ids and amount", "productsIdsAndAmount");
-        headersAndRespectiveAttributes.put("Active", "active");
+        headersAndRespectiveAttributes.put("Deletion date", "deletedAt");
 
         List<OrderReportDTO> reports = new ArrayList<>();
 
@@ -84,9 +84,9 @@ public class ReportService {
 
     private OrderReportDTO buildOrderReportDTO(OrderDTO orderDTO) {
         OrderReportDTO reportDTO = OrderReportDTO.builder()
-                .orderDate(orderDTO.getOrderDate())
+                .createdAt(orderDTO.getCreatedAt())
                 .id(orderDTO.getId())
-                .active(orderDTO.getActive())
+                .deletedAt(orderDTO.getDeletedAt())
                 .paymentMethod(orderDTO.getPaymentMethod())
                 .tableId(orderDTO.getTableId())
                 .build();
