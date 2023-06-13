@@ -13,7 +13,7 @@ public class OpenAPIConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("NimbleFlow - Prodcuts Reports API")
+                        .title("NimbleFlow - Products Reports API")
                         .description("NimbleFlow Spring-Boot API to generate products reports")
                         .version("v1.0.0")
                         .license(new License().name("MIT")))

@@ -30,18 +30,18 @@ public class ReportService {
     private final OrderService orderService;
     private final ProductService productService;
 
-    public ReportDTO<OrderDTO> getOrdersMonthReport(boolean getInactiveOrders) {
-        List<OrderDTO> orders = orderService.getAllMothOrders(getInactiveOrders);
+    public ReportDTO<OrderDTO> getOrdersMonthReport(boolean getDeletedOrders) {
+        List<OrderDTO> orders = orderService.getAllMothOrders(getDeletedOrders);
         return getOrderDTOReportDTO(orders);
     }
 
-    public ReportDTO<OrderDTO> getOrdersReportByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getInactiveOrders) {
-        List<OrderDTO> orders = orderService.findOrdersByInterval(startDate, endDate, getInactiveOrders);
+    public ReportDTO<OrderDTO> getOrdersReportByInterval(ZonedDateTime startDate, ZonedDateTime endDate, boolean getDeletedOrders) {
+        List<OrderDTO> orders = orderService.findOrdersByInterval(startDate, endDate, getDeletedOrders);
         return getOrderDTOReportDTO(orders);
     }
 
-    public ReportDTO<ProductDTO> getTopSoldProductsReport(Integer maxProducts, boolean getInactiveOrders) {
-        List<ProductDTO> products = productService.getTopSoldProducts(maxProducts, getInactiveOrders);
+    public ReportDTO<ProductDTO> getTopSoldProductsReport(Integer maxProducts, boolean getDeletedOrders) {
+        List<ProductDTO> products = productService.getTopSoldProducts(maxProducts, getDeletedOrders);
 
         if (products.isEmpty()) {
             return ReportDTO.<ProductDTO>builder().build();
@@ -65,10 +65,10 @@ public class ReportService {
         Map<String, String> headersAndRespectiveAttributes = new HashMap<>();
         headersAndRespectiveAttributes.put("Order id", "id");
         headersAndRespectiveAttributes.put("Table id", "tableId");
-        headersAndRespectiveAttributes.put("Order date", "orderDate");
+        headersAndRespectiveAttributes.put("Creation date", "createdAt");
         headersAndRespectiveAttributes.put("Payment method", "paymentMethod");
         headersAndRespectiveAttributes.put("Products ids and amount", "productsIdsAndAmount");
-        headersAndRespectiveAttributes.put("Active", "active");
+        headersAndRespectiveAttributes.put("Deletion date", "deletedAt");
 
         List<OrderReportDTO> reports = new ArrayList<>();
 
@@ -84,9 +84,9 @@ public class ReportService {
 
     private OrderReportDTO buildOrderReportDTO(OrderDTO orderDTO) {
         OrderReportDTO reportDTO = OrderReportDTO.builder()
-                .orderDate(orderDTO.getOrderDate())
+                .createdAt(orderDTO.getCreatedAt())
                 .id(orderDTO.getId())
-                .active(orderDTO.getActive())
+                .deletedAt(orderDTO.getDeletedAt())
                 .paymentMethod(orderDTO.getPaymentMethod())
                 .tableId(orderDTO.getTableId())
                 .build();

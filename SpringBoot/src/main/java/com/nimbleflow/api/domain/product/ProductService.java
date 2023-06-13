@@ -15,10 +15,10 @@ public class ProductService {
 
     private final OrderService orderService;
 
-    public List<ProductDTO> getTopSoldProducts(Integer maxProducts, boolean getInactiveOrders) {
-        log.info(String.format("Get top sold products (maxProducts: %s, getInactiveOrders: %s)", maxProducts, getInactiveOrders));
+    public List<ProductDTO> getTopSoldProducts(Integer maxProducts, boolean getDeletedOrders) {
+        log.info(String.format("Get top sold products (maxProducts: %s, getDeletedOrders: %s)", maxProducts, getDeletedOrders));
 
-        List<OrderDTO> orders = orderService.findAllOrders(getInactiveOrders);
+        List<OrderDTO> orders = orderService.findAllOrders(getDeletedOrders);
 
         Map<UUID, Integer> productsIdsCount = new HashMap<>();
 

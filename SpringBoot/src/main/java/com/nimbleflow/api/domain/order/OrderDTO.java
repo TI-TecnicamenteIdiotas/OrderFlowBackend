@@ -15,13 +15,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
+
     private UUID id;
 
     @NotNull
     private UUID tableId;
 
     @NotNull
-    private ZonedDateTime orderDate;
+    private ZonedDateTime createdAt;
 
     @NotNull
     private PaymentMethod paymentMethod;
@@ -29,5 +30,6 @@ public class OrderDTO {
     @NotNull
     private List<ProductDTO> products;
 
-    private Boolean active;
+    private ZonedDateTime deletedAt;
+
 }
