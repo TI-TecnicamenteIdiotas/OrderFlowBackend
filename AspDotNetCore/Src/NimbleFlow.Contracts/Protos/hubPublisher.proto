@@ -9,6 +9,16 @@ package hubPublisher;
 service HubPublisher {
   rpc PublishTableCreated (PublishTableValue) returns (google.protobuf.Empty);
   rpc PublishTableUpdated (PublishTableValue) returns (google.protobuf.Empty);
+  rpc PublishManyTablesDeleted (PublishTableIds) returns (google.protobuf.Empty);
+  rpc PublishTableDeleted (PublishTableId) returns (google.protobuf.Empty);
+}
+
+message PublishTableIds {
+  repeated string ids = 1;
+}
+
+message PublishTableId {
+  string id = 1;
 }
 
 message PublishTableValue {

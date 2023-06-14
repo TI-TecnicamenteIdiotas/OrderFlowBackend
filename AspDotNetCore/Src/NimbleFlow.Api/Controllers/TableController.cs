@@ -145,6 +145,9 @@ public class TableController : ControllerBase
         if (!response)
             return NotFound();
 
+        if (_hubService is not null)
+            await _hubService.PublishManyTablesDeletedAsync(tablesIds);
+
         return Ok();
     }
 
@@ -157,11 +160,18 @@ public class TableController : ControllerBase
     public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
         var responseStatus = await _tableService.DeleteById(tableId);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotFound => NotFound(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishTableDeletedAsync(tableId);
+                return Ok();
+            }
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            default:
+                return Problem();
+        }
     }
 }
