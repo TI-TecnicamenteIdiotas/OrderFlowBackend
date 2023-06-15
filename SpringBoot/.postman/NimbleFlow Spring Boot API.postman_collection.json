@@ -1,0 +1,463 @@
+{
+	"info": {
+		"_postman_id": "54c8f550-2a20-4441-9736-3d69f9d03d52",
+		"name": "NimbleFlow Spring Boot API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19723124"
+	},
+	"item": [
+		{
+			"name": "Order Controller",
+			"item": [
+				{
+					"name": "Save order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the save order endpoint\", function() {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.have.jsonBody\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"tableId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n  \"createdAt\": \"2023-05-10T00:36:25.970Z\",\r\n  \"paymentMethod\": \"CASH\",\r\n  \"products\": [\r\n    {\r\n      \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n      \"amount\": 5\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders by tableId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the get orders by tableId endpoint\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders/{{table_id}}?getDeletedOrders=false",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{table_id}}"
+							],
+							"query": [
+								{
+									"key": "getDeletedOrders",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders by interval",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the get orders by interval endpoint\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders/interval?starDate=2023-05-10T00%3A12%3A20.214Z&endDate=2023-05-14T00%3A12%3A20.214Z&getDeletedOrders=false",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"interval"
+							],
+							"query": [
+								{
+									"key": "starDate",
+									"value": "2023-05-10T00%3A12%3A20.214Z"
+								},
+								{
+									"key": "endDate",
+									"value": "2023-05-14T00%3A12%3A20.214Z"
+								},
+								{
+									"key": "getDeletedOrders",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the update endpoint\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.jsonBody\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"bac24144-2891-466a-ba5a-fd20faa04811\",\r\n  \"paymentMethod\": \"PIX\",\r\n  \"products\": [\r\n    {\r\n      \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n      \"amount\": 10\r\n    }\r\n  ],\r\n  \"active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete order by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the delete order by id endpoint\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders/{{order_id}}",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete order by tableId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the delete order by tableId endpoint\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/orders/table-id/{{table_id}}",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"table-id",
+								"{{table_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Report Controller",
+			"item": [
+				{
+					"name": "Get top sold products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the endpoint for getting top sold products report\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/report/products/top-sold?getDeletedOrders=false&maxProducts=10",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"report",
+								"products",
+								"top-sold"
+							],
+							"query": [
+								{
+									"key": "getDeletedOrders",
+									"value": "false"
+								},
+								{
+									"key": "maxProducts",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders month report",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the endpoint for getting orders month report\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/report/orders/month-report?getDeletedOrders=false",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"report",
+								"orders",
+								"month-report"
+							],
+							"query": [
+								{
+									"key": "getDeletedOrders",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders report by interval",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the endpoint for getting report by interval\", function() {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204])\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_api_path}}/api/v1/report/orders/interval?getDeletedOrders=false&startDate=2023-05-01T00%3A12%3A20.214Z&endDate=2023-05-31T00%3A12%3A20.214Z",
+							"host": [
+								"{{base_api_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"report",
+								"orders",
+								"interval"
+							],
+							"query": [
+								{
+									"key": "getDeletedOrders",
+									"value": "false"
+								},
+								{
+									"key": "startDate",
+									"value": "2023-05-01T00%3A12%3A20.214Z"
+								},
+								{
+									"key": "endDate",
+									"value": "2023-05-31T00%3A12%3A20.214Z"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate the health of the API\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_api_path}}/actuator/health",
+					"host": [
+						"{{base_api_path}}"
+					],
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_api_path",
+			"value": "http://localhost:8080/nimbleflow-api",
+			"type": "string"
+		},
+		{
+			"key": "table_id",
+			"value": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+			"type": "string"
+		},
+		{
+			"key": "order_id",
+			"value": "bac24144-2891-466a-ba5a-fd20faa04811",
+			"type": "string"
+		}
+	]
+}
