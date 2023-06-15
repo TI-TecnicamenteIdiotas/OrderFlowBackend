@@ -63,9 +63,12 @@ public abstract class RepositoryBase<TDbContext, TEntity>
         return await _dbContext.SaveChangesAsync() != 0;
     }
 
-    public async Task<bool> UpdateEntity(TEntity entity)
+    public async Task<TEntity?> UpdateEntity(TEntity entity)
     {
-        _ = _dbContext.Update(entity);
-        return await _dbContext.SaveChangesAsync() == 1;
+        var updatedEntity = _dbContext.Update(entity);
+        if (await _dbContext.SaveChangesAsync() != 1)
+            return null;
+
+        return updatedEntity.Entity;
     }
 }

@@ -21,4 +21,22 @@ public class HubService : HubPublisherBase
         await _hubContext.Clients.All.SendJsonAsync("TableCreated", request);
         return new Empty();
     }
+
+    public override async Task<Empty> PublishTableUpdated(PublishTableValue request, ServerCallContext context)
+    {
+        await _hubContext.Clients.All.SendJsonAsync("TableUpdated", request);
+        return new Empty();
+    }
+
+    public override async Task<Empty> PublishManyTablesDeleted(PublishTableIds request, ServerCallContext context)
+    {
+        await _hubContext.Clients.All.SendJsonAsync("ManyTablesDeleted", request);
+        return new Empty();
+    }
+
+    public override async Task<Empty> PublishTableDeleted(PublishTableId request, ServerCallContext context)
+    {
+        await _hubContext.Clients.All.SendJsonAsync("TableDeleted", request);
+        return new Empty();
+    }
 }

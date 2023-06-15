@@ -142,7 +142,7 @@ public class ProductController : ControllerBase
         if (requestBody.Price < 0)
             return BadRequest($"{nameof(requestBody.Price)} must not be negative");
 
-        var responseStatus = await _productService.UpdateProductById(productId, requestBody);
+        var (responseStatus, _) = await _productService.UpdateProductById(productId, requestBody);
         return responseStatus switch
         {
             HttpStatusCode.OK => Ok(),

@@ -54,11 +54,11 @@ public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFl
         return (totalAmount, products.Select(x => x.ToDto()));
     }
 
-    public async Task<HttpStatusCode> UpdateProductById(Guid productId, UpdateProductDto productDto)
+    public async Task<(HttpStatusCode, ProductDto?)> UpdateProductById(Guid productId, UpdateProductDto productDto)
     {
         var productEntity = await _productRepository.GetEntityById(productId);
         if (productEntity is null)
-            return HttpStatusCode.NotFound;
+            return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
         if (productDto.Title.IsNotNullAndNotEquals(productEntity.Title))
@@ -104,18 +104,19 @@ public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFl
         }
 
         if (!shouldUpdate)
-            return HttpStatusCode.NotModified;
+            return (HttpStatusCode.NotModified, null);
 
         try
         {
-            if (!await _productRepository.UpdateEntity(productEntity))
-                return HttpStatusCode.InternalServerError;
+            var updatedProduct = await _productRepository.UpdateEntity(productEntity);
+            if (updatedProduct is null)
+                return (HttpStatusCode.NotModified, null);
+
+            return (HttpStatusCode.OK, updatedProduct.ToDto());
         }
         catch (DbUpdateException)
         {
-            return HttpStatusCode.Conflict;
+            return (HttpStatusCode.Conflict, null);
         }
-
-        return HttpStatusCode.OK;
     }
 }

@@ -73,7 +73,8 @@ public abstract class ServiceBase<TCreateDto, TDto, TDbContext, TEntity>
 
         entity.DeletedAt = DateTime.UtcNow;
 
-        if (!await _repository.UpdateEntity(entity))
+        var updateEntity = await _repository.UpdateEntity(entity);
+        if (updateEntity is null)
             return HttpStatusCode.InternalServerError;
 
         return HttpStatusCode.OK;

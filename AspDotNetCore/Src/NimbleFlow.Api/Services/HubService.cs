@@ -1,3 +1,4 @@
+using Google.Protobuf.Collections;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using NimbleFlow.Api.Options;
@@ -25,6 +26,38 @@ public class HubService
             Id = message.Id.ToString(),
             Accountable = message.Accountable,
             IsFullyPaid = message.IsFullyPaid
+        });
+    }
+
+    public async Task PublishTableUpdatedAsync(TableDto message)
+    {
+        using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
+        var grpcClient = new HubPublisherServiceClient(channel);
+        _ = await grpcClient.PublishTableUpdatedAsync(new PublishTableValue
+        {
+            Id = message.Id.ToString(),
+            Accountable = message.Accountable,
+            IsFullyPaid = message.IsFullyPaid
+        });
+    }
+
+    public async Task PublishManyTablesDeletedAsync(IEnumerable<Guid> message)
+    {
+        using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
+        var grpcClient = new HubPublisherServiceClient(channel);
+        _ = await grpcClient.PublishManyTablesDeletedAsync(new PublishTableIds
+        {
+            Ids = { message.Select(x => x.ToString()) }
+        });
+    }
+
+    public async Task PublishTableDeletedAsync(Guid message)
+    {
+        using var channel = GrpcChannel.ForAddress(_hubServiceOptions.GrpcConnectionUrl);
+        var grpcClient = new HubPublisherServiceClient(channel);
+        _ = await grpcClient.PublishTableDeletedAsync(new PublishTableId
+        {
+            Id = message.ToString()
         });
     }
 }

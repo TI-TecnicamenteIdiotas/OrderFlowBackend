@@ -109,7 +109,6 @@ public class TableController : ControllerBase
     /// <response code="304">Not Modified</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
-    /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server Error</response>
     [HttpPut("{tableId:guid}")]
     public async Task<IActionResult> UpdateTableById([FromRoute] Guid tableId, [FromBody] UpdateTableDto requestBody)
@@ -117,15 +116,22 @@ public class TableController : ControllerBase
         if (requestBody.Accountable?.Length > MaxAccountableLength)
             return BadRequest($"{nameof(requestBody.Accountable)} must be under {MaxAccountableLength + 1} characters");
 
-        var responseStatus = await _tableService.UpdateTableById(tableId, requestBody);
-        return responseStatus switch
+        var (responseStatus, response) = await _tableService.UpdateTableById(tableId, requestBody);
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotModified => StatusCode((int)HttpStatusCode.NotModified),
-            HttpStatusCode.NotFound => NotFound(),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null && response is not null)
+                    await _hubService.PublishTableUpdatedAsync(response);
+                return Ok();
+            }
+            case HttpStatusCode.NotModified:
+                return StatusCode((int)HttpStatusCode.NotModified);
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Deletes tables by ids</summary>
@@ -139,6 +145,9 @@ public class TableController : ControllerBase
         if (!response)
             return NotFound();
 
+        if (_hubService is not null)
+            await _hubService.PublishManyTablesDeletedAsync(tablesIds);
+
         return Ok();
     }
 
@@ -151,11 +160,18 @@ public class TableController : ControllerBase
     public async Task<IActionResult> DeleteTableById([FromRoute] Guid tableId)
     {
         var responseStatus = await _tableService.DeleteById(tableId);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotFound => NotFound(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishTableDeletedAsync(tableId);
+                return Ok();
+            }
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            default:
+                return Problem();
+        }
     }
 }

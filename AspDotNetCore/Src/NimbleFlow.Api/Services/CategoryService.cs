@@ -19,11 +19,11 @@ public class CategoryService : ServiceBase<CreateCategoryDto, CategoryDto, Nimbl
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<HttpStatusCode> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
+    public async Task<(HttpStatusCode, CategoryDto?)> UpdateCategoryById(Guid categoryId, UpdateCategoryDto categoryDto)
     {
         var categoryEntity = await _categoryRepository.GetEntityById(categoryId);
         if (categoryEntity is null)
-            return HttpStatusCode.NotFound;
+            return (HttpStatusCode.NotFound, null);
 
         var shouldUpdate = false;
         if (categoryDto.Title.IsNotNullAndNotEquals(categoryEntity.Title))
@@ -45,18 +45,19 @@ public class CategoryService : ServiceBase<CreateCategoryDto, CategoryDto, Nimbl
         }
 
         if (!shouldUpdate)
-            return HttpStatusCode.NotModified;
+            return (HttpStatusCode.NotModified, null);
 
         try
         {
-            if (!await _categoryRepository.UpdateEntity(categoryEntity))
-                return HttpStatusCode.NotModified;
+            var updatedCategory = await _categoryRepository.UpdateEntity(categoryEntity);
+            if (updatedCategory is null)
+                return (HttpStatusCode.NotModified, null);
+
+            return (HttpStatusCode.OK, updatedCategory.ToDto());
         }
         catch (DbUpdateException)
         {
-            return HttpStatusCode.Conflict;
+            return (HttpStatusCode.Conflict, null);
         }
-
-        return HttpStatusCode.OK;
     }
 }
