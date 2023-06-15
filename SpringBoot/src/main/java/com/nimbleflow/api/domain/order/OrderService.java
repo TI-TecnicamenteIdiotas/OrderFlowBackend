@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -19,11 +21,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public void setModelMapper(@Lazy ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     public OrderDTO saveOrder(OrderDTO orderDTO) {
         if (orderDTO.getId() != null) {
             orderDTO.setId(null);
+        }
+
+        if (orderDTO.getActive() == null) {
+            orderDTO.setActive(true);
         }
 
         Order order = modelMapper.map(orderDTO, Order.class);
@@ -42,6 +53,7 @@ public class OrderService {
         Order order = findOrderById(orderDTO.getId())
                 .orElseThrow(() -> new NotFoundException(String.format("The order with id %s was not found", orderDTO.getId())));
 
+        modelMapper.map(orderDTO, order);
         order = orderRepository.save(order);
         log.info(String.format("Order updated successfully: %s", order));
 
@@ -54,7 +66,7 @@ public class OrderService {
         if (getDeletedOrders) {
             orders = orderRepository.findByTableId(tableId);
         } else {
-            orders = orderRepository.findByTableIdAndDeletedAtIsNullOrDeletedAtIsEmpty(tableId);
+            orders = orderRepository.findByTableIdAndActiveIsTrue(tableId);
         }
 
         if (orders.isEmpty()) return new ArrayList<>();
@@ -77,7 +89,7 @@ public class OrderService {
         }
 
         orders.forEach(order -> {
-            order.setDeletedAt(ZonedDateTime.now());
+            order.setActive(false);
             order = orderRepository.save(order);
             log.info(String.format("Order deleted successfully: %s", order));
             orderDTOS.add(modelMapper.map(order, OrderDTO.class));
@@ -91,7 +103,7 @@ public class OrderService {
 
         if (order == null) return null;
 
-        order.setDeletedAt(ZonedDateTime.now());
+        order.setActive(false);
         order = orderRepository.save(order);
         log.info(String.format("Order deleted successfully: %s", order));
 
@@ -112,11 +124,11 @@ public class OrderService {
         if (getDeletedOrders) {
             orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
         } else {
-            orders = orderRepository.findByCreatedAtBetweenAndDeletedAtIsNullOrDeletedAtIsEmpty(startDate, endDate);
+            orders = orderRepository.findByCreatedAtBetweenAndActiveIsTrue(startDate, endDate);
         }
 
         return orders.stream()
-                .map(this::mapOrderToOrderDTO)
+                .map(order -> modelMapper.map(order, OrderDTO.class))
                 .toList();
     }
 
@@ -126,20 +138,16 @@ public class OrderService {
         if (getDeletedOrders) {
             orders = orderRepository.findAll();
         } else {
-            orders = orderRepository.findByDeletedAtIsNullOrDeletedAtIsEmpty();
+            orders = orderRepository.findByActiveIsTrue();
         }
 
         return orders.stream()
-                .map(this::mapOrderToOrderDTO)
+                .map(order -> modelMapper.map(order, OrderDTO.class))
                 .toList();
     }
 
     public Optional<Order> findOrderById(UUID id) {
         return orderRepository.findById(id);
-    }
-
-    private OrderDTO mapOrderToOrderDTO(Order order) {
-        return modelMapper.map(order, OrderDTO.class);
     }
 
 }

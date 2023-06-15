@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +23,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Order Controller")
-@SecurityRequirement(name = "Bearer Authorization")
 @ApiResponse(
         responseCode = "401",
         description = "Unauthorized",
         content = @Content(schema = @Schema(implementation = ExceptionResponseExample.UnauthorizedException.class))
 )
-@RequestMapping(value = "api/v1/order", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "api/v1/orders", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderController {
 
     private final OrderService orderService;
@@ -61,7 +59,7 @@ public class OrderController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponseExample.BadRequestException.class))
             )
     })
-    public ResponseEntity<OrderDTO> updateOrder(@RequestBody @Validated OrderDTO dto) {
+    public ResponseEntity<OrderDTO> updateOrder(@RequestBody OrderDTO dto) {
         log.info(String.format("Updating order: %s", dto));
         OrderDTO body = orderService.updateOrderById(dto);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -83,7 +81,7 @@ public class OrderController {
         return new ResponseEntity<>(body, httpStatus);
     }
 
-    @DeleteMapping("{tableId}")
+    @DeleteMapping("table-id/{tableId}")
     @Operation(description = "Delete orders by tableId (logical exclusion)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -105,7 +103,7 @@ public class OrderController {
     public ResponseEntity<OrderDTO> deleteOrderById(@PathVariable UUID id) {
         log.info(String.format("Delete order by id: %s", id));
         OrderDTO body = orderService.deleteOrderById(id);
-        HttpStatus httpStatus = body != null ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        HttpStatus httpStatus = body != null ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(body, httpStatus);
     }
 

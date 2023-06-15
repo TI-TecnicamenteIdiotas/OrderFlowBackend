@@ -30,6 +30,6 @@ public class OrderDTO {
     @NotNull
     private List<ProductDTO> products;
 
-    private ZonedDateTime deletedAt;
+    private Boolean active;
 
 }

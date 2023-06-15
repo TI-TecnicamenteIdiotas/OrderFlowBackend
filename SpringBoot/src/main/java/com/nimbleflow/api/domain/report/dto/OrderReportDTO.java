@@ -18,6 +18,6 @@ public class OrderReportDTO {
     private ZonedDateTime createdAt;
     private PaymentMethod paymentMethod;
     private String productsIdsAndAmount;
-    private ZonedDateTime deletedAt;
+    private boolean active;
 
 }

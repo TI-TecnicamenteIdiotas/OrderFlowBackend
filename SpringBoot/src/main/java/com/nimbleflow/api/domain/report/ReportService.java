@@ -68,7 +68,7 @@ public class ReportService {
         headersAndRespectiveAttributes.put("Creation date", "createdAt");
         headersAndRespectiveAttributes.put("Payment method", "paymentMethod");
         headersAndRespectiveAttributes.put("Products ids and amount", "productsIdsAndAmount");
-        headersAndRespectiveAttributes.put("Deletion date", "deletedAt");
+        headersAndRespectiveAttributes.put("Active", "active");
 
         List<OrderReportDTO> reports = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class ReportService {
         OrderReportDTO reportDTO = OrderReportDTO.builder()
                 .createdAt(orderDTO.getCreatedAt())
                 .id(orderDTO.getId())
-                .deletedAt(orderDTO.getDeletedAt())
+                .active(orderDTO.getActive())
                 .paymentMethod(orderDTO.getPaymentMethod())
                 .tableId(orderDTO.getTableId())
                 .build();

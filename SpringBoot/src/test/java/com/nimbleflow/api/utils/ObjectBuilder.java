@@ -13,7 +13,7 @@ public class ObjectBuilder {
     public static OrderDTO buildOrderDTO() {
         return OrderDTO.builder()
                 .createdAt(ZonedDateTime.now().minusMonths(1L))
-                .deletedAt(null)
+                .active(true)
                 .id(new UUID(5L, 15L))
                 .tableId(new UUID(7L, 15L))
                 .paymentMethod(PaymentMethod.CASH)
@@ -31,7 +31,7 @@ public class ObjectBuilder {
     public static Order buildOrder() {
         return Order.builder()
                 .id(new UUID(5L, 15L))
-                .deletedAt(null)
+                .active(true)
                 .tableId(new UUID(5L, 15L))
                 .products(buildListOfProductDTO())
                 .createdAt(ZonedDateTime.now().minusMonths(1L))

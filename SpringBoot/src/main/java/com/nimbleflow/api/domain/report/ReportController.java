@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import java.time.ZonedDateTime;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Report Controller")
-@SecurityRequirement(name = "Bearer Authorization")
 @ApiResponse(
         responseCode = "401",
         description = "Unauthorized",
@@ -61,7 +59,7 @@ public class ReportController {
     })
     public ResponseEntity<ReportDTO<OrderDTO>> getOrdersReportByInterval(
             @RequestParam(value = "getDeletedOrders", required = false) boolean getDeletedOrders,
-            @RequestParam(value = "starDate") ZonedDateTime startDate,
+            @RequestParam(value = "startDate") ZonedDateTime startDate,
             @RequestParam(value = "endDate") ZonedDateTime endDate
     ) {
         log.info(String.format("Getting orders report by interval (startDate: %s, endDate: %s, getDeletedOrders: %s)", startDate, endDate, getDeletedOrders));

@@ -8,14 +8,16 @@ import com.nimbleflow.api.exception.BadRequestException;
 import com.nimbleflow.api.exception.NotFoundException;
 import com.nimbleflow.api.utils.ObjectBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,11 +25,20 @@ import java.util.UUID;
 @SpringBootTest
 @DisplayName("OrderService")
 public class OrderServiceTest {
+
     @InjectMocks
     private OrderService underTest;
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @BeforeEach
+    void setUp() {
+        underTest.setModelMapper(modelMapper);
+    }
 
     @Test
     @DisplayName("Validate if saveOrder() saves the order correctly and returns the OrderDTO correctly")
@@ -45,7 +56,7 @@ public class OrderServiceTest {
         Assertions.assertEquals(order.getCreatedAt(), result.getCreatedAt());
         Assertions.assertEquals(order.getProducts(), result.getProducts());
         Assertions.assertEquals(order.getPaymentMethod(), result.getPaymentMethod());
-        Assertions.assertEquals(order.getDeletedAt(), result.getDeletedAt());
+        Assertions.assertEquals(order.isActive(), result.getActive());
     }
 
     @Test
@@ -67,7 +78,7 @@ public class OrderServiceTest {
         Assertions.assertEquals(order.getCreatedAt(), result.getCreatedAt());
         Assertions.assertEquals(order.getProducts(), result.getProducts());
         Assertions.assertEquals(order.getPaymentMethod(), result.getPaymentMethod());
-        Assertions.assertEquals(order.getDeletedAt(), result.getDeletedAt());
+        Assertions.assertEquals(order.isActive(), result.getActive());
     }
 
     @Test
@@ -100,7 +111,7 @@ public class OrderServiceTest {
     void findOrdersByTableIdSuccess() {
         List<Order> orders = ObjectBuilder.buildListOfOrder();
 
-        Mockito.when(orderRepository.findByTableIdAndDeletedAtIsNullOrDeletedAtIsEmpty(Mockito.any(UUID.class)))
+        Mockito.when(orderRepository.findByTableIdAndActiveIsTrue(Mockito.any(UUID.class)))
                 .thenReturn(orders);
 
         List<OrderDTO> result = underTest.findOrdersByTableId(ObjectBuilder.buildOrder().getTableId(), false);
@@ -118,7 +129,7 @@ public class OrderServiceTest {
                 .thenReturn(orders);
 
         Order order = ObjectBuilder.buildOrder();
-        order.setDeletedAt(ZonedDateTime.now());
+        order.setActive(false);
 
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenReturn(order);
@@ -129,7 +140,7 @@ public class OrderServiceTest {
         Assertions.assertEquals(orders.size(), result.size());
 
         for (OrderDTO orderDTO : result) {
-            Assertions.assertNotNull(orderDTO.getDeletedAt());
+            Assertions.assertNotNull(orderDTO.getActive());
         }
     }
 
@@ -140,7 +151,7 @@ public class OrderServiceTest {
                 .thenReturn(Optional.of(ObjectBuilder.buildOrder()));
 
         Order order = ObjectBuilder.buildOrder();
-        order.setDeletedAt(ZonedDateTime.now());
+        order.setActive(false);
 
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenReturn(order);
@@ -148,6 +159,6 @@ public class OrderServiceTest {
         OrderDTO result = underTest.deleteOrderById(ObjectBuilder.buildOrder().getTableId());
 
         Assertions.assertNotNull(result);
-        Assertions.assertNotNull(result.getDeletedAt());
+        Assertions.assertNotNull(result.getActive());
     }
 }
