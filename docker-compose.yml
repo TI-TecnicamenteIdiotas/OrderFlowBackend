@@ -23,7 +23,7 @@ services:
       - AWS_S3_SERVICE_URL=${AWS_S3_SERVICE_URL}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
     ports:
-      - "10506:80"
+      - "10506:10506"
 
   nimbleflow.java:
     container_name: nimbleflow.java
@@ -34,4 +34,4 @@ services:
       - AWS_REGION=${AWS_REGION}
       - NO_SQL_CONNECTION_STRING=${NO_SQL_CONNECTION_STRING}
     ports:
-      - "10507:8080"
+      - "10507:10507"

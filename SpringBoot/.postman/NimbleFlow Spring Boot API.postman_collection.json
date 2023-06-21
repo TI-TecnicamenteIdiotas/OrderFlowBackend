@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "54c8f550-2a20-4441-9736-3d69f9d03d52",
+		"_postman_id": "245b4748-4fda-436c-b9e4-d5fe0f43ab61",
 		"name": "NimbleFlow Spring Boot API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19723124"
+		"_exporter_id": "27841879"
 	},
 	"item": [
 		{
@@ -446,7 +446,7 @@
 	"variable": [
 		{
 			"key": "base_api_path",
-			"value": "http://localhost:8080/nimbleflow-api",
+			"value": "http://localhost:10507/nimbleflow-api",
 			"type": "string"
 		},
 		{
