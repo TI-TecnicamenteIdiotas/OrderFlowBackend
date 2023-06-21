@@ -15,6 +15,7 @@ var app = builder.Build();
 
 app.MapControllers();
 app.MapHub<MainHub>("/main");
-app.MapGrpcService<HubService>();
+app.MapGrpcService<TableHubService>();
+app.MapGrpcService<CategoryHubService>();
 
 app.Run();

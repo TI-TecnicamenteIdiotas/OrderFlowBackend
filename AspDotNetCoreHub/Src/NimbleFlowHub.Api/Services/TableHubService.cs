@@ -3,15 +3,15 @@ using Grpc.Core;
 using Microsoft.AspNetCore.SignalR;
 using NimbleFlowHub.Api.Extensions;
 using NimbleFlowHub.Contracts;
-using HubPublisherBase = NimbleFlowHub.Contracts.HubPublisher.HubPublisherBase;
+using TableHubPublisherBase = NimbleFlowHub.Contracts.TableHubPublisher.TableHubPublisherBase;
 
 namespace NimbleFlowHub.Api.Services;
 
-public class HubService : HubPublisherBase
+public class TableHubService : TableHubPublisherBase
 {
     private readonly IHubContext<Hubs.MainHub> _hubContext;
 
-    public HubService(IHubContext<Hubs.MainHub> hubContext)
+    public TableHubService(IHubContext<Hubs.MainHub> hubContext)
     {
         _hubContext = hubContext;
     }

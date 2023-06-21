@@ -13,10 +13,12 @@ public class CategoryController : ControllerBase
 {
     private const int MaxTitleLength = 32;
     private readonly CategoryService _categoryService;
+    private readonly CategoryHubService? _hubService;
 
-    public CategoryController(CategoryService categoryService)
+    public CategoryController(CategoryService categoryService, CategoryHubService? hubService)
     {
         _categoryService = categoryService;
+        _hubService = hubService;
     }
 
     /// <summary>Creates a category</summary>
@@ -41,12 +43,19 @@ public class CategoryController : ControllerBase
             return BadRequest($"{nameof(requestBody.CategoryIcon)} must be positive");
 
         var (responseStatus, response) = await _categoryService.Create(requestBody);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.Created => Created(string.Empty, response),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.Created when response is not null:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishCategoryCreatedAsync(response);
+                return Created(string.Empty, response);
+            }
+            case HttpStatusCode.Conflict:
+                return Conflict();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Gets all categories paginated</summary>
@@ -129,15 +138,24 @@ public class CategoryController : ControllerBase
         if (requestBody.CategoryIcon < 0)
             return BadRequest($"{nameof(requestBody.CategoryIcon)} must be positive");
 
-        var (responseStatus, _) = await _categoryService.UpdateCategoryById(categoryId, requestBody);
-        return responseStatus switch
+        var (responseStatus, response) = await _categoryService.UpdateCategoryById(categoryId, requestBody);
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotModified => StatusCode((int)HttpStatusCode.NotModified),
-            HttpStatusCode.NotFound => NotFound(),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null && response is not null)
+                    await _hubService.PublishCategoryUpdatedAsync(response);
+                return Ok();
+            }
+            case HttpStatusCode.NotModified:
+                return StatusCode((int)HttpStatusCode.NotModified);
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            case HttpStatusCode.Conflict:
+                return Conflict();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Deletes categories by ids</summary>
@@ -151,6 +169,9 @@ public class CategoryController : ControllerBase
         if (!response)
             return NotFound();
 
+        if (_hubService is not null)
+            await _hubService.PublishManyCategoriesDeletedAsync(categoriesIds);
+
         return Ok();
     }
 
@@ -163,11 +184,18 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> DeleteCategoryById([FromRoute] Guid categoryId)
     {
         var responseStatus = await _categoryService.DeleteById(categoryId);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotFound => NotFound(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishCategoryDeletedAsync(categoryId);
+                return Ok();
+            }
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            default:
+                return Problem();
+        }
     }
 }

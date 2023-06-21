@@ -28,7 +28,7 @@ public abstract class TestBase : IDisposable
 
         var categoryRepository = new CategoryRepository(dbContext);
         var categoryService = new CategoryService(categoryRepository);
-        CategoryController = new CategoryController(categoryService);
+        CategoryController = new CategoryController(categoryService, null);
 
         var productRepository = new ProductRepository(dbContext);
         var productService = new ProductService(productRepository);

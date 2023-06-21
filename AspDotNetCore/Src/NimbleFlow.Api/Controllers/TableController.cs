@@ -13,9 +13,9 @@ public class TableController : ControllerBase
 {
     private const int MaxAccountableLength = 256;
     private readonly TableService _tableService;
-    private readonly HubService? _hubService;
+    private readonly TableHubService? _hubService;
 
-    public TableController(TableService tableService, HubService? hubService)
+    public TableController(TableService tableService, TableHubService? hubService)
     {
         _tableService = tableService;
         _hubService = hubService;

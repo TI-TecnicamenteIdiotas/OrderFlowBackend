@@ -4,9 +4,9 @@ option csharp_namespace = "NimbleFlowHub.Contracts";
 
 import "google/protobuf/empty.proto";
 
-package hubPublisher;
+package tableHubPublisher;
 
-service HubPublisher {
+service TableHubPublisher {
   rpc PublishTableCreated (PublishTableValue) returns (google.protobuf.Empty);
   rpc PublishTableUpdated (PublishTableValue) returns (google.protobuf.Empty);
   rpc PublishManyTablesDeleted (PublishTableIds) returns (google.protobuf.Empty);

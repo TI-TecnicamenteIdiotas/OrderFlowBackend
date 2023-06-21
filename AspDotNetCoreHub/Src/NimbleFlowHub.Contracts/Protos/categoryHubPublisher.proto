@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option csharp_namespace = "NimbleFlowHub.Contracts";
+
+import "google/protobuf/empty.proto";
+
+package categoryHubPublisher;
+
+service CategoryHubPublisher {
+  rpc PublishCategoryCreated (PublishCategoryValue) returns (google.protobuf.Empty);
+  rpc PublishCategoryUpdated (PublishCategoryValue) returns (google.protobuf.Empty);
+  rpc PublishManyCategoriesDeleted (PublishCategoryIds) returns (google.protobuf.Empty);
+  rpc PublishCategoryDeleted (PublishCategoryId) returns (google.protobuf.Empty);
+}
+
+message PublishCategoryIds {
+  repeated string ids = 1;
+}
+
+message PublishCategoryId {
+  string id = 1;
+}
+
+message PublishCategoryValue {
+  string id = 1;
+  string title = 2;
+  int32 colorTheme = 3;
+  int32 categoryIcon = 4;
+}
