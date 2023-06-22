@@ -25,9 +25,9 @@ public class ProductHubService
         {
             Id = message.Id.ToString(),
             Title = message.Title,
-            Description = message.Description,
+            Description = message.Description ?? string.Empty,
             Price = float.Parse(message.Price.ToString(CultureInfo.InvariantCulture)),
-            ImageUrl = message.ImageUrl,
+            ImageUrl = message.ImageUrl ?? string.Empty,
             IsFavorite = message.IsFavorite,
             CategoryId = message.CategoryId.ToString(),
         });
@@ -41,9 +41,9 @@ public class ProductHubService
         {
             Id = message.Id.ToString(),
             Title = message.Title,
-            Description = message.Description,
+            Description = message.Description ?? string.Empty,
             Price = float.Parse(message.Price.ToString(CultureInfo.InvariantCulture)),
-            ImageUrl = message.ImageUrl,
+            ImageUrl = message.ImageUrl ?? string.Empty,
             IsFavorite = message.IsFavorite,
             CategoryId = message.CategoryId.ToString(),
         });
