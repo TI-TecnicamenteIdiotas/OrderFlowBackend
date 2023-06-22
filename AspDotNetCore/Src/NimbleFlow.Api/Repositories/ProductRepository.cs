@@ -11,6 +11,28 @@ public class ProductRepository : RepositoryBase<NimbleFlowContext, Product>
     {
     }
 
+    public new Task<(int totalAmount, Product[])> GetAllEntitiesPaginated(int page, int limit, bool includeDeleted)
+    {
+        async Task<(int totalAmount, Product[])> QueryEntities(IQueryable<Product> entities)
+        {
+            var totalQuery = await entities.CountAsync();
+            var entitiesQuery = await entities
+                .Include(x => x.Category)
+                .OrderBy(x => x.CreatedAt)
+                .Skip(page * limit)
+                .Take(limit)
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            return (totalQuery, entitiesQuery);
+        }
+
+        if (includeDeleted)
+            return QueryEntities(DbEntities);
+
+        return QueryEntities(DbEntities.Where(x => x.DeletedAt == null && x.Category.DeletedAt == null));
+    }
+
     public Task<(int totalAmount, Product[])> GetAllProductsPaginatedByCategoryId(
         int page,
         int limit,
@@ -22,6 +44,7 @@ public class ProductRepository : RepositoryBase<NimbleFlowContext, Product>
         {
             var totalQuery = await entities.CountAsync();
             var entitiesQuery = await entities
+                .Include(x => x.Category)
                 .OrderBy(x => x.CreatedAt)
                 .Skip(page * limit)
                 .Take(limit)
@@ -35,6 +58,6 @@ public class ProductRepository : RepositoryBase<NimbleFlowContext, Product>
         if (includeDeleted)
             return QueryEntities(DbEntities);
 
-        return QueryEntities(DbEntities.Where(x => x.DeletedAt == null));
+        return QueryEntities(DbEntities.Where(x => x.DeletedAt == null && x.Category.DeletedAt == null));
     }
 }

@@ -19,6 +19,16 @@ public class ProductService : ServiceBase<CreateProductDto, ProductDto, NimbleFl
         _productRepository = productRepository;
     }
 
+    public new async Task<(int totalAmount, IEnumerable<ProductDto>)> GetAllPaginated(
+        int page,
+        int limit,
+        bool includeDeleted
+    )
+    {
+        var (totalAmount, entities) = await _productRepository.GetAllEntitiesPaginated(page, limit, includeDeleted);
+        return (totalAmount, entities.Select(x => x.ToDto()));
+    }
+
     public new async Task<(HttpStatusCode, ProductDto?)> Create(CreateProductDto createDto)
     {
         try

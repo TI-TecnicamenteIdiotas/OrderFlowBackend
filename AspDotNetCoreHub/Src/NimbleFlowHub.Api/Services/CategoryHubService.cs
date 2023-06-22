@@ -26,18 +26,21 @@ public class CategoryHubService : CategoryHubPublisherBase
     public override async Task<Empty> PublishCategoryUpdated(PublishCategoryValue request, ServerCallContext context)
     {
         await _hubContext.Clients.All.SendJsonAsync("CategoryUpdated", request);
+        await _hubContext.Clients.All.SendJsonAsync("ProductCategoryUpdated", request);
         return new Empty();
     }
 
     public override async Task<Empty> PublishManyCategoriesDeleted(PublishCategoryIds request, ServerCallContext context)
     {
         await _hubContext.Clients.All.SendJsonAsync("ManyCategoriesDeleted", request);
+        await _hubContext.Clients.All.SendJsonAsync("ManyProductsCategoriesDeleted", request);
         return new Empty();
     }
 
     public override async Task<Empty> PublishCategoryDeleted(PublishCategoryId request, ServerCallContext context)
     {
         await _hubContext.Clients.All.SendJsonAsync("CategoryDeleted", request);
+        await _hubContext.Clients.All.SendJsonAsync("ProductCategoryDeleted", request);
         return new Empty();
     }
 }
