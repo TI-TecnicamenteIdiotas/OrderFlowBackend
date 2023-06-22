@@ -17,6 +17,7 @@
 
     <ItemGroup>
         <Protobuf Include="Protos\categoryHubPublisher.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\productHubPublisher.proto" GrpcServices="Server" />
         <Protobuf Include="Protos\tableHubPublisher.proto" GrpcServices="Server" />
     </ItemGroup>
 

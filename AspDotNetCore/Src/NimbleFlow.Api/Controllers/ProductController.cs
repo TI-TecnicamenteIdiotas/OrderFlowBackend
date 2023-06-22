@@ -14,10 +14,12 @@ public class ProductController : ControllerBase
     private const int MaxTitleLength = 64;
     private const int MaxDescriptionLength = 512;
     private readonly ProductService _productService;
+    private readonly ProductHubService? _hubService;
 
-    public ProductController(ProductService productService)
+    public ProductController(ProductService productService, ProductHubService? hubService)
     {
         _productService = productService;
+        _hubService = hubService;
     }
 
     /// <summary>Creates a product</summary>
@@ -42,13 +44,21 @@ public class ProductController : ControllerBase
             return BadRequest($"{nameof(requestBody.Price)} must not be negative");
 
         var (responseStatus, response) = await _productService.Create(requestBody);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.Created => Created(string.Empty, response),
-            HttpStatusCode.BadRequest => BadRequest(),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.Created when response is not null:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishProductCreatedAsync(response);
+                return Created(string.Empty, response);
+            }
+            case HttpStatusCode.BadRequest:
+                return BadRequest();
+            case HttpStatusCode.Conflict:
+                return Conflict();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Gets all products paginated or filter all products by category id</summary>
@@ -142,15 +152,24 @@ public class ProductController : ControllerBase
         if (requestBody.Price < 0)
             return BadRequest($"{nameof(requestBody.Price)} must not be negative");
 
-        var (responseStatus, _) = await _productService.UpdateProductById(productId, requestBody);
-        return responseStatus switch
+        var (responseStatus, response) = await _productService.UpdateProductById(productId, requestBody);
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotModified => StatusCode((int)HttpStatusCode.NotModified),
-            HttpStatusCode.NotFound => NotFound(),
-            HttpStatusCode.Conflict => Conflict(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null && response is not null)
+                    await _hubService.PublishProductUpdatedAsync(response);
+                return Ok();
+            }
+            case HttpStatusCode.NotModified:
+                return StatusCode((int)HttpStatusCode.NotModified);
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            case HttpStatusCode.Conflict:
+                return Conflict();
+            default:
+                return Problem();
+        }
     }
 
     /// <summary>Deletes products by ids</summary>
@@ -164,6 +183,9 @@ public class ProductController : ControllerBase
         if (!response)
             return NotFound();
 
+        if (_hubService is not null)
+            await _hubService.PublishManyProductsDeletedAsync(productsIds);
+
         return Ok();
     }
 
@@ -176,11 +198,18 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> DeleteProductById([FromRoute] Guid productId)
     {
         var responseStatus = await _productService.DeleteById(productId);
-        return responseStatus switch
+        switch (responseStatus)
         {
-            HttpStatusCode.OK => Ok(),
-            HttpStatusCode.NotFound => NotFound(),
-            _ => Problem()
-        };
+            case HttpStatusCode.OK:
+            {
+                if (_hubService is not null)
+                    await _hubService.PublishProductDeletedAsync(productId);
+                return Ok();
+            }
+            case HttpStatusCode.NotFound:
+                return NotFound();
+            default:
+                return Problem();
+        }
     }
 }

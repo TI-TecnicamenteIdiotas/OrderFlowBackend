@@ -2,6 +2,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.SignalR;
 using NimbleFlowHub.Api.Extensions;
+using NimbleFlowHub.Api.Hubs;
 using NimbleFlowHub.Contracts;
 using CategoryHubPublisherBase = NimbleFlowHub.Contracts.CategoryHubPublisher.CategoryHubPublisherBase;
 
@@ -9,9 +10,9 @@ namespace NimbleFlowHub.Api.Services;
 
 public class CategoryHubService : CategoryHubPublisherBase
 {
-    private readonly IHubContext<Hubs.MainHub> _hubContext;
+    private readonly IHubContext<MainHub> _hubContext;
 
-    public CategoryHubService(IHubContext<Hubs.MainHub> hubContext)
+    public CategoryHubService(IHubContext<MainHub> hubContext)
     {
         _hubContext = hubContext;
     }

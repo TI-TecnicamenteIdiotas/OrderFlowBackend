@@ -12,5 +12,6 @@ public static partial class ServiceCollectionExtensions
         services.AddScoped<TableService>();
         services.AddScoped<TableHubService>();
         services.AddScoped<CategoryHubService>();
+        services.AddScoped<ProductHubService>();
     }
 }

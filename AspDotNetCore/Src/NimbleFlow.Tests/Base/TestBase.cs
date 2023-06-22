@@ -32,7 +32,7 @@ public abstract class TestBase : IDisposable
 
         var productRepository = new ProductRepository(dbContext);
         var productService = new ProductService(productRepository);
-        ProductController = new ProductController(productService);
+        ProductController = new ProductController(productService, null);
 
         var tableRepository = new TableRepository(dbContext);
         var tableService = new TableService(tableRepository);

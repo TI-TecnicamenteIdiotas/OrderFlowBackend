@@ -2,6 +2,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.SignalR;
 using NimbleFlowHub.Api.Extensions;
+using NimbleFlowHub.Api.Hubs;
 using NimbleFlowHub.Contracts;
 using TableHubPublisherBase = NimbleFlowHub.Contracts.TableHubPublisher.TableHubPublisherBase;
 
@@ -9,9 +10,9 @@ namespace NimbleFlowHub.Api.Services;
 
 public class TableHubService : TableHubPublisherBase
 {
-    private readonly IHubContext<Hubs.MainHub> _hubContext;
+    private readonly IHubContext<MainHub> _hubContext;
 
-    public TableHubService(IHubContext<Hubs.MainHub> hubContext)
+    public TableHubService(IHubContext<MainHub> hubContext)
     {
         _hubContext = hubContext;
     }
