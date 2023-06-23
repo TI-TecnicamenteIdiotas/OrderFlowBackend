@@ -34,7 +34,7 @@ public class UploadController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="415">Unsupported Media Type</response>
     [HttpPost("image")]
-    [Consumes("image/jpeg", "image/png")]
+    [Consumes("image/jpeg", "image/jpg", "image/png")]
     [ProducesResponseType(typeof(string), StatusCodes.Status201Created, MediaTypeNames.Text.Plain)]
     public async Task<IActionResult> UploadBinaryImage()
     {

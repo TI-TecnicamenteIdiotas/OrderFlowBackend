@@ -11,7 +11,7 @@
         "AWS_ACCESS_KEY_ID": "<CHANGE_ME_IF_NEEDED>",
         "AWS_SECRET_ACCESS_KEY": "<CHANGE_ME_IF_NEEDED>",
         "AWS_REGION": "us-east-1",
-        "AWS_S3_SERVICE_URL": "http://127.0.0.1:10502",
+        "AWS_S3_SERVICE_URL": "http://192.168.15.131:10502",
         "AWS_S3_BUCKET_NAME": "nimbleflow",
         "HUB_SERVER_URL": "http://127.0.0.1:10505"
       }

@@ -20,6 +20,7 @@ public class CategoryHubService : CategoryHubPublisherBase
     public override async Task<Empty> PublishCategoryCreated(PublishCategoryValue request, ServerCallContext context)
     {
         await _hubContext.Clients.All.SendJsonAsync("CategoryCreated", request);
+        await _hubContext.Clients.All.SendJsonAsync("ProductCategoryCreated", request);
         return new Empty();
     }
 
