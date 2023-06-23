@@ -14,8 +14,8 @@ namespace NimbleFlow.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class UploadController : ControllerBase
 {
-    /// 1mb in binary bytes
-    private const int FileSizeLimit = 1048576;
+    /// 10mb in binary bytes
+    private const int FileSizeLimit = 10485760;
 
     private readonly Dictionary<FileTypeEnum, byte[]> _acceptedFileSignatures = new()
     {
