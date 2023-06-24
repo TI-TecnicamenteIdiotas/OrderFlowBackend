@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: always
+    include-message: always
+  servlet:
+    context-path: /nimbleflow-api
+
+amazon:
+  aws:
+    accesskey: guest
+    secretkey: guest
+  dynamodb:
+    endpoint: http://localhost:10501
+    region: us-east-1

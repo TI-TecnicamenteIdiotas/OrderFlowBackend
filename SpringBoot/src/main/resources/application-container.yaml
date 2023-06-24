@@ -1,0 +1,15 @@
+server:
+  port: 10507
+  error:
+    include-stacktrace: always
+    include-message: always
+  servlet:
+    context-path: /nimbleflow-api
+
+amazon:
+  aws:
+    accesskey: ${AWS_ACCESS_KEY_ID}
+    secretkey: ${AWS_SECRET_ACCESS_KEY}
+  dynamodb:
+    endpoint: ${NO_SQL_CONNECTION_STRING}
+    region: ${AWS_REGION}

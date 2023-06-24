@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  nimbleflow.aspnetcore.hub:
+    container_name: nimbleflow.aspnetcore.hub
+    image: ${CONTAINER_REGISTRY}/nimbleflow.aspnetcore.hub:${TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    ports:
+      - "10504:10504"
+      - "10505:10505"
+
+  nimbleflow.aspnetcore:
+    container_name: nimbleflow.aspnetcore
+    image: ${CONTAINER_REGISTRY}/nimbleflow.aspnetcore:${TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING}
+      - HUB_SERVER_URL=${HUB_SERVER_URL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_SERVICE_URL=${AWS_S3_SERVICE_URL}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+    ports:
+      - "10506:10506"
+
+  nimbleflow.java:
+    container_name: nimbleflow.java
+    image: ${CONTAINER_REGISTRY}/nimbleflow.java:${TAG:-latest}
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - NO_SQL_CONNECTION_STRING=${NO_SQL_CONNECTION_STRING}
+    ports:
+      - "10507:10507"

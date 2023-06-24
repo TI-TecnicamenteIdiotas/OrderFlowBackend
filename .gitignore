@@ -394,6 +394,7 @@ FodyWeavers.xsd
 *.msp
 
 # JetBrains Rider
+.idea/*
 *.sln.iml
 
 ### Rider ###
@@ -487,3 +488,7 @@ fabric.properties
 # Ignore all local history of files
 .history
 .ionide
+
+SpringBoot/docker
+SpringBoot/target
+.idea
